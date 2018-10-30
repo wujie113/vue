@@ -401,6 +401,35 @@ export const asyncRouterMap = [
   },
 
   {
+    path: '/setting',
+    component: Layout,
+    redirect: '/excel/export-excel',
+    name: 'Excel',
+    meta: {
+      title: 'excel',
+      icon: 'excel'
+    },
+    children: [
+    {
+      path: 'export-excel',
+      component: () => import('@/views/excel/exportExcel'),
+      name: 'ExportExcel',
+      meta: { title: 'exportExcel' }
+    },
+    {
+      path: 'export-selected-excel',
+      component: () => import('@/views/excel/selectExcel'),
+      name: 'SelectExcel',
+      meta: { title: 'selectExcel' }
+    },
+    {
+      path: 'upload-excel',
+      component: () => import('@/views/excel/uploadExcel'),
+      name: 'UploadExcel',
+      meta: { title: 'uploadExcel' }
+    }]
+  },
+  {
     path: 'external-link',
     component: Layout,
     children: [

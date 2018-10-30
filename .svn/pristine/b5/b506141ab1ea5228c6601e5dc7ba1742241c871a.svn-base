@@ -1,0 +1,163 @@
+<template>
+  <treeselect
+					  :load-options="loadOrgs"
+					  :options="orgs" 
+					  :auto-load-root-options="autoload"
+            :value="value"
+					  :multiple="multiple"  
+            value-consists-of="LEAF_PRIORITY"
+					  no-children-text="空记录"  retry-text="重试"  :value-format="format"
+					  placeholder="选择部门..."
+            @input="handleInput" 
+					  />
+</template> 
+<script>
+var a = [
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [
+              { id: "7", name: "百脑汇", parentId: "6", sort: 0 },
+              { $ref: "$[0].children[0].children[0].children[0]" }
+            ],
+            id: "6",
+            name: "石牌",
+            parentId: "3",
+            sort: 0
+          },
+          { $ref: "$[0].children[0].children[0]" }
+        ],
+        id: "3",
+        name: "天河区",
+        parentId: "1",
+        sort: 0
+      },
+      { id: "4", name: "越秀区", parentId: "1", sort: 0 },
+      { id: "5", name: "黄埔区", parentId: "1", sort: 0 },
+      { $ref: "$[0].children[0]" },
+      { $ref: "$[0].children[1]" },
+      { $ref: "$[0].children[2]" }
+    ],
+    id: "1",
+    name: "广州",
+    parentId: "0",
+    sort: 0
+  },
+  {
+    children: [
+      {
+        children: [
+          { id: "10", name: "科技园", parentId: "8", sort: 0 },
+          { $ref: "$[1].children[0].children[0]" }
+        ],
+        id: "8",
+        name: "南山区",
+        parentId: "2",
+        sort: 0
+      },
+      { id: "9", name: "宝安区", parentId: "2", sort: 0 },
+      { $ref: "$[1].children[0]" },
+      { $ref: "$[1].children[1]" }
+    ],
+    id: "2",
+    name: "深圳",
+    parentId: "0",
+    sort: 0
+  }
+]
+// import the component
+import Treeselect from "@riophae/vue-treeselect"
+// import the styles
+import "@riophae/vue-treeselect/dist/vue-treeselect.css"
+import { list } from "@/api/core/org"
+export default {
+  components: { Treeselect },
+  name: "RmOrgSelect",
+  props: {
+    value: {
+      required: false
+    },
+    format: {
+      required: false,
+      type: String,
+      default: "object"
+    },
+    multiple: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    autoload: {
+      required: false,
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      orgs: null
+    }
+  },
+  computed: {},
+  methods: {
+    handleInput(value, instanceId) {
+      console.log(JSON.stringify(value))
+      this.$emit("input", value)
+    },
+    handleSelect(node, instanceId) {
+      //console.log("node:", node)
+      //支持v-model方式
+      //  console.log("input :", JSON.stringify(this.value))
+      if (this.multiple) {
+        this.value.push(node)
+        this.$emit("input", this.value)
+      } else {
+        this.$emit("input", node)
+      }
+      //this.$emit('update:org',node)
+    },
+    loadOrgs({ action, parentNode, callback }) {
+      //console.log(action, parentNode, this.org)
+      var self = this
+      var pid = null
+      if (action != "LOAD_ROOT_OPTIONS") {
+        pid = parentNode.id
+      }
+      list(pid)
+        .then(response => {
+          //console.log("response:::", response)
+          const data = response.data
+          var list = data.list
+          if (list.length == 0) {
+            if (pid) parentNode.children = undefined
+            callback()
+            return
+          }
+          var orgs = []
+          for (var i in list) {
+            orgs.push({
+              id: list[i].id,
+              name: list[i].name,
+              label: list[i].name,
+              children: null
+            })
+            if (pid) {
+              parentNode.children = orgs
+            } else {
+              self.orgs = orgs
+            }
+            callback()
+          }
+        })
+        .catch(error => {
+          callback()
+        })
+    }
+  }
+}
+</script>
+
+<style scoped>
+</style>

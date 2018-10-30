@@ -1,0 +1,28 @@
+import request from '@/utils/request'
+ 
+export function login(username, password) { 
+  
+  return request({
+    url: '/c/login',
+    method: 'post',
+    data: {
+      username,
+      password,
+      mobileLogin:true
+    }
+  })
+}
+
+export function getInfo(token) {
+  return request({
+    url: '/api/employee/me',
+    method: 'get' 
+  })
+}
+
+export function logout() {
+  return request({
+    url: '/c/logout',
+    method: 'get'
+  })
+}

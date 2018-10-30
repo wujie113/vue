@@ -1,0 +1,52 @@
+ <template>
+  <el-table
+    :data="list" 
+    stripe
+    style="width: 100%">
+    <el-table-column
+      prop="id"
+      label="电房编码"
+      width="280">
+    </el-table-column>
+    <el-table-column
+      prop="name"
+      label="电房名称"
+      width="">
+    </el-table-column>
+     
+  </el-table>
+</template>
+ 
+<script>
+import { getList } from '@/api/river/river.js'
+export default {
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
+  data() {
+    return {
+      list: null,
+      listLoading: true
+    }
+  },
+  created() {
+    this.fetchData()
+  },
+  methods: {
+    fetchData() {
+      this.listLoading = true
+      getList(this.listQuery).then(response => {
+        this.list = response.data.list
+        this.listLoading = false
+      })
+    }
+  }
+}
+</script>

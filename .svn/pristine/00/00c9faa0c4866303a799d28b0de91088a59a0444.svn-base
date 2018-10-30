@@ -1,0 +1,372 @@
+<template>
+  <div class="app-container">
+    <div class="filter-container"> 
+       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
+      </el-select> 
+      <rm-dict title="请选择类型"  placeholder="请选择类型"  type="yes_no"     :name.sync="listQuery.type" />
+       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+       <el-button
+			 type="primary"
+			 icon="el-icon-plus"
+			 @click="visible=true"
+			>新增</el-button>
+    </div>
+      <el-table :data="list" row-key="id"  stripe style="width: 100%">
+                <el-table-column prop="name" label="取水口名称"/>
+        <el-table-column prop="code" label="取水口编码"/>
+        <el-table-column prop="lat" label="经度"/>
+        <el-table-column prop="lng" label="纬度"/>
+        <el-table-column prop="province" label="省"/>
+        <el-table-column prop="region" label="地区"/>
+        <el-table-column prop="county" label="县"/>
+        <el-table-column prop="town" label="乡（镇）"/>
+        <el-table-column prop="village" label="街（村）"/>
+        <el-table-column prop="regimeCode" label="行政区划代码"/>
+        <el-table-column prop="postion" label="取水口位置"/>
+        <el-table-column prop="waterNameCode" label="所在水资源三级区名称及编码"/>
+        <el-table-column prop="getMethod" label="取水方式"/>
+        <el-table-column prop="lockName" label="水闸名称"/>
+        <el-table-column prop="lockCode" label="水闸编码"/>
+        <el-table-column prop="pumpName" label="泵站名称"/>
+        <el-table-column prop="pumpCode" label="泵站编码"/>
+        <el-table-column prop="isGetWater" label="是否为引(调)水工程取水口"/>
+        <el-table-column prop="citeName" label="引调水工程名称"/>
+        <el-table-column prop="citeCode" label="引调水工程编码"/>
+        <el-table-column prop="isOrigin" label="是否位于地表水水源地"/>
+        <el-table-column prop="originName" label="水源地名称"/>
+        <el-table-column prop="originCode" label="水源地编码"/>
+        <el-table-column prop="originType" label="水源类型"/>
+        <el-table-column prop="lakeName" label="湖（水库）名称"/>
+        <el-table-column prop="lakeCode" label="湖（水库）编码"/>
+        <el-table-column prop="riverName" label="河流名称"/>
+        <el-table-column prop="riverCode" label="河流编码"/>
+        <el-table-column prop="flow" label="取水流量（立方米/秒）"/>
+        <el-table-column prop="getFlow" label="年最大取水量（万立方米）"/>
+        <el-table-column prop="flowUse" label="主要取水用途"/>
+        <el-table-column prop="flowY2011" label="2011年取水量（万立方米）"/>
+        <el-table-column prop="flowRepeat" label="取水量重复系数"/>
+        <el-table-column prop="flowMethod" label="取水量取得方式"/>
+        <el-table-column prop="personNum" label="供水人口（万人）"/>
+        <el-table-column prop="area" label="灌溉面积（万亩）"/>
+        <el-table-column prop="dept" label="单位名称（个人）"/>
+        <el-table-column prop="deptCode" label="单位代码"/>
+        <el-table-column prop="industry" label="所属行业"/>
+        <el-table-column prop="isFlow" label="有无取水许可证"/>
+        <el-table-column prop="flowCode" label="取水许可证编号"/>
+        <el-table-column prop="flowNum" label="许可取水量（万立方米/年）"/>
+        <el-table-column prop="approveDept" label="取水许可审批单位"/>
+        <el-table-column prop="supervision" label="取水许可监督管理机关"/>
+        <el-table-column prop="recordMan" label="填表人员"/>
+        <el-table-column prop="recordPhone" label="填表联系人电话"/>
+        <el-table-column prop="reviewMan" label="复核人员"/>
+        <el-table-column prop="reviewPhone" label="复核人联系电话"/>
+        <el-table-column prop="auditMan" label="审查人员"/>
+        <el-table-column prop="auditSymbol" label="审核标志"/>
+        <el-table-column prop="regionAudit" label="地区审核"/>
+        <el-table-column prop="provinceAudit" label="省级审核"/>
+        <el-table-column prop="nationAudit" label="中央审核"/>
+		<el-table-column prop="id" label="操作" width="100"   >
+        	<template slot-scope="scope">
+            	<el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
+			<el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete"/>
+        	</template>
+        </el-table-column>
+      </el-table>  
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" /> 
+  
+  
+  <el-dialog :visible.sync="visible" title="编辑">
+  	<el-form :model="form">
+			<el-form-item label="取水口名称">
+				<el-input v-model="form.name"/>
+			</el-form-item>
+			<el-form-item label="取水口编码">
+				<el-input v-model="form.code"/>
+			</el-form-item>
+			<el-form-item label="经度">
+				<el-input v-model="form.lat"/>
+			</el-form-item>
+			<el-form-item label="纬度">
+				<el-input v-model="form.lng"/>
+			</el-form-item>
+			<el-form-item label="省">
+				<el-input v-model="form.province"/>
+			</el-form-item>
+			<el-form-item label="地区">
+				<el-input v-model="form.region"/>
+			</el-form-item>
+			<el-form-item label="县">
+				<el-input v-model="form.county"/>
+			</el-form-item>
+			<el-form-item label="乡（镇）">
+				<el-input v-model="form.town"/>
+			</el-form-item>
+			<el-form-item label="街（村）">
+				<el-input v-model="form.village"/>
+			</el-form-item>
+			<el-form-item label="行政区划代码">
+				<el-input v-model="form.regimeCode"/>
+			</el-form-item>
+			<el-form-item label="取水口位置">
+				<el-input v-model="form.postion"/>
+			</el-form-item>
+			<el-form-item label="所在水资源三级区名称及编码">
+				<el-input v-model="form.waterNameCode"/>
+			</el-form-item>
+			<el-form-item label="取水方式">
+				<el-input v-model="form.getMethod"/>
+			</el-form-item>
+			<el-form-item label="水闸名称">
+				<el-input v-model="form.lockName"/>
+			</el-form-item>
+			<el-form-item label="水闸编码">
+				<el-input v-model="form.lockCode"/>
+			</el-form-item>
+			<el-form-item label="泵站名称">
+				<el-input v-model="form.pumpName"/>
+			</el-form-item>
+			<el-form-item label="泵站编码">
+				<el-input v-model="form.pumpCode"/>
+			</el-form-item>
+			<el-form-item label="是否为引(调)水工程取水口">
+				<el-input v-model="form.isGetWater"/>
+			</el-form-item>
+			<el-form-item label="引调水工程名称">
+				<el-input v-model="form.citeName"/>
+			</el-form-item>
+			<el-form-item label="引调水工程编码">
+				<el-input v-model="form.citeCode"/>
+			</el-form-item>
+			<el-form-item label="是否位于地表水水源地">
+				<el-input v-model="form.isOrigin"/>
+			</el-form-item>
+			<el-form-item label="水源地名称">
+				<el-input v-model="form.originName"/>
+			</el-form-item>
+			<el-form-item label="水源地编码">
+				<el-input v-model="form.originCode"/>
+			</el-form-item>
+			<el-form-item label="水源类型">
+				<el-input v-model="form.originType"/>
+			</el-form-item>
+			<el-form-item label="湖（水库）名称">
+				<el-input v-model="form.lakeName"/>
+			</el-form-item>
+			<el-form-item label="湖（水库）编码">
+				<el-input v-model="form.lakeCode"/>
+			</el-form-item>
+			<el-form-item label="河流名称">
+				<el-input v-model="form.riverName"/>
+			</el-form-item>
+			<el-form-item label="河流编码">
+				<el-input v-model="form.riverCode"/>
+			</el-form-item>
+			<el-form-item label="取水流量（立方米/秒）">
+				<el-input v-model="form.flow"/>
+			</el-form-item>
+			<el-form-item label="年最大取水量（万立方米）">
+				<el-input v-model="form.getFlow"/>
+			</el-form-item>
+			<el-form-item label="主要取水用途">
+				<el-input v-model="form.flowUse"/>
+			</el-form-item>
+			<el-form-item label="2011年取水量（万立方米）">
+				<el-input v-model="form.flowY2011"/>
+			</el-form-item>
+			<el-form-item label="取水量重复系数">
+				<el-input v-model="form.flowRepeat"/>
+			</el-form-item>
+			<el-form-item label="取水量取得方式">
+				<el-input v-model="form.flowMethod"/>
+			</el-form-item>
+			<el-form-item label="供水人口（万人）">
+				<el-input v-model="form.personNum"/>
+			</el-form-item>
+			<el-form-item label="灌溉面积（万亩）">
+				<el-input v-model="form.area"/>
+			</el-form-item>
+			<el-form-item label="单位名称（个人）">
+				<el-input v-model="form.dept"/>
+			</el-form-item>
+			<el-form-item label="单位代码">
+				<el-input v-model="form.deptCode"/>
+			</el-form-item>
+			<el-form-item label="所属行业">
+				<el-input v-model="form.industry"/>
+			</el-form-item>
+			<el-form-item label="有无取水许可证">
+				<el-input v-model="form.isFlow"/>
+			</el-form-item>
+			<el-form-item label="取水许可证编号">
+				<el-input v-model="form.flowCode"/>
+			</el-form-item>
+			<el-form-item label="许可取水量（万立方米/年）">
+				<el-input v-model="form.flowNum"/>
+			</el-form-item>
+			<el-form-item label="取水许可审批单位">
+				<el-input v-model="form.approveDept"/>
+			</el-form-item>
+			<el-form-item label="取水许可监督管理机关">
+				<el-input v-model="form.supervision"/>
+			</el-form-item>
+			<el-form-item label="填表人员">
+				<el-input v-model="form.recordMan"/>
+			</el-form-item>
+			<el-form-item label="填表联系人电话">
+				<el-input v-model="form.recordPhone"/>
+			</el-form-item>
+			<el-form-item label="复核人员">
+				<el-input v-model="form.reviewMan"/>
+			</el-form-item>
+			<el-form-item label="复核人联系电话">
+				<el-input v-model="form.reviewPhone"/>
+			</el-form-item>
+			<el-form-item label="审查人员">
+				<el-input v-model="form.auditMan"/>
+			</el-form-item>
+			<el-form-item label="审核标志">
+				<el-input v-model="form.auditSymbol"/>
+			</el-form-item>
+			<el-form-item label="地区审核">
+				<el-input v-model="form.regionAudit"/>
+			</el-form-item>
+			<el-form-item label="省级审核">
+				<el-input v-model="form.provinceAudit"/>
+			</el-form-item>
+			<el-form-item label="中央审核">
+				<el-input v-model="form.nationAudit"/>
+			</el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="visible = false">取 消</el-button>
+                <el-button @click="save()" type="primary">确 定</el-button>
+            </div>
+        </el-dialog>
+       </div>
+</template> 
+<script> 
+import Pagination from '@/components/Pagination' 
+import { getList } from '@/api/res/intake.js'
+import RmDict from '@/components/rm/dict'
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
+export default {
+  components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
+   data() {
+      return {
+      visible : false,
+	  form: {
+	  	name:null,	  	
+	  	code:null,	  	
+	  	lat:null,	  	
+	  	lng:null,	  	
+	  	province:null,	  	
+	  	region:null,	  	
+	  	county:null,	  	
+	  	town:null,	  	
+	  	village:null,	  	
+	  	regimeCode:null,	  	
+	  	postion:null,	  	
+	  	waterNameCode:null,	  	
+	  	getMethod:null,	  	
+	  	lockName:null,	  	
+	  	lockCode:null,	  	
+	  	pumpName:null,	  	
+	  	pumpCode:null,	  	
+	  	isGetWater:null,	  	
+	  	citeName:null,	  	
+	  	citeCode:null,	  	
+	  	isOrigin:null,	  	
+	  	originName:null,	  	
+	  	originCode:null,	  	
+	  	originType:null,	  	
+	  	lakeName:null,	  	
+	  	lakeCode:null,	  	
+	  	riverName:null,	  	
+	  	riverCode:null,	  	
+	  	flow:null,	  	
+	  	getFlow:null,	  	
+	  	flowUse:null,	  	
+	  	flowY2011:null,	  	
+	  	flowRepeat:null,	  	
+	  	flowMethod:null,	  	
+	  	personNum:null,	  	
+	  	area:null,	  	
+	  	dept:null,	  	
+	  	deptCode:null,	  	
+	  	industry:null,	  	
+	  	isFlow:null,	  	
+	  	flowCode:null,	  	
+	  	flowNum:null,	  	
+	  	approveDept:null,	  	
+	  	supervision:null,	  	
+	  	recordMan:null,	  	
+	  	recordPhone:null,	  	
+	  	reviewMan:null,	  	
+	  	reviewPhone:null,	  	
+	  	auditMan:null,	  	
+	  	auditSymbol:null,	  	
+	  	regionAudit:null,	  	
+	  	provinceAudit:null,	  	
+	  	nationAudit:null,	  	
+	  },
+      list:  null, 
+      total: 0 ,
+      listQuery: {
+        pageNo: 1,
+        pageSize: 10, 
+        importance: undefined,
+        search: undefined,
+        type: undefined,
+        sort: '+id'
+      },
+      importanceOptions: [1, 2, 3],
+    }
+    },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() {  
+        this.listLoading = true ;
+        console.log("this.listQuery::::",this.listQuery);
+        getList(this.listQuery).then(response => { 
+          this.listLoading = false 
+           this.list = response.data.list
+           this.total = response.data.count
+        })
+    },
+     handleFilter() {
+      this.listQuery.pageNo = 1
+      this.getList()
+    },
+	edit(row){
+		//console.log(JSON.stringify(row));
+		this.visible=true;
+		this.form=row;
+	},
+	save(){
+		//console.log('保存:',JSON.stringify(this.form),this.selectUser);
+		this.visible=false;
+		//
+	},
+	del(row){
+		var self=this;
+		//console.log(row); 
+	}  
+  }
+}
+</script>

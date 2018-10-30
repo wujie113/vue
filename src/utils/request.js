@@ -6,7 +6,7 @@ import qs from 'qs'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api 的 base_url
+  baseURL: process.env.BASE_API2, // api 的 base_url
   timeout: 5000 // 请求超时时间
 })
 // request拦截器
@@ -26,7 +26,7 @@ service.interceptors.request.use(
     // config.headers['mobileLogin'] = true;
     //  config.url= config.url+"?token="+getToken();
     if (config.method === 'post') {
-      config.data = qs.stringify(config.data)
+      config.data = qs.stringify(config.data,  { allowDots: true })
     }
     return config
   },

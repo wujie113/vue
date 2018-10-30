@@ -1,0 +1,11 @@
+import request from '@/utils/request' 
+
+export function getdictList(type) {
+  return request({
+    url: '/api/sys/dict/find',
+    method: 'get' ,
+    params:{
+        type
+    }
+  })
+}

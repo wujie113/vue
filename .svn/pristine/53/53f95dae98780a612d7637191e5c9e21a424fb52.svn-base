@@ -1,0 +1,139 @@
+<template>
+  <div class="app-container">
+    <div class="filter-container">
+      <el-input clearable placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      
+      <rm-dict type="sex" :name.sync="listQuery.sex" class="filter-item"/>
+      <rm-dict class="filter-item" title="请选择类型" placeholder="请选择类型" type="yes_no" :name.sync="listQuery.type" />
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="visible=true">新增</el-button>
+    </div>
+    <el-table :data="list" row-key="id" stripe style="width: 100%">
+      <el-table-column prop="user.name" label="归属用户" />
+      <el-table-column prop="office.name" label="归属部门" />
+      <el-table-column prop="area.name" label="归属区域" />
+      <el-table-column prop="name" label="名称" />
+      <el-table-column prop="sex" label="性别" />
+      <el-table-column prop="inDate" label="加入日期" />
+      <el-table-column prop="id" label="操作" width="100">
+        <template slot-scope="scope">
+          <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit" />
+          <el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete" />
+        </template>
+      </el-table-column>
+    </el-table>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
+
+    <el-dialog :visible.sync="visible" title="编辑">
+      <el-form :model="form" label-width="120px">
+        <el-form-item label="归属用户">
+          <rm-user-select v-model="form.user" />
+        </el-form-item>
+        <el-form-item label="归属部门">
+          <rm-org-select v-model="form.office" />
+        </el-form-item>
+        <el-form-item label="归属区域">
+          <rm-area-select v-model="form.area" />
+        </el-form-item>
+        <el-form-item label="名称">
+          <el-input v-model="form.name"  placeholder="请输入名称"/>
+        </el-form-item>
+        <el-form-item label="性别">
+          <rm-dict-radio type="sex" :name.sync="form.sex" />
+        </el-form-item>
+        <el-form-item label="加入日期">
+          <el-date-picker v-model="form.inDate" type="date" placeholder="Pick a date" style="width: 100%;" />
+        </el-form-item>
+        <el-form-item label="备注信息">
+          <el-input v-model="form.remarks" type="textarea" placeholder="请输入备注信息"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="visible = false">取 消</el-button>
+        <el-button @click="save()" type="primary">确 定</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template> 
+<script> 
+  import Pagination from '@/components/Pagination'
+  import { getList } from '@/api/test/testData.js'
+  import RmDict from '@/components/rm/dict'
+  import RmDictRadio from '@/components/rm/dictradio'
+  import RmDictCheckbox from '@/components/rm/dictcheckbox'
+  import RmOrgSelect from "@/components/rm/orgselect"
+  import RmUserSelect from "@/components/rm/userselect"
+  import RmAreaSelect from "@/components/rm/areaselect"
+  export default {
+    components: { Pagination, RmDict, RmDictRadio,RmDictCheckbox, RmOrgSelect, RmUserSelect, RmAreaSelect },
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          published: 'success',
+          draft: 'gray',
+          deleted: 'danger'
+        }
+        return statusMap[status]
+      }
+    },
+    data() {
+      return {
+        visible: false,
+        form: {
+          user: { id: '', label: '-' },
+          office: { id: '', label: '-' },
+          area: { id: '', label: '-' },
+          name: null,
+          sex: null,
+          inDate: null
+        },
+        list: null,
+        total: 0,
+        listQuery: {
+          pageNo: 1,
+          pageSize: 10,
+          importance: undefined,
+          search: undefined,
+          type: undefined,
+          sort: '+id'
+        },
+        importanceOptions: [1, 2, 3]
+      }
+    },
+    created() {
+      this.getList()
+    },
+    methods: {
+      getList() {
+        this.listLoading = true
+        console.log("this.listQuery::::", this.listQuery)
+        getList(this.listQuery).then(response => {
+          this.listLoading = false
+          this.list = response.data.list
+          this.total = response.data.count
+        })
+      },
+      handleFilter() {
+        this.listQuery.pageNo = 1
+        this.getList()
+      },
+      edit(row) {
+        //console.log(JSON.stringify(row));
+        this.visible = true
+        this.form = row
+        this.form.user.label = this.form.user.name
+        this.form.office.label = this.form.office.name
+        this.form.area.label = this.form.area.name
+      },
+      save() {
+        //console.log('保存:',JSON.stringify(this.form),this.selectUser);
+        this.visible = false
+        //
+      },
+      del(row) {
+        //var self = this
+        //console.log(row); 
+      }
+    }
+  }
+</script>

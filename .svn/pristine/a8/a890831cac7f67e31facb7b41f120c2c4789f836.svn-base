@@ -1,0 +1,94 @@
+<template>
+  <div class="app-container">
+    <el-form ref="form" :model="form" label-width="120px">
+      <el-row>
+  <el-col :span="12">
+      <el-form-item label="选择部门-绑定对象"> 
+         <rm-org-select v-model="form.org1"  />
+      </el-form-item>
+       <el-form-item label="选择部门-自定义解析方式"> 
+         <rm-org-select @input="handleOrgSelect" :value="form.org2" />
+      </el-form-item>
+       <el-form-item label="选择部门-多选"> 
+         <rm-org-select v-model="form.org3"   :multiple="true"  />
+      </el-form-item>
+       <el-form-item label="选择人员-绑定对象"> 
+         <rm-user-select v-model="form.user1"  />
+      </el-form-item>
+       <el-form-item label="选择人员-自定义解析方式"> 
+         <rm-user-select  @input="handleUserSelected"  :value="form.user2"  />
+      </el-form-item>
+        <el-form-item label="选择人员-多选"> 
+         <rm-user-select   v-model="form.user3"  :multiple="true" />
+      </el-form-item>
+      
+       </el-col>
+  <el-col :span="12"> 
+       <el-form-item label="选择区域-绑定对象"> 
+         <rm-area-select v-model="form.area1"  />
+      </el-form-item>
+  </el-col>
+</el-row>
+ <el-form-item>
+        <el-button type="primary" @click="onSubmit">Create</el-button>
+        <el-button @click="onCancel">Cancel</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
+
+export default {
+  components: { RmOrgSelect, RmUserSelect,RmAreaSelect },
+  data() {
+    return {
+      form: {
+        name: "",
+        org: { id: "0", label: "部门00" },
+        orgId: "22",
+        org1: { id: "1", label: "测试" },
+        org2: { id: "2", label: "测试2" },
+        org3: [],
+        user1: { id: "1", label: "张三" },
+        user2: { id: "2", label: "李四" },
+        user3: [],
+        area1: { id: "1", label: "广州" },
+        area2: { id: "2", label: "北京" },
+        area3: { id: "3", label: "深圳" }
+      }
+    }
+  },
+  methods: {
+    onSubmit() {
+      console.log(JSON.stringify(this.form))
+      this.$message("submit!")
+    },
+    onCancel() {
+      this.$message({
+        message: "cancel!",
+        type: "warning"
+      })
+    },
+    handleOrgSelect(node) {
+      //console.log("node", node)
+      this.form.org2 = node
+    },
+    handleUserSelected(node) {
+      console.log("select user node:", JSON.stringify(node))
+      this.form.user2 = node
+      console.log("22select user node:", JSON.stringify(this.form.user2))
+    }
+  }
+}
+</script>
+
+<style scoped>
+.line {
+  text-align: center
+}
+</style>
+
