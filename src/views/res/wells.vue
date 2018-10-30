@@ -1,0 +1,447 @@
+<template>
+  <div class="app-container">
+    <div class="filter-container"> 
+       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
+      </el-select> 
+      <rm-dict title="请选择类型"  placeholder="请选择类型"  type="yes_no"     :name.sync="listQuery.type" />
+       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+       <el-button
+			 type="primary"
+			 icon="el-icon-plus"
+			 @click="visible=true"
+			>新增</el-button>
+    </div>
+      <el-table :data="list" row-key="id"  stripe style="width: 100%">
+                <el-table-column prop="name" label="名称"/>
+        <el-table-column prop="code" label="编码"/>
+        <el-table-column prop="lat" label="经度"/>
+        <el-table-column prop="lng" label="纬度"/>
+        <el-table-column prop="province" label="省"/>
+        <el-table-column prop="region" label="地区"/>
+        <el-table-column prop="county" label="县"/>
+        <el-table-column prop="town" label="乡（镇）"/>
+        <el-table-column prop="village" label="街（村）"/>
+        <el-table-column prop="regimeCode" label="行政区划代码"/>
+        <el-table-column prop="buildedYear" label="成井时间（年）"/>
+        <el-table-column prop="deep" label="井深（米）"/>
+        <el-table-column prop="deep2" label="地下水埋深（米）"/>
+        <el-table-column prop="isBring" label="是否为单位自备井"/>
+        <el-table-column prop="width" label="井口井管内径(毫米)"/>
+        <el-table-column prop="material" label="井壁管材料"/>
+        <el-table-column prop="s" label="应用状况"/>
+        <el-table-column prop="isEquipment" label="是否已配套机电设备"/>
+        <el-table-column prop="modelLength" label="水泵型号"/>
+        <el-table-column prop="ratedLength" label="水泵额定扬程(米)"/>
+        <el-table-column prop="ratedTraffic" label="水泵额定流量(立方米/小时)"/>
+        <el-table-column prop="ratedPower" label="水泵额定功率(千瓦)"/>
+        <el-table-column prop="isSetMeasure" label="是否已安装水量计量设施"/>
+        <el-table-column prop="measureType" label="水量计量设施类型"/>
+        <el-table-column prop="isScale" label="是否为规模以上地下水水源地的水井"/>
+        <el-table-column prop="waterName" label="所在水源地名称"/>
+        <el-table-column prop="waterCode" label="所在水源地编码"/>
+        <el-table-column prop="landscape" label="所在地貌类型区"/>
+        <el-table-column prop="column1" label="所取用地下水的类型"/>
+        <el-table-column prop="column2" label="所在水资源三级区名称及编码"/>
+        <el-table-column prop="column3" label="水源类型"/>
+        <el-table-column prop="column4" label="主要取水用途及效益"/>
+        <el-table-column prop="column5" label="乡村实际供水人口(人)"/>
+        <el-table-column prop="column6" label="所在灌区类型"/>
+        <el-table-column prop="column7" label="控制灌溉面积（亩）"/>
+        <el-table-column prop="column8" label="实际灌溉面积（亩）"/>
+        <el-table-column prop="column9" label="主要取水用途"/>
+        <el-table-column prop="column10" label="水温（℃）"/>
+        <el-table-column prop="column11" label="主要取水用途            主要取水用途"/>
+        <el-table-column prop="column12" label="取水量确定方法"/>
+        <el-table-column prop="column13" label="全年耗电量(kW&middot;h)"/>
+        <el-table-column prop="column14" label="全年耗油量(升)"/>
+        <el-table-column prop="column15" label="全年开泵时数(小时)"/>
+        <el-table-column prop="column16" label="单位耗电量的取水量(立方米/kW&middot;h)"/>
+        <el-table-column prop="column18" label="单位耗油量的取水量(立方米/升)"/>
+        <el-table-column prop="column19" label="水泵单位时间出水量(立方米/小时)"/>
+        <el-table-column prop="column20" label="实测法取水量(万立方米)"/>
+        <el-table-column prop="column21" label="耗电量法取水量(万立方米)"/>
+        <el-table-column prop="column22" label="耗油量法取水量(万立方米)"/>
+        <el-table-column prop="column23" label="出水量法取水量(万立方米)"/>
+        <el-table-column prop="column24" label="是否已办理取水许可证"/>
+        <el-table-column prop="column25" label="取水许可证编号"/>
+        <el-table-column prop="column26" label="年许可取水量(万立方米)"/>
+        <el-table-column prop="column27" label="是否已办理采矿许可证"/>
+        <el-table-column prop="column28" label="采矿许可证证号"/>
+        <el-table-column prop="column29" label="矿区面积"/>
+        <el-table-column prop="column30" label="生产规模(万立方米/年)"/>
+        <el-table-column prop="column31" label="管理单位名称"/>
+        <el-table-column prop="column32" label="管理单位隶属关系"/>
+        <el-table-column prop="recordMan" label="填表人员"/>
+        <el-table-column prop="recordPhone" label="填表联系人电话"/>
+        <el-table-column prop="reviewMan" label="复核人员"/>
+        <el-table-column prop="reviewPhone" label="复核人联系电话"/>
+        <el-table-column prop="auditMan" label="审查人员"/>
+        <el-table-column prop="auditSymbol" label="审核标志"/>
+        <el-table-column prop="regionAudit" label="地区审核"/>
+        <el-table-column prop="provinceAudit" label="省级审核"/>
+        <el-table-column prop="nationAudit" label="中央审核"/>
+		<el-table-column prop="id" label="操作" width="100"   >
+        	<template slot-scope="scope">
+            	<el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
+			<el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete"/>
+        	</template>
+        </el-table-column>
+      </el-table>  
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" /> 
+  
+  
+  <el-dialog :visible.sync="visible" title="编辑">
+  	<el-form :model="form">
+			<el-form-item label="名称">
+				<el-input v-model="form.name"/>
+			</el-form-item>
+			<el-form-item label="编码">
+				<el-input v-model="form.code"/>
+			</el-form-item>
+			<el-form-item label="经度">
+				<el-input v-model="form.lat"/>
+			</el-form-item>
+			<el-form-item label="纬度">
+				<el-input v-model="form.lng"/>
+			</el-form-item>
+			<el-form-item label="省">
+				<el-input v-model="form.province"/>
+			</el-form-item>
+			<el-form-item label="地区">
+				<el-input v-model="form.region"/>
+			</el-form-item>
+			<el-form-item label="县">
+				<el-input v-model="form.county"/>
+			</el-form-item>
+			<el-form-item label="乡（镇）">
+				<el-input v-model="form.town"/>
+			</el-form-item>
+			<el-form-item label="街（村）">
+				<el-input v-model="form.village"/>
+			</el-form-item>
+			<el-form-item label="行政区划代码">
+				<el-input v-model="form.regimeCode"/>
+			</el-form-item>
+			<el-form-item label="成井时间（年）">
+				<el-input v-model="form.buildedYear"/>
+			</el-form-item>
+			<el-form-item label="井深（米）">
+				<el-input v-model="form.deep"/>
+			</el-form-item>
+			<el-form-item label="地下水埋深（米）">
+				<el-input v-model="form.deep2"/>
+			</el-form-item>
+			<el-form-item label="是否为单位自备井">
+				<el-input v-model="form.isBring"/>
+			</el-form-item>
+			<el-form-item label="井口井管内径(毫米)">
+				<el-input v-model="form.width"/>
+			</el-form-item>
+			<el-form-item label="井壁管材料">
+				<el-input v-model="form.material"/>
+			</el-form-item>
+			<el-form-item label="应用状况">
+				<el-input v-model="form.s"/>
+			</el-form-item>
+			<el-form-item label="是否已配套机电设备">
+				<el-input v-model="form.isEquipment"/>
+			</el-form-item>
+			<el-form-item label="水泵型号">
+				<el-input v-model="form.modelLength"/>
+			</el-form-item>
+			<el-form-item label="水泵额定扬程(米)">
+				<el-input v-model="form.ratedLength"/>
+			</el-form-item>
+			<el-form-item label="水泵额定流量(立方米/小时)">
+				<el-input v-model="form.ratedTraffic"/>
+			</el-form-item>
+			<el-form-item label="水泵额定功率(千瓦)">
+				<el-input v-model="form.ratedPower"/>
+			</el-form-item>
+			<el-form-item label="是否已安装水量计量设施">
+				<el-input v-model="form.isSetMeasure"/>
+			</el-form-item>
+			<el-form-item label="水量计量设施类型">
+				<el-input v-model="form.measureType"/>
+			</el-form-item>
+			<el-form-item label="是否为规模以上地下水水源地的水井">
+				<el-input v-model="form.isScale"/>
+			</el-form-item>
+			<el-form-item label="所在水源地名称">
+				<el-input v-model="form.waterName"/>
+			</el-form-item>
+			<el-form-item label="所在水源地编码">
+				<el-input v-model="form.waterCode"/>
+			</el-form-item>
+			<el-form-item label="所在地貌类型区">
+				<el-input v-model="form.landscape"/>
+			</el-form-item>
+			<el-form-item label="所取用地下水的类型">
+				<el-input v-model="form.column1"/>
+			</el-form-item>
+			<el-form-item label="所在水资源三级区名称及编码">
+				<el-input v-model="form.column2"/>
+			</el-form-item>
+			<el-form-item label="水源类型">
+				<el-input v-model="form.column3"/>
+			</el-form-item>
+			<el-form-item label="主要取水用途及效益">
+				<el-input v-model="form.column4"/>
+			</el-form-item>
+			<el-form-item label="乡村实际供水人口(人)">
+				<el-input v-model="form.column5"/>
+			</el-form-item>
+			<el-form-item label="所在灌区类型">
+				<el-input v-model="form.column6"/>
+			</el-form-item>
+			<el-form-item label="控制灌溉面积（亩）">
+				<el-input v-model="form.column7"/>
+			</el-form-item>
+			<el-form-item label="实际灌溉面积（亩）">
+				<el-input v-model="form.column8"/>
+			</el-form-item>
+			<el-form-item label="主要取水用途">
+				<el-input v-model="form.column9"/>
+			</el-form-item>
+			<el-form-item label="水温（℃）">
+				<el-input v-model="form.column10"/>
+			</el-form-item>
+			<el-form-item label="主要取水用途            主要取水用途">
+				<el-input v-model="form.column11"/>
+			</el-form-item>
+			<el-form-item label="取水量确定方法">
+				<el-input v-model="form.column12"/>
+			</el-form-item>
+			<el-form-item label="全年耗电量(kW&middot;h)">
+				<el-input v-model="form.column13"/>
+			</el-form-item>
+			<el-form-item label="全年耗油量(升)">
+				<el-input v-model="form.column14"/>
+			</el-form-item>
+			<el-form-item label="全年开泵时数(小时)">
+				<el-input v-model="form.column15"/>
+			</el-form-item>
+			<el-form-item label="单位耗电量的取水量(立方米/kW&middot;h)">
+				<el-input v-model="form.column16"/>
+			</el-form-item>
+			<el-form-item label="单位耗油量的取水量(立方米/升)">
+				<el-input v-model="form.column18"/>
+			</el-form-item>
+			<el-form-item label="水泵单位时间出水量(立方米/小时)">
+				<el-input v-model="form.column19"/>
+			</el-form-item>
+			<el-form-item label="实测法取水量(万立方米)">
+				<el-input v-model="form.column20"/>
+			</el-form-item>
+			<el-form-item label="耗电量法取水量(万立方米)">
+				<el-input v-model="form.column21"/>
+			</el-form-item>
+			<el-form-item label="耗油量法取水量(万立方米)">
+				<el-input v-model="form.column22"/>
+			</el-form-item>
+			<el-form-item label="出水量法取水量(万立方米)">
+				<el-input v-model="form.column23"/>
+			</el-form-item>
+			<el-form-item label="是否已办理取水许可证">
+				<el-input v-model="form.column24"/>
+			</el-form-item>
+			<el-form-item label="取水许可证编号">
+				<el-input v-model="form.column25"/>
+			</el-form-item>
+			<el-form-item label="年许可取水量(万立方米)">
+				<el-input v-model="form.column26"/>
+			</el-form-item>
+			<el-form-item label="是否已办理采矿许可证">
+				<el-input v-model="form.column27"/>
+			</el-form-item>
+			<el-form-item label="采矿许可证证号">
+				<el-input v-model="form.column28"/>
+			</el-form-item>
+			<el-form-item label="矿区面积">
+				<el-input v-model="form.column29"/>
+			</el-form-item>
+			<el-form-item label="生产规模(万立方米/年)">
+				<el-input v-model="form.column30"/>
+			</el-form-item>
+			<el-form-item label="管理单位名称">
+				<el-input v-model="form.column31"/>
+			</el-form-item>
+			<el-form-item label="管理单位隶属关系">
+				<el-input v-model="form.column32"/>
+			</el-form-item>
+			<el-form-item label="填表人员">
+				<el-input v-model="form.recordMan"/>
+			</el-form-item>
+			<el-form-item label="填表联系人电话">
+				<el-input v-model="form.recordPhone"/>
+			</el-form-item>
+			<el-form-item label="复核人员">
+				<el-input v-model="form.reviewMan"/>
+			</el-form-item>
+			<el-form-item label="复核人联系电话">
+				<el-input v-model="form.reviewPhone"/>
+			</el-form-item>
+			<el-form-item label="审查人员">
+				<el-input v-model="form.auditMan"/>
+			</el-form-item>
+			<el-form-item label="审核标志">
+				<el-input v-model="form.auditSymbol"/>
+			</el-form-item>
+			<el-form-item label="地区审核">
+				<el-input v-model="form.regionAudit"/>
+			</el-form-item>
+			<el-form-item label="省级审核">
+				<el-input v-model="form.provinceAudit"/>
+			</el-form-item>
+			<el-form-item label="中央审核">
+				<el-input v-model="form.nationAudit"/>
+			</el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="visible = false">取 消</el-button>
+                <el-button @click="save()" type="primary">确 定</el-button>
+            </div>
+        </el-dialog>
+       </div>
+</template> 
+<script> 
+import Pagination from '@/components/Pagination' 
+import { getList } from '@/api/res/wells.js'
+import RmDict from '@/components/rm/dict'
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
+export default {
+  components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
+   data() {
+      return {
+      visible : false,
+	  form: {
+	  	name:null,	  	
+	  	code:null,	  	
+	  	lat:null,	  	
+	  	lng:null,	  	
+	  	province:null,	  	
+	  	region:null,	  	
+	  	county:null,	  	
+	  	town:null,	  	
+	  	village:null,	  	
+	  	regimeCode:null,	  	
+	  	buildedYear:null,	  	
+	  	deep:null,	  	
+	  	deep2:null,	  	
+	  	isBring:null,	  	
+	  	width:null,	  	
+	  	material:null,	  	
+	  	s:null,	  	
+	  	isEquipment:null,	  	
+	  	modelLength:null,	  	
+	  	ratedLength:null,	  	
+	  	ratedTraffic:null,	  	
+	  	ratedPower:null,	  	
+	  	isSetMeasure:null,	  	
+	  	measureType:null,	  	
+	  	isScale:null,	  	
+	  	waterName:null,	  	
+	  	waterCode:null,	  	
+	  	landscape:null,	  	
+	  	column1:null,	  	
+	  	column2:null,	  	
+	  	column3:null,	  	
+	  	column4:null,	  	
+	  	column5:null,	  	
+	  	column6:null,	  	
+	  	column7:null,	  	
+	  	column8:null,	  	
+	  	column9:null,	  	
+	  	column10:null,	  	
+	  	column11:null,	  	
+	  	column12:null,	  	
+	  	column13:null,	  	
+	  	column14:null,	  	
+	  	column15:null,	  	
+	  	column16:null,	  	
+	  	column18:null,	  	
+	  	column19:null,	  	
+	  	column20:null,	  	
+	  	column21:null,	  	
+	  	column22:null,	  	
+	  	column23:null,	  	
+	  	column24:null,	  	
+	  	column25:null,	  	
+	  	column26:null,	  	
+	  	column27:null,	  	
+	  	column28:null,	  	
+	  	column29:null,	  	
+	  	column30:null,	  	
+	  	column31:null,	  	
+	  	column32:null,	  	
+	  	recordMan:null,	  	
+	  	recordPhone:null,	  	
+	  	reviewMan:null,	  	
+	  	reviewPhone:null,	  	
+	  	auditMan:null,	  	
+	  	auditSymbol:null,	  	
+	  	regionAudit:null,	  	
+	  	provinceAudit:null,	  	
+	  	nationAudit:null,	  	
+	  },
+      list:  null, 
+      total: 0 ,
+      listQuery: {
+        pageNo: 1,
+        pageSize: 10, 
+        importance: undefined,
+        search: undefined,
+        type: undefined,
+        sort: '+id'
+      },
+      importanceOptions: [1, 2, 3],
+    }
+    },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() {  
+        this.listLoading = true ;
+        console.log("this.listQuery::::",this.listQuery);
+        getList(this.listQuery).then(response => { 
+          this.listLoading = false 
+           this.list = response.data.list
+           this.total = response.data.count
+        })
+    },
+     handleFilter() {
+      this.listQuery.pageNo = 1
+      this.getList()
+    },
+	edit(row){
+		//console.log(JSON.stringify(row));
+		this.visible=true;
+		this.form=row;
+	},
+	save(){
+		//console.log('保存:',JSON.stringify(this.form),this.selectUser);
+		this.visible=false;
+		//
+	},
+	del(row){
+		var self=this;
+		//console.log(row); 
+	}  
+  }
+}
+</script>

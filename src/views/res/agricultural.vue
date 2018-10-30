@@ -1,0 +1,377 @@
+<template>
+  <div class="app-container">
+    <div class="filter-container"> 
+       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
+      </el-select> 
+      <rm-dict title="请选择类型"  placeholder="请选择类型"  type="yes_no"     :name.sync="listQuery.type" />
+       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+       <el-button
+			 type="primary"
+			 icon="el-icon-plus"
+			 @click="visible=true"
+			>新增</el-button>
+    </div>
+      <el-table :data="list" row-key="id"  stripe style="width: 100%">
+                <el-table-column prop="name" label="工程名称"/>
+        <el-table-column prop="code" label="工程编码"/>
+        <el-table-column prop="lat" label="经度"/>
+        <el-table-column prop="lng" label="纬度"/>
+        <el-table-column prop="province" label="省"/>
+        <el-table-column prop="region" label="地区"/>
+        <el-table-column prop="county" label="县"/>
+        <el-table-column prop="tower" label="乡（镇）"/>
+        <el-table-column prop="village" label="街（村）"/>
+        <el-table-column prop="regimeCode" label="行政区划代码"/>
+        <el-table-column prop="threeCode" label="所在水资源三级区名称及编码"/>
+        <el-table-column prop="type" label="取水水源类型"/>
+        <el-table-column prop="isReservoir" label="是否为水库水"/>
+        <el-table-column prop="projectType" label="工程类型"/>
+        <el-table-column prop="benefitVillageNum" label="受益行政村数量（个）"/>
+        <el-table-column prop="drinkWay" label="供水方式"/>
+        <el-table-column prop="isCertificate" label="是否有取水许可证"/>
+        <el-table-column prop="certificateCode" label="取水许可证编号"/>
+        <el-table-column prop="isHealth" label="是否取得卫生许可"/>
+        <el-table-column prop="healthCode" label="卫生许可证编号"/>
+        <el-table-column prop="pipeLength" label="入户前的管网长度（km）"/>
+        <el-table-column prop="power" label="配套功率（kw）"/>
+        <el-table-column prop="construction" label="工程建设情况"/>
+        <el-table-column prop="buildedYear" label="建成时间（年）"/>
+        <el-table-column prop="buildedMonth" label="建成时间（月）"/>
+        <el-table-column prop="buildYear" label="开工时间（年）"/>
+        <el-table-column prop="buildMonth" label="开工时间（月）"/>
+        <el-table-column prop="scale" label="设计供水规模（立方米/d）"/>
+        <el-table-column prop="planPerson" label="设计供水人口(人)"/>
+        <el-table-column prop="gross" label="年实际供水总量（万立方米）"/>
+        <el-table-column prop="grossLife" label="年实际生活供水量（万立方米）"/>
+        <el-table-column prop="grossProduction" label="年实际生产供水量（万立方米）"/>
+        <el-table-column prop="person" label="年实际供水人口 （人）"/>
+        <el-table-column prop="excessiveNum" label="水质超标项目"/>
+        <el-table-column prop="purification" label="净水处理"/>
+        <el-table-column prop="detectionEqui" label="水质检测设备"/>
+        <el-table-column prop="detectionWay" label="水质检测方式"/>
+        <el-table-column prop="mangerName" label="管理单位名称"/>
+        <el-table-column prop="mangerCode" label="管理单位代码"/>
+        <el-table-column prop="manger" label="管理主体"/>
+        <el-table-column prop="charge" label="收费形式"/>
+        <el-table-column prop="measureMoney" label="计量收费执行居民生活水价（元/立方米）"/>
+        <el-table-column prop="totalMeasureMoney" label="计量收费年实收水费（万元）"/>
+        <el-table-column prop="fixedMoney" label="固定收费执行居民生活水价（元/户&middot;月）"/>
+        <el-table-column prop="totalFixedMoney" label="固定收费年实收水费（万元）"/>
+        <el-table-column prop="recordMan" label="填表人员"/>
+        <el-table-column prop="recordPhone" label="填表联系人电话"/>
+        <el-table-column prop="reviewMan" label="复核人员"/>
+        <el-table-column prop="reviewPhone" label="复核人联系电话"/>
+        <el-table-column prop="auditMan" label="审查人员"/>
+        <el-table-column prop="auditSymbol" label="审核标志"/>
+        <el-table-column prop="regionAudit" label="地区审核"/>
+        <el-table-column prop="provinceAudit" label="省级审核"/>
+        <el-table-column prop="nationAudit" label="中央审核"/>
+		<el-table-column prop="id" label="操作" width="100"   >
+        	<template slot-scope="scope">
+            	<el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
+			<el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete"/>
+        	</template>
+        </el-table-column>
+      </el-table>  
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" /> 
+  
+  
+  <el-dialog :visible.sync="visible" title="编辑">
+  	<el-form :model="form">
+			<el-form-item label="工程名称">
+				<el-input v-model="form.name"/>
+			</el-form-item>
+			<el-form-item label="工程编码">
+				<el-input v-model="form.code"/>
+			</el-form-item>
+			<el-form-item label="经度">
+				<el-input v-model="form.lat"/>
+			</el-form-item>
+			<el-form-item label="纬度">
+				<el-input v-model="form.lng"/>
+			</el-form-item>
+			<el-form-item label="省">
+				<el-input v-model="form.province"/>
+			</el-form-item>
+			<el-form-item label="地区">
+				<el-input v-model="form.region"/>
+			</el-form-item>
+			<el-form-item label="县">
+				<el-input v-model="form.county"/>
+			</el-form-item>
+			<el-form-item label="乡（镇）">
+				<el-input v-model="form.tower"/>
+			</el-form-item>
+			<el-form-item label="街（村）">
+				<el-input v-model="form.village"/>
+			</el-form-item>
+			<el-form-item label="行政区划代码">
+				<el-input v-model="form.regimeCode"/>
+			</el-form-item>
+			<el-form-item label="所在水资源三级区名称及编码">
+				<el-input v-model="form.threeCode"/>
+			</el-form-item>
+			<el-form-item label="取水水源类型">
+				<el-input v-model="form.type"/>
+			</el-form-item>
+			<el-form-item label="是否为水库水">
+				<el-input v-model="form.isReservoir"/>
+			</el-form-item>
+			<el-form-item label="工程类型">
+				<el-input v-model="form.projectType"/>
+			</el-form-item>
+			<el-form-item label="受益行政村数量（个）">
+				<el-input v-model="form.benefitVillageNum"/>
+			</el-form-item>
+			<el-form-item label="供水方式">
+				<el-input v-model="form.drinkWay"/>
+			</el-form-item>
+			<el-form-item label="是否有取水许可证">
+				<el-input v-model="form.isCertificate"/>
+			</el-form-item>
+			<el-form-item label="取水许可证编号">
+				<el-input v-model="form.certificateCode"/>
+			</el-form-item>
+			<el-form-item label="是否取得卫生许可">
+				<el-input v-model="form.isHealth"/>
+			</el-form-item>
+			<el-form-item label="卫生许可证编号">
+				<el-input v-model="form.healthCode"/>
+			</el-form-item>
+			<el-form-item label="入户前的管网长度（km）">
+				<el-input v-model="form.pipeLength"/>
+			</el-form-item>
+			<el-form-item label="配套功率（kw）">
+				<el-input v-model="form.power"/>
+			</el-form-item>
+			<el-form-item label="工程建设情况">
+				<el-input v-model="form.construction"/>
+			</el-form-item>
+			<el-form-item label="建成时间（年）">
+				<el-input v-model="form.buildedYear"/>
+			</el-form-item>
+			<el-form-item label="建成时间（月）">
+				<el-input v-model="form.buildedMonth"/>
+			</el-form-item>
+			<el-form-item label="开工时间（年）">
+				<el-input v-model="form.buildYear"/>
+			</el-form-item>
+			<el-form-item label="开工时间（月）">
+				<el-input v-model="form.buildMonth"/>
+			</el-form-item>
+			<el-form-item label="设计供水规模（立方米/d）">
+				<el-input v-model="form.scale"/>
+			</el-form-item>
+			<el-form-item label="设计供水人口(人)">
+				<el-input v-model="form.planPerson"/>
+			</el-form-item>
+			<el-form-item label="年实际供水总量（万立方米）">
+				<el-input v-model="form.gross"/>
+			</el-form-item>
+			<el-form-item label="年实际生活供水量（万立方米）">
+				<el-input v-model="form.grossLife"/>
+			</el-form-item>
+			<el-form-item label="年实际生产供水量（万立方米）">
+				<el-input v-model="form.grossProduction"/>
+			</el-form-item>
+			<el-form-item label="年实际供水人口 （人）">
+				<el-input v-model="form.person"/>
+			</el-form-item>
+			<el-form-item label="水质超标项目">
+				<el-input v-model="form.excessiveNum"/>
+			</el-form-item>
+			<el-form-item label="净水处理">
+				<el-input v-model="form.purification"/>
+			</el-form-item>
+			<el-form-item label="水质检测设备">
+				<el-input v-model="form.detectionEqui"/>
+			</el-form-item>
+			<el-form-item label="水质检测方式">
+				<el-input v-model="form.detectionWay"/>
+			</el-form-item>
+			<el-form-item label="管理单位名称">
+				<el-input v-model="form.mangerName"/>
+			</el-form-item>
+			<el-form-item label="管理单位代码">
+				<el-input v-model="form.mangerCode"/>
+			</el-form-item>
+			<el-form-item label="管理主体">
+				<el-input v-model="form.manger"/>
+			</el-form-item>
+			<el-form-item label="收费形式">
+				<el-input v-model="form.charge"/>
+			</el-form-item>
+			<el-form-item label="计量收费执行居民生活水价（元/立方米）">
+				<el-input v-model="form.measureMoney"/>
+			</el-form-item>
+			<el-form-item label="计量收费年实收水费（万元）">
+				<el-input v-model="form.totalMeasureMoney"/>
+			</el-form-item>
+			<el-form-item label="固定收费执行居民生活水价（元/户&middot;月）">
+				<el-input v-model="form.fixedMoney"/>
+			</el-form-item>
+			<el-form-item label="固定收费年实收水费（万元）">
+				<el-input v-model="form.totalFixedMoney"/>
+			</el-form-item>
+			<el-form-item label="填表人员">
+				<el-input v-model="form.recordMan"/>
+			</el-form-item>
+			<el-form-item label="填表联系人电话">
+				<el-input v-model="form.recordPhone"/>
+			</el-form-item>
+			<el-form-item label="复核人员">
+				<el-input v-model="form.reviewMan"/>
+			</el-form-item>
+			<el-form-item label="复核人联系电话">
+				<el-input v-model="form.reviewPhone"/>
+			</el-form-item>
+			<el-form-item label="审查人员">
+				<el-input v-model="form.auditMan"/>
+			</el-form-item>
+			<el-form-item label="审核标志">
+				<el-input v-model="form.auditSymbol"/>
+			</el-form-item>
+			<el-form-item label="地区审核">
+				<el-input v-model="form.regionAudit"/>
+			</el-form-item>
+			<el-form-item label="省级审核">
+				<el-input v-model="form.provinceAudit"/>
+			</el-form-item>
+			<el-form-item label="中央审核">
+				<el-input v-model="form.nationAudit"/>
+			</el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="visible = false">取 消</el-button>
+                <el-button @click="save()" type="primary">确 定</el-button>
+            </div>
+        </el-dialog>
+       </div>
+</template> 
+<script> 
+import Pagination from '@/components/Pagination' 
+import { getList } from '@/api/res/agricultural.js'
+import RmDict from '@/components/rm/dict'
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
+export default {
+  components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
+   data() {
+      return {
+      visible : false,
+	  form: {
+	  	name:null,	  	
+	  	code:null,	  	
+	  	lat:null,	  	
+	  	lng:null,	  	
+	  	province:null,	  	
+	  	region:null,	  	
+	  	county:null,	  	
+	  	tower:null,	  	
+	  	village:null,	  	
+	  	regimeCode:null,	  	
+	  	threeCode:null,	  	
+	  	type:null,	  	
+	  	isReservoir:null,	  	
+	  	projectType:null,	  	
+	  	benefitVillageNum:null,	  	
+	  	drinkWay:null,	  	
+	  	isCertificate:null,	  	
+	  	certificateCode:null,	  	
+	  	isHealth:null,	  	
+	  	healthCode:null,	  	
+	  	pipeLength:null,	  	
+	  	power:null,	  	
+	  	construction:null,	  	
+	  	buildedYear:null,	  	
+	  	buildedMonth:null,	  	
+	  	buildYear:null,	  	
+	  	buildMonth:null,	  	
+	  	scale:null,	  	
+	  	planPerson:null,	  	
+	  	gross:null,	  	
+	  	grossLife:null,	  	
+	  	grossProduction:null,	  	
+	  	person:null,	  	
+	  	excessiveNum:null,	  	
+	  	purification:null,	  	
+	  	detectionEqui:null,	  	
+	  	detectionWay:null,	  	
+	  	mangerName:null,	  	
+	  	mangerCode:null,	  	
+	  	manger:null,	  	
+	  	charge:null,	  	
+	  	measureMoney:null,	  	
+	  	totalMeasureMoney:null,	  	
+	  	fixedMoney:null,	  	
+	  	totalFixedMoney:null,	  	
+	  	recordMan:null,	  	
+	  	recordPhone:null,	  	
+	  	reviewMan:null,	  	
+	  	reviewPhone:null,	  	
+	  	auditMan:null,	  	
+	  	auditSymbol:null,	  	
+	  	regionAudit:null,	  	
+	  	provinceAudit:null,	  	
+	  	nationAudit:null,	  	
+	  },
+      list:  null, 
+      total: 0 ,
+      listQuery: {
+        pageNo: 1,
+        pageSize: 10, 
+        importance: undefined,
+        search: undefined,
+        type: undefined,
+        sort: '+id'
+      },
+      importanceOptions: [1, 2, 3],
+    }
+    },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() {  
+        this.listLoading = true ;
+        console.log("this.listQuery::::",this.listQuery);
+        getList(this.listQuery).then(response => { 
+          this.listLoading = false 
+           this.list = response.data.list
+           this.total = response.data.count
+        })
+    },
+     handleFilter() {
+      this.listQuery.pageNo = 1
+      this.getList()
+    },
+	edit(row){
+		//console.log(JSON.stringify(row));
+		this.visible=true;
+		this.form=row;
+	},
+	save(){
+		//console.log('保存:',JSON.stringify(this.form),this.selectUser);
+		this.visible=false;
+		//
+	},
+	del(row){
+		var self=this;
+		//console.log(row); 
+	}  
+  }
+}
+</script>

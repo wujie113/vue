@@ -1,0 +1,497 @@
+<template>
+  <div class="app-container">
+    <div class="filter-container"> 
+       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
+      </el-select> 
+      <rm-dict title="请选择类型"  placeholder="请选择类型"  type="yes_no"     :name.sync="listQuery.type" />
+       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+       <el-button
+			 type="primary"
+			 icon="el-icon-plus"
+			 @click="visible=true"
+			>新增</el-button>
+    </div>
+      <el-table :data="list" row-key="id"  stripe style="width: 100%">
+                <el-table-column prop="name" label="水库名称"/>
+        <el-table-column prop="code" label="水库编码"/>
+        <el-table-column prop="lat" label="经度"/>
+        <el-table-column prop="lng" label="纬度"/>
+        <el-table-column prop="province" label="省"/>
+        <el-table-column prop="region" label="地区"/>
+        <el-table-column prop="county" label="县"/>
+        <el-table-column prop="town" label="乡（镇）"/>
+        <el-table-column prop="village" label="街（村）"/>
+        <el-table-column prop="regimeCode" label="行政区划代码"/>
+        <el-table-column prop="threeCode" label="所在水资源三级区名称及编码"/>
+        <el-table-column prop="riverName" label="所在河流（湖泊）名称"/>
+        <el-table-column prop="riverCode" label="所在河流（湖泊）编码"/>
+        <el-table-column prop="reservoirType" label="水库类型"/>
+        <el-table-column prop="type" label="类型"/>
+        <el-table-column prop="coloum1" label="挡水主坝类型按材料分"/>
+        <el-table-column prop="column2" label="挡水主坝类型按结构分"/>
+        <el-table-column prop="column3" label="主要泄洪建筑物型式"/>
+        <el-table-column prop="column4" label="坝址控制流域面积（平方公里）"/>
+        <el-table-column prop="column5" label="坝址多年平均径流量（万立方米）"/>
+        <el-table-column prop="column6" label="生产安置人口（万人）"/>
+        <el-table-column prop="column7" label="搬迁安置人口（万人）"/>
+        <el-table-column prop="column8" label="工程建设情况"/>
+        <el-table-column prop="column9" label="建成时间（年）"/>
+        <el-table-column prop="column10" label="建成时间（月）"/>
+        <el-table-column prop="column11" label="开工时间（年）"/>
+        <el-table-column prop="column12" label="开工时间（月）"/>
+        <el-table-column prop="column13" label="水库调节性能"/>
+        <el-table-column prop="column14" label="工程等别"/>
+        <el-table-column prop="column15" label="主坝级别"/>
+        <el-table-column prop="column16" label="主坝尺寸坝高（m）"/>
+        <el-table-column prop="column17" label="主坝尺寸坝长（m）"/>
+        <el-table-column prop="column18" label="最大泄洪流量（立方米/S）"/>
+        <el-table-column prop="column19" label="高程系统"/>
+        <el-table-column prop="column20" label="坝顶高程(m)"/>
+        <el-table-column prop="column21" label="设计洪水标准［重现期］（年）"/>
+        <el-table-column prop="column22" label="校核洪水标准［重现期］（年）"/>
+        <el-table-column prop="column23" label="校核洪水位(m)"/>
+        <el-table-column prop="column24" label="设计洪水位(m)"/>
+        <el-table-column prop="column25" label="防洪高水位(m)"/>
+        <el-table-column prop="column26" label="正常蓄水位(m)"/>
+        <el-table-column prop="column27" label="防洪限制水位(m)"/>
+        <el-table-column prop="column28" label="死水位(m)"/>
+        <el-table-column prop="column29" label="总库容（万立方米）"/>
+        <el-table-column prop="column30" label="调洪库容（万立方米）"/>
+        <el-table-column prop="column31" label="防洪库容（万立方米）"/>
+        <el-table-column prop="column32" label="兴利库容（万立方米）"/>
+        <el-table-column prop="column33" label="死库容(万立方米)"/>
+        <el-table-column prop="column34" label="正常蓄水位相应水面面积（平方公里）"/>
+        <el-table-column prop="column35" label="防洪"/>
+        <el-table-column prop="column36" label="发电"/>
+        <el-table-column prop="column37" label="供水"/>
+        <el-table-column prop="column38" label="灌溉"/>
+        <el-table-column prop="column39" label="航运"/>
+        <el-table-column prop="column40" label="养殖            养殖"/>
+        <el-table-column prop="column41" label="其它"/>
+        <el-table-column prop="column42" label="重要保护对象"/>
+        <el-table-column prop="column43" label="设计年供水量"/>
+        <el-table-column prop="column44" label="2011年供水量(万立方米)"/>
+        <el-table-column prop="column45" label="2011年供水量数据来源"/>
+        <el-table-column prop="column46" label="取水口数量（个）"/>
+        <el-table-column prop="column47" label="供水对象"/>
+        <el-table-column prop="column48" label="设计灌溉面积（万亩）"/>
+        <el-table-column prop="column49" label="灌溉对象：灌区名称"/>
+        <el-table-column prop="column50" label="水库管理单位名称"/>
+        <el-table-column prop="column51" label="水库管理单位代码"/>
+        <el-table-column prop="column52" label="水库归口管理部门"/>
+        <el-table-column prop="division" label="是否完成划界"/>
+        <el-table-column prop="confirm" label="是否完成确权"/>
+        <el-table-column prop="recordMan" label="填表人员"/>
+        <el-table-column prop="recordPhone" label="填表联系人电话"/>
+        <el-table-column prop="reviewMan" label="复核人员"/>
+        <el-table-column prop="reviewPhone" label="复核人联系电话"/>
+        <el-table-column prop="auditMan" label="审查人员"/>
+        <el-table-column prop="auditSymbol" label="审核标志"/>
+        <el-table-column prop="regionAudit" label="地区审核"/>
+        <el-table-column prop="provinceAudit" label="省级审核"/>
+        <el-table-column prop="nationAudit" label="中央审核"/>
+		<el-table-column prop="id" label="操作" width="100"   >
+        	<template slot-scope="scope">
+            	<el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
+			<el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete"/>
+        	</template>
+        </el-table-column>
+      </el-table>  
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" /> 
+  
+  
+  <el-dialog :visible.sync="visible" title="编辑">
+  	<el-form :model="form">
+			<el-form-item label="水库名称">
+				<el-input v-model="form.name"/>
+			</el-form-item>
+			<el-form-item label="水库编码">
+				<el-input v-model="form.code"/>
+			</el-form-item>
+			<el-form-item label="经度">
+				<el-input v-model="form.lat"/>
+			</el-form-item>
+			<el-form-item label="纬度">
+				<el-input v-model="form.lng"/>
+			</el-form-item>
+			<el-form-item label="省">
+				<el-input v-model="form.province"/>
+			</el-form-item>
+			<el-form-item label="地区">
+				<el-input v-model="form.region"/>
+			</el-form-item>
+			<el-form-item label="县">
+				<el-input v-model="form.county"/>
+			</el-form-item>
+			<el-form-item label="乡（镇）">
+				<el-input v-model="form.town"/>
+			</el-form-item>
+			<el-form-item label="街（村）">
+				<el-input v-model="form.village"/>
+			</el-form-item>
+			<el-form-item label="行政区划代码">
+				<el-input v-model="form.regimeCode"/>
+			</el-form-item>
+			<el-form-item label="所在水资源三级区名称及编码">
+				<el-input v-model="form.threeCode"/>
+			</el-form-item>
+			<el-form-item label="所在河流（湖泊）名称">
+				<el-input v-model="form.riverName"/>
+			</el-form-item>
+			<el-form-item label="所在河流（湖泊）编码">
+				<el-input v-model="form.riverCode"/>
+			</el-form-item>
+			<el-form-item label="水库类型">
+				<el-input v-model="form.reservoirType"/>
+			</el-form-item>
+			<el-form-item label="类型">
+				<el-input v-model="form.type"/>
+			</el-form-item>
+			<el-form-item label="挡水主坝类型按材料分">
+				<el-input v-model="form.coloum1"/>
+			</el-form-item>
+			<el-form-item label="挡水主坝类型按结构分">
+				<el-input v-model="form.column2"/>
+			</el-form-item>
+			<el-form-item label="主要泄洪建筑物型式">
+				<el-input v-model="form.column3"/>
+			</el-form-item>
+			<el-form-item label="坝址控制流域面积（平方公里）">
+				<el-input v-model="form.column4"/>
+			</el-form-item>
+			<el-form-item label="坝址多年平均径流量（万立方米）">
+				<el-input v-model="form.column5"/>
+			</el-form-item>
+			<el-form-item label="生产安置人口（万人）">
+				<el-input v-model="form.column6"/>
+			</el-form-item>
+			<el-form-item label="搬迁安置人口（万人）">
+				<el-input v-model="form.column7"/>
+			</el-form-item>
+			<el-form-item label="工程建设情况">
+				<el-input v-model="form.column8"/>
+			</el-form-item>
+			<el-form-item label="建成时间（年）">
+				<el-input v-model="form.column9"/>
+			</el-form-item>
+			<el-form-item label="建成时间（月）">
+				<el-input v-model="form.column10"/>
+			</el-form-item>
+			<el-form-item label="开工时间（年）">
+				<el-input v-model="form.column11"/>
+			</el-form-item>
+			<el-form-item label="开工时间（月）">
+				<el-input v-model="form.column12"/>
+			</el-form-item>
+			<el-form-item label="水库调节性能">
+				<el-input v-model="form.column13"/>
+			</el-form-item>
+			<el-form-item label="工程等别">
+				<el-input v-model="form.column14"/>
+			</el-form-item>
+			<el-form-item label="主坝级别">
+				<el-input v-model="form.column15"/>
+			</el-form-item>
+			<el-form-item label="主坝尺寸坝高（m）">
+				<el-input v-model="form.column16"/>
+			</el-form-item>
+			<el-form-item label="主坝尺寸坝长（m）">
+				<el-input v-model="form.column17"/>
+			</el-form-item>
+			<el-form-item label="最大泄洪流量（立方米/S）">
+				<el-input v-model="form.column18"/>
+			</el-form-item>
+			<el-form-item label="高程系统">
+				<el-input v-model="form.column19"/>
+			</el-form-item>
+			<el-form-item label="坝顶高程(m)">
+				<el-input v-model="form.column20"/>
+			</el-form-item>
+			<el-form-item label="设计洪水标准［重现期］（年）">
+				<el-input v-model="form.column21"/>
+			</el-form-item>
+			<el-form-item label="校核洪水标准［重现期］（年）">
+				<el-input v-model="form.column22"/>
+			</el-form-item>
+			<el-form-item label="校核洪水位(m)">
+				<el-input v-model="form.column23"/>
+			</el-form-item>
+			<el-form-item label="设计洪水位(m)">
+				<el-input v-model="form.column24"/>
+			</el-form-item>
+			<el-form-item label="防洪高水位(m)">
+				<el-input v-model="form.column25"/>
+			</el-form-item>
+			<el-form-item label="正常蓄水位(m)">
+				<el-input v-model="form.column26"/>
+			</el-form-item>
+			<el-form-item label="防洪限制水位(m)">
+				<el-input v-model="form.column27"/>
+			</el-form-item>
+			<el-form-item label="死水位(m)">
+				<el-input v-model="form.column28"/>
+			</el-form-item>
+			<el-form-item label="总库容（万立方米）">
+				<el-input v-model="form.column29"/>
+			</el-form-item>
+			<el-form-item label="调洪库容（万立方米）">
+				<el-input v-model="form.column30"/>
+			</el-form-item>
+			<el-form-item label="防洪库容（万立方米）">
+				<el-input v-model="form.column31"/>
+			</el-form-item>
+			<el-form-item label="兴利库容（万立方米）">
+				<el-input v-model="form.column32"/>
+			</el-form-item>
+			<el-form-item label="死库容(万立方米)">
+				<el-input v-model="form.column33"/>
+			</el-form-item>
+			<el-form-item label="正常蓄水位相应水面面积（平方公里）">
+				<el-input v-model="form.column34"/>
+			</el-form-item>
+			<el-form-item label="防洪">
+				<el-input v-model="form.column35"/>
+			</el-form-item>
+			<el-form-item label="发电">
+				<el-input v-model="form.column36"/>
+			</el-form-item>
+			<el-form-item label="供水">
+				<el-input v-model="form.column37"/>
+			</el-form-item>
+			<el-form-item label="灌溉">
+				<el-input v-model="form.column38"/>
+			</el-form-item>
+			<el-form-item label="航运">
+				<el-input v-model="form.column39"/>
+			</el-form-item>
+			<el-form-item label="养殖            养殖">
+				<el-input v-model="form.column40"/>
+			</el-form-item>
+			<el-form-item label="其它">
+				<el-input v-model="form.column41"/>
+			</el-form-item>
+			<el-form-item label="重要保护对象">
+				<el-input v-model="form.column42"/>
+			</el-form-item>
+			<el-form-item label="设计年供水量">
+				<el-input v-model="form.column43"/>
+			</el-form-item>
+			<el-form-item label="2011年供水量(万立方米)">
+				<el-input v-model="form.column44"/>
+			</el-form-item>
+			<el-form-item label="2011年供水量数据来源">
+				<el-input v-model="form.column45"/>
+			</el-form-item>
+			<el-form-item label="取水口数量（个）">
+				<el-input v-model="form.column46"/>
+			</el-form-item>
+			<el-form-item label="供水对象">
+				<el-input v-model="form.column47"/>
+			</el-form-item>
+			<el-form-item label="设计灌溉面积（万亩）">
+				<el-input v-model="form.column48"/>
+			</el-form-item>
+			<el-form-item label="灌溉对象：灌区名称">
+				<el-input v-model="form.column49"/>
+			</el-form-item>
+			<el-form-item label="水库管理单位名称">
+				<el-input v-model="form.column50"/>
+			</el-form-item>
+			<el-form-item label="水库管理单位代码">
+				<el-input v-model="form.column51"/>
+			</el-form-item>
+			<el-form-item label="水库归口管理部门">
+				<el-input v-model="form.column52"/>
+			</el-form-item>
+			<el-form-item label="是否完成划界">
+				<el-input v-model="form.division"/>
+			</el-form-item>
+			<el-form-item label="是否完成确权">
+				<el-input v-model="form.confirm"/>
+			</el-form-item>
+			<el-form-item label="填表人员">
+				<el-input v-model="form.recordMan"/>
+			</el-form-item>
+			<el-form-item label="填表联系人电话">
+				<el-input v-model="form.recordPhone"/>
+			</el-form-item>
+			<el-form-item label="复核人员">
+				<el-input v-model="form.reviewMan"/>
+			</el-form-item>
+			<el-form-item label="复核人联系电话">
+				<el-input v-model="form.reviewPhone"/>
+			</el-form-item>
+			<el-form-item label="审查人员">
+				<el-input v-model="form.auditMan"/>
+			</el-form-item>
+			<el-form-item label="审核标志">
+				<el-input v-model="form.auditSymbol"/>
+			</el-form-item>
+			<el-form-item label="地区审核">
+				<el-input v-model="form.regionAudit"/>
+			</el-form-item>
+			<el-form-item label="省级审核">
+				<el-input v-model="form.provinceAudit"/>
+			</el-form-item>
+			<el-form-item label="中央审核">
+				<el-input v-model="form.nationAudit"/>
+			</el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="visible = false">取 消</el-button>
+                <el-button @click="save()" type="primary">确 定</el-button>
+            </div>
+        </el-dialog>
+       </div>
+</template> 
+<script> 
+import Pagination from '@/components/Pagination' 
+import { getList } from '@/api/rs/reservoir.js'
+import RmDict from '@/components/rm/dict'
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
+export default {
+  components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
+   data() {
+      return {
+      visible : false,
+	  form: {
+	  	name:null,	  	
+	  	code:null,	  	
+	  	lat:null,	  	
+	  	lng:null,	  	
+	  	province:null,	  	
+	  	region:null,	  	
+	  	county:null,	  	
+	  	town:null,	  	
+	  	village:null,	  	
+	  	regimeCode:null,	  	
+	  	threeCode:null,	  	
+	  	riverName:null,	  	
+	  	riverCode:null,	  	
+	  	reservoirType:null,	  	
+	  	type:null,	  	
+	  	coloum1:null,	  	
+	  	column2:null,	  	
+	  	column3:null,	  	
+	  	column4:null,	  	
+	  	column5:null,	  	
+	  	column6:null,	  	
+	  	column7:null,	  	
+	  	column8:null,	  	
+	  	column9:null,	  	
+	  	column10:null,	  	
+	  	column11:null,	  	
+	  	column12:null,	  	
+	  	column13:null,	  	
+	  	column14:null,	  	
+	  	column15:null,	  	
+	  	column16:null,	  	
+	  	column17:null,	  	
+	  	column18:null,	  	
+	  	column19:null,	  	
+	  	column20:null,	  	
+	  	column21:null,	  	
+	  	column22:null,	  	
+	  	column23:null,	  	
+	  	column24:null,	  	
+	  	column25:null,	  	
+	  	column26:null,	  	
+	  	column27:null,	  	
+	  	column28:null,	  	
+	  	column29:null,	  	
+	  	column30:null,	  	
+	  	column31:null,	  	
+	  	column32:null,	  	
+	  	column33:null,	  	
+	  	column34:null,	  	
+	  	column35:null,	  	
+	  	column36:null,	  	
+	  	column37:null,	  	
+	  	column38:null,	  	
+	  	column39:null,	  	
+	  	column40:null,	  	
+	  	column41:null,	  	
+	  	column42:null,	  	
+	  	column43:null,	  	
+	  	column44:null,	  	
+	  	column45:null,	  	
+	  	column46:null,	  	
+	  	column47:null,	  	
+	  	column48:null,	  	
+	  	column49:null,	  	
+	  	column50:null,	  	
+	  	column51:null,	  	
+	  	column52:null,	  	
+	  	division:null,	  	
+	  	confirm:null,	  	
+	  	recordMan:null,	  	
+	  	recordPhone:null,	  	
+	  	reviewMan:null,	  	
+	  	reviewPhone:null,	  	
+	  	auditMan:null,	  	
+	  	auditSymbol:null,	  	
+	  	regionAudit:null,	  	
+	  	provinceAudit:null,	  	
+	  	nationAudit:null,	  	
+	  },
+      list:  null, 
+      total: 0 ,
+      listQuery: {
+        pageNo: 1,
+        pageSize: 10, 
+        importance: undefined,
+        search: undefined,
+        type: undefined,
+        sort: '+id'
+      },
+      importanceOptions: [1, 2, 3],
+    }
+    },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() {  
+        this.listLoading = true ;
+        console.log("this.listQuery::::",this.listQuery);
+        getList(this.listQuery).then(response => { 
+          this.listLoading = false 
+           this.list = response.data.list
+           this.total = response.data.count
+        })
+    },
+     handleFilter() {
+      this.listQuery.pageNo = 1
+      this.getList()
+    },
+	edit(row){
+		//console.log(JSON.stringify(row));
+		this.visible=true;
+		this.form=row;
+	},
+	save(){
+		//console.log('保存:',JSON.stringify(this.form),this.selectUser);
+		this.visible=false;
+		//
+	},
+	del(row){
+		var self=this;
+		//console.log(row); 
+	}  
+  }
+}
+</script>
