@@ -69,7 +69,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'home',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/home/index'),
         name: 'Home',
         meta: { title: '首页', icon: 'home', noCache: true }
       }
@@ -116,6 +116,12 @@ export const constantRouterMap = [
       icon: 'toushu'
     },
     children: [
+      {
+        path: 'map',
+        name: 'testMap',
+        component: () => import('@/views/test/map'),
+        meta: { title: '地图', icon: 'form' }
+      },
       {
         path: 'index',
         name: 'Form',
@@ -403,31 +409,33 @@ export const asyncRouterMap = [
   {
     path: '/setting',
     component: Layout,
-    redirect: '/excel/export-excel',
-    name: 'Excel',
-    meta: {
-      title: 'excel',
-      icon: 'excel'
-    },
+    redirect: '/setting/setting',
+    name: 'setting',
+    meta: { title: '系统设置', icon: 'setting' },
     children: [
-    {
-      path: 'export-excel',
-      component: () => import('@/views/excel/exportExcel'),
-      name: 'ExportExcel',
-      meta: { title: 'exportExcel' }
-    },
-    {
-      path: 'export-selected-excel',
-      component: () => import('@/views/excel/selectExcel'),
-      name: 'SelectExcel',
-      meta: { title: 'selectExcel' }
-    },
-    {
-      path: 'upload-excel',
-      component: () => import('@/views/excel/uploadExcel'),
-      name: 'UploadExcel',
-      meta: { title: 'uploadExcel' }
-    }]
+      {
+        path: 'areaManagement',
+        name: 'areaManagement',
+        component: () => import('@/views/setting/areaManagement'),
+        meta: { title: '区域管理' }
+      }, {
+        path: 'logManagement',
+        name: 'logManagement',
+        component: () => import('@/views/setting/logManagement'),
+        meta: { title: '日志管理' }
+      },
+      {
+        path: 'userManagement',
+        name: 'userManagement',
+        component: () => import('@/views/setting/userManagement'),
+        meta: { title: '用户管理' }
+      }, {
+        path: 'addressBook',
+        name: 'addressBook',
+        component: () => import('@/views/setting/addressBook'),
+        meta: { title: '通讯录' }
+      }
+    ]
   },
   {
     path: 'external-link',

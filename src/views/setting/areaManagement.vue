@@ -1,0 +1,227 @@
+<template>
+  <div class="app-container">
+    <div class="widget-all-system-body">
+      <el-row :gutter="20">
+        <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10">
+          <div class="grid-content bg-purple-light panel">
+            <div class="panelHeading">
+              <div>
+                <svg-icon icon-class="tree" />行政区域
+              </div>
+              <div class="btn-group">
+                <button class="btn mini">
+                  <i class="el-icon-refresh"></i>
+                </button>
+                <button class="btn mini">
+                  <i class="el-icon-circle-plus"></i>
+                </button>
+                <button class="btn mini">
+                  <i class="el-icon-delete"></i>
+                </button>
+              </div>
+            </div>
+            <div class="source panel-body">
+              <el-tree 
+              :data="data" 
+              :props="defaultProps" 
+              @node-click="handleNodeClick" 
+              empty-text="暂无数据" 
+              highlight-current 
+              ></el-tree>
+            </div>
+          </div>
+        </el-col>
+        <el-col :xs="14" :sm="14" :md="14" :lg="14" :xl="14">
+          <div class="grid-content bg-purple panel">
+            <div class="panelHeading">
+              <div>
+                <svg-icon icon-class="edit" />编辑站点：{{ firstNode }}
+              </div>
+            </div>
+            <div class="source">
+              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" v-loading="loading">
+                <el-form-item label="名称" prop="name" required>
+                  <el-input v-model="ruleForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="排序" prop="sort">
+                  <el-input type="number" v-model="ruleForm.sort"></el-input>
+                </el-form-item>
+                <el-form-item label="描述" prop="desc">
+                  <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="submitForm('ruleForm')" >提交</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      ruleForm: {
+        name: "",
+        sort: "",
+        desc: ""
+      },
+      loading: false,
+      rules: {
+        name: [
+          { required: true, message: "请输入地点名称", trigger: "blur" },
+          { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
+        ],
+        sort: [{ required: false, message: "", trigger: "change" }],
+        desc: [{ required: false, message: "请填写描述内容", trigger: "blur" }]
+      },
+      data: [
+        {
+          label: "广州市",
+          children: [
+            {
+              label: "一级 1",
+              children: [
+                {
+                  label: "二级 1-1",
+                  children: [
+                    {
+                      label: "三级 1-1-1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              label: "一级 2",
+              children: [
+                {
+                  label: "二级 2-1",
+                  children: [
+                    {
+                      label: "三级 2-1-1"
+                    }
+                  ]
+                },
+                {
+                  label: "二级 2-2",
+                  children: [
+                    {
+                      label: "三级 2-2-1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              label: "一级 3",
+              children: [
+                {
+                  label: "二级 3-1",
+                  children: [
+                    {
+                      label: "三级 3-1-1"
+                    }
+                  ]
+                },
+                {
+                  label: "二级 3-2",
+                  children: [
+                    {
+                      label: "三级 3-2-1"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
+      firstNode: "广州市"
+    }
+  },
+  methods: {
+    // 提交
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          // alert("submit!");
+          console.log(this.ruleForm)
+          this.loading = true
+          setTimeout(() => {
+            this.loading = false
+            this.$message({
+              showClose: true,
+              message: "添加成功",
+              type: "success",
+              center: true
+            })
+          }, 2000)
+        } else {
+          console.log("error submit!!")
+          return false
+        }
+      })
+    },
+    handleNodeClick(data) {
+      console.log(data)
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.widget-all-system-body {
+  .panel {
+    margin-bottom: 0;
+    height: 86vh;
+    overflow: auto;
+    .panelHeading {
+      color: #333;
+      background-color: #f5f5f5;
+      border-color: #ddd;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 39px;
+      .svg-icon {
+        margin: 0 5px;
+      }
+      .btn-group {
+        position: relative;
+        // display: inline-block;
+        vertical-align: middle;
+        float: right;
+      }
+    }
+    .source {
+      padding: 24px;
+    }
+    .panel-body {
+      overflow: auto;
+      height: calc(86vh - 41px);
+    }
+  }
+}
+.panel {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-color: #ddd;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.panelHeading {
+  padding: 8px 15px;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+</style>
