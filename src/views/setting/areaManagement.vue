@@ -67,7 +67,7 @@ import {
   Delete,
   Add,
   Datails
-} from "@/api/setting/areaTree";
+} from "@/api/setting/areaTree"
 export default {
   data() {
     return {
@@ -152,10 +152,10 @@ export default {
         label: "label"
       },
       firstNode: "广州市"
-    };
+    }
   },
   created() {
-    this.AreaTree();
+    this.AreaTree()
   },
   methods: {
     // 提交
@@ -163,31 +163,37 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // alert("submit!");
-          console.log(this.ruleForm);
-          this.loading = true;
+          console.log(this.ruleForm)
+          this.loading = true
           setTimeout(() => {
-            this.loading = false;
+            this.loading = false
             this.$message({
               showClose: true,
               message: "添加成功",
               type: "success",
               center: true
-            });
-          }, 2000);
+            })
+          }, 2000)
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log("error submit!!")
+          return false
         }
-      });
+      })
     },
     handleNodeClick(data) {
-      console.log(data);
+      console.log(data)
     },
     AreaTree() {
-      console.log("页面加载");
+      console.log("页面加载")
+      AreaTree().then(res => {
+        console.log(res)
+        if (res.success && res.code == 0) {
+          
+        }
+      }).catch(errorRes => {})
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .widget-all-system-body {
