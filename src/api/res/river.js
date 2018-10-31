@@ -12,7 +12,7 @@ import request from '@/utils/request'
 	  return request({
 	    url: '/api/res/river/list',
 	    method: 'get',
-	    params:{id:id}
+	    params: { id: id }
 	  })
 	}
 	export function save(data) {
@@ -27,7 +27,7 @@ import request from '@/utils/request'
 	  return request({
 	    url: '/api/res/river/del',
 	    method: 'post',
-	    params:{ids:ids}
+	    params: { ids: ids }
 	  })
 	}
 
@@ -36,6 +36,6 @@ import request from '@/utils/request'
 		return request({
 	    url: '/api/res/river/sxlist',
 	    method: 'get',
-	    params:{type:"SX"}
+	    params: { type: "SX" }
 	  })
 	}

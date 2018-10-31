@@ -66,7 +66,7 @@ export default {
    data() {
       return {
       visible: false,
-      fullscreenLoading:false,
+      fullscreenLoading: false,
       form: {
         type: "SX",	   	
         name: null,	  	
@@ -74,12 +74,12 @@ export default {
         lat: null,	  	
         description: null,	  	
         area: null,	 
-        code:null,
+        code: null,
         pid: null	  	
       },
       list: null, 
       total: 0 ,
-      listLoading:false,
+      listLoading: false,
       listQuery: {
         pageNo: 1,
         pageSize: 10, 
@@ -119,28 +119,28 @@ export default {
       console.log('保存:',JSON.stringify(this.form))
       save(this.form).then(response => {
             // this.fullscreenLoading=false;
-           this.getList();
+           this.getList()
          // console.log("then:::")
       }).catch(error => {
         //  this.fullscreenLoading=false; 
-          this.listLoading = false ;
+          this.listLoading = false 
           // console.log(this.listLoading);
-      });
+      })
       //
       // this.listLoading = false 
 	},
 	del(row) {
     var self = this
-    console.log(row.id);
+    console.log(row.id)
 	   del(row.id).then(response => {
             // this.fullscreenLoading=false;
-           this.getList();
+           this.getList()
          // console.log("then:::")
       }).catch(error => {
         //  this.fullscreenLoading=false; 
-          this.listLoading = false ;
+          this.listLoading = false 
           // console.log(this.listLoading);
-      });
+      })
 	}  
   }
 }

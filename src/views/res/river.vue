@@ -86,7 +86,7 @@ export default {
 	  	lng: null,	  	
 	  	lat: null,	  	
 	  	description: null,	  	
-	  	area:null,	
+	  	area: null,	
 	  	pid: null	  	
 	  },
       list: null, 
@@ -100,12 +100,12 @@ export default {
         sort: '+id'
       },
       typeOptions: [{ label: '河流', key: 'HL' }, { label: '沟渠', key: 'GQ' }],
-      sxOptions:null,
+      sxOptions: null
     }
     },
   created() {
-    this.getList();
-    this.getxslist();
+    this.getList()
+    this.getxslist()
   },
   methods: {
     getList() {  
@@ -121,9 +121,9 @@ export default {
       this.listQuery.pageNo = 1
       this.getList()
     },
-  getxslist(){
+  getxslist() {
       getxslist(this.listQuery).then(response => {  
-            this.sxOptions = response.data.list ;
+            this.sxOptions = response.data.list 
             console.log(response)
       })
   },
