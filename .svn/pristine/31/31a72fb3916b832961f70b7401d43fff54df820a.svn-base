@@ -1,0 +1,42 @@
+<template>
+    <div class="app-container">
+    <div id="map" class="map" style="width: 100%;  border: 2px solid black; background-color: white"></div>
+    </div>
+</template> 
+<script> 
+    import 'ol/ol.css'
+    import { Map, View } from 'ol'
+    import TileLayer from 'ol/layer/Tile'
+    import OSM from 'ol/source/OSM'
+    export default {
+        data() {
+            return {
+                map: null,
+                v: {
+                    form: false,
+                    loading: false
+                }
+            }
+        },
+        mounted() {
+            this.initMap()
+        },
+        methods: {
+            initMap() {
+                console.log('initMap')
+                this.map = new Map({
+                    target: 'map',
+                    layers: [
+                        new TileLayer({
+                            source: new OSM()
+                        })
+                    ],
+                    view: new View({
+                        center: [0, 0],
+                        zoom: 0
+                    })
+                })
+            }
+        }
+    }
+</script>

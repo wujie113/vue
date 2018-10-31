@@ -1,0 +1,21 @@
+import request from '@/utils/request'
+
+export function getList(params) {
+  return request({
+    url: '/api/emuipment/list',
+    method: 'get',
+    params
+  })
+ 
+} 
+export function saveRiver() {
+  return request({
+    url: '/api/emuipment/save',
+    method: 'post',
+    transformResponse: [function(data) { 
+      data = JSON.parse(data)
+      data.success = data.success || true
+      return data
+    }]
+  })
+}

@@ -5,7 +5,6 @@
       <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
       </el-select> 
-      <rm-dict title="请选择类型"  placeholder="请选择类型"  type="yes_no"     :name.sync="listQuery.type" />
        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
     </div>
       <el-table :data="list" stripe style="width: 100%">
@@ -38,7 +37,7 @@ export default {
    data() {
       return {
       tableKey: 0,
-      list:  null, 
+      list: null, 
       total: 0 ,
       listQuery: {
         pageNo: 1,
@@ -49,7 +48,7 @@ export default {
         sort: '+id'
       },
       downloadLoading: false,
-       importanceOptions: [1, 2, 3],
+       importanceOptions: [1, 2, 3]
     }
     },
   created() {
@@ -57,8 +56,8 @@ export default {
   },
   methods: {
     getList() {  
-        this.listLoading = true ;
-        console.log("this.listQuery::::",this.listQuery);
+        this.listLoading = true 
+        console.log("this.listQuery::::",this.listQuery)
         getList(this.listQuery).then(response => { 
           this.listLoading = false 
            this.list = response.data.list
@@ -68,7 +67,7 @@ export default {
      handleFilter() {
       this.listQuery.pageNo = 1
       this.getList()
-    },
+    }
   }
 }
 </script>
