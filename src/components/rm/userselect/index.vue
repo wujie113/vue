@@ -99,7 +99,7 @@
             var olist = data.offices
             var ulist = data.users
             if (olist.length === 0) {
-              if (pid) parentNode.children = undefined
+              if (pid) parentNode.children = []
               //组织机构禁用
               parentNode.isDisabled = true
               callback()

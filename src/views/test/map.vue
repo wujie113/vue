@@ -1,33 +1,72 @@
 <template>
-    <div id="map" class="map"></div>
+    <div>
+        <div id="mapctrl">
+            <el-popover placement="图层管理" width="400" trigger="click">
+                <el-collapse v-model="activeNames">
+                    <el-collapse-item title="数据图层" name="datalayer">
+                        <div class="map-c-layer-box" v-for="item in datalayers" :key="item.value" v-bind:class="{active: item.visible}" @click="switchDatalayer(item)">
+                            <img :src="'/static/map/'+item.id +'.png'" />
+                            <span>{{item.name}}</span>
+                        </div>
+                    </el-collapse-item>
+                    <el-collapse-item title="底图图层" name="bglayer">
+                        <div class="map-c-layer-box" v-for="item in bglayers" :key="item.value" v-bind:class="{ active: item.visible}" @click="switchBglayer(item)">
+                            <img :src="'/static/map/'+item.id +'.png' " />
+                            <span>{{item.name}}</span>
+                        </div>
+                    </el-collapse-item>
+                </el-collapse>
+                <el-button slot="reference">图层</el-button>
+            </el-popover>
+        </div>
+        <svg-icon icon-class="map-tool" />
+        <svg-icon icon-class="map-layer" />
+        <div id="map" class="map"></div>
+    </div>
 </template> 
 <script> 
     import 'ol/ol.css'
     import { Map, View } from 'ol'
-    import { Group as LayerGroup, Tile as TileLayer } from 'ol/layer.js'
+    //import { Group as LayerGroup, Tile as TileLayer } from 'ol/layer.js'
+    import { fromLonLat } from 'ol/proj.js'
     import { defaults as defaultControls } from 'ol/control.js'
     import { ScaleLine } from 'ol/control.js'
     import MousePosition from 'ol/control/MousePosition.js'
     import { createStringXY } from 'ol/coordinate.js'
-    import XYZ from 'ol/source/XYZ.js'
+    //import XYZ from 'ol/source/XYZ.js'
+    import { cfg as mapCfg } from "@/components/rm/map/config.js"
+    import { utils as mapUtils } from "@/components/rm/map/utils.js"
     export default {
         data() {
             return {
-                map: null
+                map: null,
+                bglayers: [], //底图
+                datalayers: [],//数据图层
+                activeNames: ['datalayer', 'bglayer']
             }
         },
         mounted() {
             this.initMap()
         },
         methods: {
+            switchDatalayer(layer) {
+                layer.visible = !layer.visible
+                //console.log(layer)
+                layer.layer.setVisible(layer.visible)
+            },
+            switchBglayer(layer) {
+                //console.log(layer)
+                layer.visible = true
+                mapUtils.switchBglayer(this.map, layer, mapCfg.bglayers)
+            },
             initMap() {
                 //console.log('initMap')
                 this.map = new Map({
                     target: 'map',
                     controls: defaultControls({
-                        attribution: false,
+                        attribution: true,
                         attributionOptions: {
-                            collapsible: false
+                            collapsible: true
                         },
                         zoomOptions: { zoomInTipLabel: '放大', zoomOutTipLabel: '缩小' }
                     }).extend([new ScaleLine({ units: 'metric' }), new MousePosition({
@@ -36,77 +75,23 @@
                         undefinedHTML: '&nbsp;'
                     })]),
                     layers: [
-                        new LayerGroup({
-                            visible: true,
-                            layers: [
-                                new TileLayer({
-                                    source: new XYZ({
-                                        title: "Google影像图",
-                                        url: "http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}"
-                                    })
-                                }),
-                                new TileLayer({
-                                    source: new XYZ({
-                                        title: "Google影像注记",
-                                        url: "http://www.google.cn/maps/vt?lyrs=h@189&gl=cn&x={x}&y={y}&z={z}"
-                                    })
-                                })]
-                        }),
-                        new LayerGroup({
-                            visible: false,
-                            layers: [
-                                new TileLayer({
-                                    source: new XYZ({
-                                        title: "Google电子地图",
-                                        url: "http://www.google.cn/maps/vt?lyrs=m@189&gl=cn&x={x}&y={y}&z={z}"
-                                    })
-                                }),
-                                new TileLayer({
-                                    source: new XYZ({
-                                        title: "Google交通地图",
-                                        url: "http://www.google.cn/maps/vt/pb=!1m4!1m3!1i{z}!2i{x}!3i{y}!2m3!1e0!2sm!3i380072576!3m8!2szh-CN!3scn!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0"
-                                    })
-                                })]
-                        }),
-                        new LayerGroup({
-                            visible: false,
-                            layers: [new TileLayer({
-                                source: new XYZ({
-                                    title: "天地图路网",
-                                    url: "http://t2.tianditu.com/DataServer?T=vec_w&x={x}&y={y}&l={z}"
-                                })
-                            }),
-                            new TileLayer({
-                                source: new XYZ({
-                                    title: "天地图文字标注",
-                                    url: "http://t2.tianditu.com/DataServer?T=cva_w&x={x}&y={y}&l={z}"
-                                })
-                            })
-                            ]
-                        }),
-                        new LayerGroup({
-                            visible: false,
-                            layers: [new TileLayer({
-                                source: new XYZ({
-                                    title: "天地图卫星",
-                                    url: "http://t3.tianditu.com/DataServer?T=img_w&x={x}&y={y}&l={z}"
-                                })
-                            }),
-                            new TileLayer({
-                                source: new XYZ({
-                                    title: "天地图文字标注",
-                                    url: "http://t2.tianditu.com/DataServer?T=cva_w&x={x}&y={y}&l={z}"
-                                })
-                            })
-                            ]                        })
                     ],
                     view: new View({
-                        center: [113.373171, 23.104508],
-                        projection: 'EPSG:4326',
-                        minZoom: 6,
-                        zoom: 15
+                        center: mapCfg.center,//, fromLonLat(mapCfg.center)
+                        projection: mapCfg.projection,
+                        minZoom: mapCfg.minZoom,
+                        zoom: mapCfg.zoom
                     })
                 })
+
+                //初始化底图
+                mapUtils.initBgLayers(this.map, mapCfg.bglayers)
+                mapUtils.initBaseLayer(this.map) //添加基础图层，包括选择搜索、搜索结果、绘画层
+                mapUtils.initDataLayer(this.map, mapCfg.datalayers) //添加数据图层
+
+                //初始化地图操作控件
+                this.bglayers = mapCfg.bglayers
+                this.datalayers = mapCfg.datalayers
             }
         }
     }
@@ -118,5 +103,23 @@
       left: 10px;
       position: absolute;
       color: #ccc;
+    }
+    .map-c-layer-box {
+      width: 90px;
+      height: 70px;
+      display: inline-block;
+      text-align: center;
+    }
+    .map-c-layer-box img {
+      width: 80px;
+      height: 50px;
+      display: block;
+    }
+    .map-c-layer-box.active {
+      color: #3280fc;
+    }
+    .map-c-layer-box.active img {
+      border: 2px solid #3280fc;
+      box-shadow: 0px 0px 7px #3280fc;
     }
 </style>

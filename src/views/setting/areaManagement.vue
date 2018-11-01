@@ -41,7 +41,7 @@
                   <el-input type="number" v-model="ruleForm.sort"></el-input>
                 </el-form-item>
                 <el-form-item label="描述" prop="desc">
-                  <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+                  <el-input type="textarea" v-model="ruleForm.desc" :rows="4"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
