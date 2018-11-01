@@ -193,7 +193,7 @@ export default {
     loadLeftTree() {
       tree().then((res) => {
         console.log("左边树", res)
-        let data = res.data.list
+        const data = res.data.list
         this.dataArray = data
         this.loading = false
       }).catch((errorRes) => {
@@ -207,21 +207,19 @@ export default {
       console.log("节点信息", data)
       this.tableLoading = true
 
-      let idx = data.id
-      let params = {
+      const idx = data.id
+      const params = {
         id: idx
       }
       this.getList(params)
-
     },
     getList(idx) {
       tableList(idx).then((res) => {
         console.log('表单列表', res)
         this.tableLoading = false
-
-      }).catch((errorRes => {
+      }).catch(errorRes => {
         this.tableLoading = false
-      }))
+      })
     },
     // 查询,分页使用
     tableList() {
@@ -245,14 +243,14 @@ export default {
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
       } else {
-        this.$refs.multipleTable.clearSelection();
+        this.$refs.multipleTable.clearSelection()
       }
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val;
+      this.multipleSelection = val
     }
   }
 }
