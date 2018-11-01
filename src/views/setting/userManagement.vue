@@ -207,7 +207,7 @@ export default {
       console.log("节点信息", data)
       this.tableLoading = true
 
-      const idx = data.id
+      let idx = data.id
       const params = {
         id: idx
       }
