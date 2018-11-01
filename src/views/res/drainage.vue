@@ -6,11 +6,10 @@
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
       </el-select> 
        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-       <el-button
-			 type="primary"
-			 icon="el-icon-plus"
-			 @click="visible=true"
-			>新增</el-button>
+      <el-button
+              type="primary"
+              icon="el-icon-plus"
+              @click="addRiver"	>新增</el-button>
     </div>
       <el-table  v-loading="listLoading" :data="list"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%">
          <el-table-column prop="name" label="水系名称"/>  
@@ -27,20 +26,30 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />  
   <el-dialog :visible.sync="visible"  width="30%" title="编辑">
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="水系名称">
+        <el-form-item prop="name" label="水系名称">
           <el-input v-model="form.name"/>
         </el-form-item>  
-        <el-form-item label="责任主体">
+        <el-form-item   prop="area" label="责任主体">
           <rm-area-select v-model="form.area"  />
         </el-form-item> 
-        <el-form-item label="水系描述">
+        <el-form-item   prop="description" label="水系描述">
           <el-input v-model="form.description" :rows="4" type="textarea" />
-        </el-form-item>
-       </el-form>
+        </el-form-item> 
+      </el-form> 
+       <el-upload 
+           action="http://localhost:8010/hzmis/common/fileRecord"
+              list-type="picture-card"  
+:auto-upload="false"
+              :on-preview="handlePictureCardPreview"
+              accept=".jpg,.jpeg,.png,.gif"
+              :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+        </el-upload>  
             <div slot="footer" class="dialog-footer">
                 <el-button @click="visible = false">取 消</el-button>
                 <el-button @click="save()" type="primary" >确 定</el-button>
             </div>
+           
         </el-dialog>
        </div>
 </template> 
@@ -67,6 +76,8 @@ export default {
       return {
       visible: false,
       fullscreenLoading: false,
+       dialogImageUrl: '',
+      dialogVisible: false,
       form: {
         type: "SX",	   	
         name: null,	  	
@@ -75,7 +86,7 @@ export default {
         description: null,	  	
         area: null,	 
         code: null,
-        pid: null	  	
+        river: null	  	
       },
       list: null, 
       total: 0 ,
@@ -103,17 +114,30 @@ export default {
            this.total = response.data.count
         })
     },
+     addRiver() {    
+    this.visible = true   
+    if (this.$refs.form != undefined) {  
+       Object.assign(this.form, this.$options.data().form) 
+    }  
+  },
      handleFilter() {
       this.listQuery.pageNo = 1
       this.getList()
     },
-	edit(row) {
-		//console.log(JSON.stringify(row));
-		this.visible = true
-		this.form = row
+     handleRemove(file, fileList) {
+        console.log(file, fileList)
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url
+        this.dialogVisible = true
+      },
+	edit(row) { 
+		this.visible = true 
+    Object.assign(this.form, row) 
 	},
 	save() { 
       this.visible = false
+      var action = "http://localhost:8010/hzmis/common/fileRecord"
       // this.fullscreenLoading = true;
        this.listLoading = true  
       console.log('保存:',JSON.stringify(this.form))

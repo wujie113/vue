@@ -25,7 +25,7 @@ export function Delete(ids) {
 }
 // 新增
 export function Add(params) {
-  return ({
+  return request({
     url: '/api/sys/area/save',
     method: 'post',
     data: params

@@ -7,15 +7,16 @@
       </el-select>
        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
        <el-button
-       type="primary"
-			 icon="el-icon-plus"
-			 @click="visible=true" 	>新增</el-button>
+              type="primary"
+              icon="el-icon-plus"
+              @click="addRiver"	>新增</el-button>
     </div>
       <el-table  v-loading="listLoading" :data="list"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%">
-      <el-table-column prop="type" label="所属水系"/> 
-      <el-table-column prop="type" label="河流类型"/>  
-      <el-table-column prop="description" label="描述"/>
-      <el-table-column prop="area.id" label="责任主体"/> 
+      <el-table-column prop="name" label="名称"/> 
+      <el-table-column prop="river.name" label="所属水系"/> 
+      <el-table-column prop="typename" label="河流类型"/>   
+      <el-table-column prop="area.name" label="责任主体"/> 
+      <el-table-column prop="description" label="描述" :show-overflow-tooltip="true"/>
 		<el-table-column prop="id" label="操作" width="100"   >
         	<template slot-scope="scope">
             	<el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
@@ -27,23 +28,23 @@
   
    <el-dialog :visible.sync="visible"  width="30%" title="编辑">
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="河流名称">
+        <el-form-item prop="name" label="河流名称">
           <el-input v-model="form.name"/>
         </el-form-item>    
-       <el-form-item label="所属水系">
-            <el-select v-model="form.type" placeholder="请选择水系" clearable class="filter-item" >
+       <el-form-item  prop="river" label="所属水系">
+            <el-select v-model="form.river" placeholder="请选择水系" clearable class="filter-item" >
               <el-option v-for="item in sxOptions" :key="item.key" :label="item.label" :value="item.key"/>
             </el-select>
         </el-form-item>  
-       <el-form-item label="河流类型">
+       <el-form-item   prop="type"  label="河流类型">
             <el-select v-model="form.type" placeholder="请选择类型" clearable class="filter-item" >
               <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key"/>
             </el-select>
         </el-form-item>  
-        <el-form-item label="责任主体">
+        <el-form-item   prop="area"  label="责任主体">
           <rm-area-select v-model="form.area"  />
         </el-form-item>  
-        <el-form-item label="水系描述">
+        <el-form-item prop="description" label="河流描述">
           <el-input v-model="form.description" :rows="4" type="textarea" />
         </el-form-item>
        </el-form>
@@ -76,6 +77,7 @@ export default {
    data() {
       return {
       visible: false,
+      listLoading: null,
 	  form: {
 	  	type: null,	  	
 	  	province: null,	  	
@@ -87,7 +89,7 @@ export default {
 	  	lat: null,	  	
 	  	description: null,	  	
 	  	area: null,	
-	  	pid: null	  	
+	  	river: null	  	
 	  },
       list: null, 
       total: 0 ,
@@ -102,7 +104,7 @@ export default {
       typeOptions: [{ label: '河流', key: 'HL' }, { label: '沟渠', key: 'GQ' }],
       sxOptions: null
     }
-    },
+    } ,
   created() {
     this.getList()
     this.getxslist()
@@ -127,20 +129,34 @@ export default {
             console.log(response)
       })
   },
-	edit(row) {
-		//console.log(JSON.stringify(row));
-		this.visible = true
-		this.form = row
+  addRiver() {    
+    this.visible = true   
+    if (this.$refs.form != undefined) {  
+       Object.assign(this.form, this.$options.data().form) 
+    }  
+  },
+	edit(row) { 
+		this.visible = true 
+    Object.assign(this.form, row) 
 	},
 	save() {
-		//console.log('保存:',JSON.stringify(this.form),this.selectUser);
-		this.visible = false
-		//
+	    this.visible = false
+  	  this.listLoading = true   
+      save(this.form).then(response => { 
+           this.getList() 
+      }).catch(error => { 
+          this.listLoading = false   
+      })
 	},
 	del(row) {
-		var self = this
-		//console.log(row); 
-	}  
+      var self = this
+      console.log(row.id)
+      del(row.id).then(response => { 
+            this.getList() 
+      }).catch(error => { 
+          this.listLoading = false  
+      })  
+	  }  
   }
 }
 </script>

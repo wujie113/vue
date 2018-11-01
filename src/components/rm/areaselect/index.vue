@@ -54,6 +54,9 @@
       }
     },
     computed: {},
+    created() { 
+        // this.loadAreas({action:'LOAD_ROOT_OPTIONS'}); 
+    },
     methods: {
       handleInput(value, instanceId) {
         console.log(JSON.stringify(value))
@@ -71,8 +74,8 @@
         }
         //this.$emit('update:org',node)
       },
-      loadAreas({ action, parentNode, callback }) {
-        //console.log(action, parentNode, this.org);
+      loadAreas({ action, parentNode, callback }) { 
+        console.log(action, parentNode, this.org)
         var self = this
         var pid = null
         if (action !== "LOAD_ROOT_OPTIONS") {

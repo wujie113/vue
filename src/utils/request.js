@@ -19,13 +19,14 @@ service.interceptors.request.use(
       } else {
         config.params['token'] = getToken()
       }
-    }
+    } 
     // if (store.getters.token) {
     //   config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
     // }
     // config.headers['mobileLogin'] = true;
     //  config.url= config.url+"?token="+getToken();
     if (config.method === 'post') {
+      console.log("config::::",config)
       config.data = qs.stringify(config.data, { allowDots: true })
     }
     return config

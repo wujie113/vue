@@ -9,25 +9,19 @@
                 <svg-icon icon-class="tree" />行政区域
               </div>
               <div class="btn-group">
-                <button class="btn mini">
+                <button class="btn mini" @click="refreshBtn">
                   <i class="el-icon-refresh"></i>
                 </button>
-                <button class="btn mini">
+                <button class="btn mini" @click="addBtn">
                   <i class="el-icon-circle-plus"></i>
                 </button>
-                <button class="btn mini">
+                <button class="btn mini" @click="deleteBtn">
                   <i class="el-icon-delete"></i>
                 </button>
               </div>
             </div>
             <div class="source panel-body">
-              <el-tree 
-              :data="data" 
-              :props="defaultProps" 
-              @node-click="handleNodeClick" 
-              empty-text="暂无数据" 
-              highlight-current 
-              ></el-tree>
+              <el-tree :data="dataArray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current></el-tree>
             </div>
           </div>
         </el-col>
@@ -35,7 +29,7 @@
           <div class="grid-content bg-purple panel">
             <div class="panelHeading">
               <div>
-                <svg-icon icon-class="edit" />编辑站点：{{ firstNode }}
+                <svg-icon icon-class="edit" />{{ leftName }}：{{ firstNode }}
               </div>
             </div>
             <div class="source">
@@ -50,7 +44,7 @@
                   <el-input type="textarea" v-model="ruleForm.desc"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="submitForm('ruleForm')" >提交</el-button>
+                  <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -61,13 +55,7 @@
   </div>
 </template>
 <script>
-import {
-  AreaTree,
-  AreaMytree,
-  Delete,
-  Add,
-  Datails
-} from "@/api/setting/areaTree"
+import { AreaTree, AreaMytree, Delete, Add, Datails } from "@/api/setting/areaTree"
 export default {
   data() {
     return {
@@ -80,78 +68,23 @@ export default {
       rules: {
         name: [
           { required: true, message: "请输入地点名称", trigger: "blur" },
-          { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
+          {
+            min: 3,
+            max: 10,
+            message: "长度在 3 到 10 个字符",
+            trigger: "blur"
+          }
         ],
         sort: [{ required: false, message: "", trigger: "change" }],
         desc: [{ required: false, message: "请填写描述内容", trigger: "blur" }]
       },
-      data: [
-        {
-          label: "广州市",
-          children: [
-            {
-              label: "一级 1",
-              children: [
-                {
-                  label: "二级 1-1",
-                  children: [
-                    {
-                      label: "三级 1-1-1"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              label: "一级 2",
-              children: [
-                {
-                  label: "二级 2-1",
-                  children: [
-                    {
-                      label: "三级 2-1-1"
-                    }
-                  ]
-                },
-                {
-                  label: "二级 2-2",
-                  children: [
-                    {
-                      label: "三级 2-2-1"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              label: "一级 3",
-              children: [
-                {
-                  label: "二级 3-1",
-                  children: [
-                    {
-                      label: "三级 3-1-1"
-                    }
-                  ]
-                },
-                {
-                  label: "二级 3-2",
-                  children: [
-                    {
-                      label: "三级 3-2-1"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      dataArray: [],
       defaultProps: {
         children: "children",
         label: "label"
       },
-      firstNode: "广州市"
+      firstNode: "",
+      leftName: "编辑站点"
     }
   },
   created() {
@@ -160,37 +93,124 @@ export default {
   methods: {
     // 提交
     submitForm(formName) {
+      console.log(this.$refs)
       this.$refs[formName].validate(valid => {
         if (valid) {
-          // alert("submit!");
-          console.log(this.ruleForm)
+          console.log("ruleForm", this.ruleForm)
+
+          const params = {
+            name: this.ruleForm.name
+          }
+          let message = ""
+          if (this.leftName == "编辑站点") {
+            if (this.ruleForm.sort) {
+              params.sort = this.ruleForm.sort
+            }
+            if (this.ruleForm.desc) {
+              params.desc = this.ruleForm.desc
+            }
+            // 有记录ID,是修改
+            if (this.nodeData.id) {
+              params.id = this.nodeData.id
+            }
+            if (this.nodeData.parentId) {
+              params["parent.id"] = this.nodeData.parentId
+            }
+            message = "修改成功"
+          } else if (this.leftName == "添加站点") {
+            if (this.ruleForm.sort) {
+              params.sort = this.ruleForm.sort
+            }
+            if (this.ruleForm.desc) {
+              params.desc = this.ruleForm.desc
+            }
+            if (this.nodeData.parentId) {
+              params["parent.id"] = this.nodeData.id
+            }
+            message = "添加成功"
+          }
+
+          console.log("params", params)
           this.loading = true
-          setTimeout(() => {
+          Add(params).then(res => {
             this.loading = false
             this.$message({
               showClose: true,
-              message: "添加成功",
+              message: message,
               type: "success",
               center: true
             })
-          }, 2000)
+            this.AreaTree()
+          }).catch(error => {
+            this.loading = false
+          })
         } else {
           console.log("error submit!!")
+          this.$message({
+            showClose: true,
+            message: "请填写完整",
+            type: "error",
+            center: true
+          })
           return false
         }
       })
     },
     handleNodeClick(data) {
-      console.log(data)
+      console.log("节点信息", data)
+      this.leftName = "编辑站点"
+
+      this.nodeData = data
+      this.firstNode = this.nodeData.label
+      this.ruleForm.name = this.nodeData.label
+      this.ruleForm.sort = this.nodeData.sort
     },
     AreaTree() {
-      console.log("页面加载")
       AreaTree().then(res => {
-        console.log(res)
-        if (res.success && res.code == 0) {
-          
-        }
-      }).catch(errorRes => {})
+        this.dataArray = res.data.list
+        this.firstNode = res.data.list[0].label
+        this.ruleForm.name = res.data.list[0].label
+        this.ruleForm.sort = res.data.list[0].sort
+        this.nodeData = res.data.list[0]
+      }).catch(errorRes => { })
+    },
+    refreshBtn() {
+      this.AreaTree()
+      this.leftName = "编辑站点"
+    },
+    // 添加
+    addBtn() {
+      const param = this.ruleForm
+      this.leftName = "添加站点"
+      this.$refs.ruleForm.resetFields()
+      this.ruleForm.sort = 100
+    },
+    // 删除
+    deleteBtn() {
+      const ids = this.nodeData.id
+      this.$confirm("确认删除?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        Delete(ids).then(res => {
+          this.AreaTree()
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          })
+        }).catch(errorRes => {
+          this.$message({
+            type: "error",
+            message: "网络错误!"
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消删除"
+        })
+      })
     }
   }
 }

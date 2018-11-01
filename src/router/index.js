@@ -93,18 +93,7 @@ export const constantRouterMap = [
         name: 'drainage',
         component: () => import('@/views/res/drainage'),
         meta: { title: '水系管理', icon: 'table' }
-      },
-      {
-        path: 'lake',
-        name: 'lake',
-        component: () => import('@/views/resource/lake'),
-        meta: { title: '湖泊(山塘)', icon: 'table' }
-      },{
-        path: 'dutypart',
-        name: 'dutypart',
-        component: () => import('@/views/resource/dutypart'),
-        meta: { title: '责任段', icon: 'table' }
-      }
+      } 
     ]
   },
   {
