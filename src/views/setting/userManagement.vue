@@ -213,6 +213,18 @@ export default {
       }
       this.getList(params)
     },
+    // 表单编辑
+    handleEdit() {
+
+    },
+    // 表单修改密码
+    ModifyPassword() {
+
+    },
+    // 停用启用
+    handleStart() {
+
+    },
     getList(idx) {
       tableList(idx).then((res) => {
         console.log('表单列表', res)
