@@ -18,7 +18,7 @@
           </div>
         </el-col>
         <el-col :xs="12" :sm="12" :md="14" :lg="16" :xl="18">
-          1111
+          111122222
         </el-col>
       </el-row>
     </div>
