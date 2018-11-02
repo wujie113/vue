@@ -201,7 +201,7 @@ export default {
       })
     },
     onlyShowSelectBtn(v) {
-      // console.log("只显示所属单位", v)
+      console.log("只显示所属单位", v)
     },
     handleNodeClick(data) {
       console.log("节点信息", data)
