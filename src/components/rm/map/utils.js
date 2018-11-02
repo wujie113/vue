@@ -18,7 +18,8 @@ var __wmtsCapabilities = null
 export const utils = {
     initBgLayers: function(map, bglayers) {
         bglayers.forEach((k) => {
-            k.layer.set('code', 'bglayer')
+            k.layer.set('code', k.id)
+            k.layer.set('ltype', 'bg')
             k.layer.setVisible(k.visible)
             map.addLayer(k.layer)
         })
@@ -155,6 +156,7 @@ export const utils = {
                 } else {
                     k.layer = this.createWMSTileLayer(k)
                     k.layer.set('code', k.id)
+                    k.layer.set('ltype', 'data')
                     k.layer.setVisible(k.visible)
                     map.addLayer(k.layer)
                 }
@@ -185,6 +187,7 @@ export const utils = {
 
 
         _drawLayer.set('code', 'drawlayer')
+        _drawLayer.set('ltype', 'base')
         _drawLayer.set('name', '默认绘图层')
         _drawLayer.set('editable', true)
 
@@ -195,6 +198,7 @@ export const utils = {
             style: styleFunction//'createSelectionStyleFunction'
         })
         _searchLayer.set('code', 'searchlayer')
+        _searchLayer.set('ltype', 'base')
         _searchLayer.set('name', '搜索结果层')
         _searchLayer.set('editable', false)
         // 用于绘制选择框的图层 
@@ -204,6 +208,7 @@ export const utils = {
             style: styleFunction//'createSelectionStyleFunction'
         })
         _selectionDrawLayer.set('code', 'selectionDrawLayer')
+        _selectionDrawLayer.set('ltype', 'base')
         _selectionDrawLayer.set('name', '绘制选择框的图层')
         _selectionDrawLayer.set('editable', false)
 
