@@ -5,7 +5,7 @@
       <el-select v-model="listQuery.type" placeholder="请选择类型" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key"/>
       </el-select>
-       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
        <el-button
               type="primary"
               icon="el-icon-plus"
@@ -48,20 +48,35 @@
           <el-input v-model="form.description" :rows="4" type="textarea" />
         </el-form-item>
        </el-form>
+        <el-upload 
+           :action="doUpload"
+              list-type="picture-card"  :auto-upload="false"
+              :on-preview="handlePictureCardPreview"
+              accept=".jpg,.jpeg,.png,.gif"
+              ref="upload" 
+              :file-list="fileList"
+              :before-remove="removefile"
+              :data="uploaddata" 
+              :on-success="handleSuccess"
+              :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+        </el-upload>  
             <div slot="footer" class="dialog-footer">
                 <el-button @click="visible = false">取 消</el-button>
                 <el-button @click="save()" type="primary" >确 定</el-button>
             </div>
         </el-dialog>
+        
        </div>
 </template> 
 <script> 
 import Pagination from '@/components/Pagination' 
-import { getList ,save,del,getxslist } from '@/api/res/river.js'
+import { getList ,save,del,getxslist ,getfiles,delfiles} from '@/api/res/river.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
+import { getToken } from '@/utils/auth'
 export default {
   components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -75,9 +90,11 @@ export default {
     }
   },
    data() {
-      return {
-      visible: false,
-      listLoading: null,
+    return {
+    visible: false,
+    listLoading: null,
+    doUpload:process.env.BASE_FILE_API+"?token="+getToken(),
+    fileList:[],
 	  form: {
 	  	type: null,	  	
 	  	province: null,	  	
@@ -86,11 +103,15 @@ export default {
 	  	town: null,	  	
 	  	name: null,	  	
 	  	lng: null,	  	
-	  	lat: null,	  	
+      lat: null, 	  	
 	  	description: null,	  	
 	  	area: null,	
 	  	river: null	  	
-	  },
+    },
+    uploaddata:{
+        bizId:null,
+        bizType:"R"
+      },
       list: null, 
       total: 0 ,
       listQuery: {
@@ -107,7 +128,7 @@ export default {
     } ,
   created() {
     this.getList()
-    this.getxslist()
+    this.getxslist() 
   },
   methods: {
     getList() {  
@@ -138,16 +159,41 @@ export default {
 	edit(row) { 
 		this.visible = true 
     Object.assign(this.form, row) 
+    getfiles({bizId:this.form.id,bizType:"R"}).then(response => { 
+      console.log("response::::::::::",response);
+        this.fileList=response.data;
+     })
 	},
 	save() {
 	    this.visible = false
   	  this.listLoading = true   
-      save(this.form).then(response => { 
-           this.getList() 
+      save(this.form).then(response => {
+           this.uploaddata.bizId=response.data.id;  
+           if(this.$refs.upload.uploadFiles!=undefined&&this.$refs.upload.uploadFiles.length>0){ 
+             this.$refs.upload.submit();  
+           } else{ 
+             this.getList(); 
+           } 
       }).catch(error => { 
           this.listLoading = false   
       })
-	},
+  },
+  handleSuccess(){  
+    this.fileList = [];
+    this.getList(); 
+  },
+  removefile(file){ 
+      delfiles({ids:file.id}).then(response => { 
+          console.log("图片删除成功!!!!!");
+     })   
+  },
+  handleRemove(file, fileList) {
+    console.log(file, fileList);
+  },
+  handlePictureCardPreview(file) {
+    this.dialogImageUrl = file.url;
+    this.dialogVisible = true;
+  },
 	del(row) {
       var self = this
       console.log(row.id)

@@ -31,25 +31,37 @@
         </el-form-item>
         <el-form-item prop="description" label="水系描述">
           <el-input v-model="form.description" :rows="4" type="textarea" />
-        </el-form-item>
-      </el-form>
-      <el-upload action="http://localhost:8010/hzmis/common/fileRecord" list-type="picture-card" :auto-upload="false" :on-preview="handlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" :on-remove="handleRemove">
-        <i class="el-icon-plus"></i>
-      </el-upload>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">取 消</el-button>
-        <el-button @click="save()" type="primary">确 定</el-button>
-      </div>
-
-    </el-dialog>
-  </div>
+        </el-form-item> 
+      </el-form> 
+      
+       <el-upload 
+           :action="doUpload"
+              list-type="picture-card"  :auto-upload="false"
+              :on-preview="handlePictureCardPreview"
+              accept=".jpg,.jpeg,.png,.gif"
+              ref="upload" 
+              :file-list="fileList"
+              :before-remove="removefile"
+              :data="uploaddata"
+              :before-upload="beforeUpload"
+              :on-success="handleSuccess"
+              :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+        </el-upload>  
+          <div slot="footer" class="dialog-footer">
+              <el-button @click="visible = false">取 消</el-button>
+              <el-button @click="save()" type="primary" >确 定</el-button>
+          </div> 
+        </el-dialog>
+       </div>
 </template> 
 <script> 
-import Pagination from '@/components/Pagination'
-import { getList, save, del } from '@/api/res/river.js'
+import Pagination from '@/components/Pagination' 
+import { getList ,save,del ,getfiles,delfiles,uploadFile} from '@/api/res/river.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
+import { getToken } from '@/utils/auth'
 import RmAreaSelect from "@/components/rm/areaselect"
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
@@ -66,9 +78,15 @@ export default {
   data() {
     return {
       visible: false,
+       doUpload:process.env.BASE_FILE_API+"?token="+getToken(),
       fullscreenLoading: false,
-      dialogImageUrl: '',
+      fileList:[],
+       dialogImageUrl: '',
       dialogVisible: false,
+      uploaddata:{
+        bizId:"",
+        bizType: "R",
+      },
       form: {
         type: "SX",
         name: null,
@@ -125,32 +143,60 @@ export default {
     edit(row) {
       this.visible = true
       Object.assign(this.form, row)
-    },
-    save() {
-      this.visible = false
-      var action = "http://localhost:8010/hzmis/common/fileRecord"
+    }, 
+	  save() { 
+      var action=process.env.BASE_API; 
       // this.fullscreenLoading = true;
       this.listLoading = true
       console.log('保存:', JSON.stringify(this.form))
       save(this.form).then(response => {
-        // this.fullscreenLoading=false;
-        this.getList()
-        // console.log("then:::")
-      }).catch(error => {
-        //  this.fullscreenLoading=false; 
-        this.listLoading = false
-        // console.log(this.listLoading);
-      })
-      //
-      // this.listLoading = false 
-    },
-    del(row) {
-      var self = this
-      console.log(row.id)
-      del(row.id).then(response => {
-        // this.fullscreenLoading=false;
-        this.getList()
-        // console.log("then:::")
+            // this.fullscreenLoading=false;
+           console.log("     cosole.log(response);:::",response.data.id); 
+           this.uploaddata.bizId=response.data.id; 
+           this.form.id=response.data.id;
+           console.log("upload::::",this.$refs.upload.uploadFiles.length);
+           if(this.$refs.upload.uploadFiles!=undefined&&this.$refs.upload.uploadFiles.length>0){ 
+             this.$refs.upload.submit();  
+           } else{ 
+             this.getList(); 
+           } 
+      }).catch(error => { 
+          this.listLoading = false 
+         console.log("出错了。。。。。：：：",error);
+      }) 
+  },
+  handleSuccess(){ 
+    console.log('上传成功:',JSON.stringify(this.form))
+    this.fileList = [];
+    this.getList(); 
+  },
+  removefile(file){ 
+      console.log("删除文件：：：",file);
+      delfiles({ids:file.id}).then(response => { 
+          console.log("图片删除成功!!!!!");
+     })   
+  },
+  beforeUpload(file){
+      // let fd = new FormData();
+      // fd.append('file',file);//传文件 
+      // console.log("this.form.id:::::",this.form.id);
+      // fd.append('bizId',this.form.id);//传其他参数
+      // fd.append('bizType',"R"); 
+      // uploadFile(fd).then(response => { 
+      //      alert('成功'); 
+      //      return false;
+      // }).catch(error => { 
+      //     console.log("error:::",error) 
+      // })
+     
+  },
+	del(row) {
+    var self = this
+    console.log(row.id)
+	   del(row.id).then(response => {
+            // this.fullscreenLoading=false;
+           this.getList()
+         // console.log("then:::")
       }).catch(error => {
         //  this.fullscreenLoading=false; 
         this.listLoading = false

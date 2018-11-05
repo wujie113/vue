@@ -1,57 +1,55 @@
 <template>
   <div class="app-container">
-    <div class="widget-all-system-body">
-      <el-row :gutter="20">
-        <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10">
-          <div class="grid-content bg-purple-light panel">
-            <div class="panelHeading">
-              <div>
-                <svg-icon icon-class="tree" />行政区域
-              </div>
-              <div class="btn-group">
-                <button class="btn mini" @click="refreshBtn">
-                  <i class="el-icon-refresh"></i>
-                </button>
-                <button class="btn mini" @click="addBtn">
-                  <i class="el-icon-circle-plus"></i>
-                </button>
-                <button class="btn mini" @click="deleteBtn">
-                  <i class="el-icon-delete"></i>
-                </button>
-              </div>
+    <el-row :gutter="20">
+      <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10">
+        <div class="panel">
+          <div class="panelHeading">
+            <div>
+              <svg-icon icon-class="tree" />行政区域
             </div>
-            <div class="source panel-body">
-              <el-tree :data="dataArray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current></el-tree>
+            <div class="btn-group">
+              <button class="btn mini" @click="refreshBtn">
+                <i class="el-icon-refresh"></i>
+              </button>
+              <button class="btn mini" @click="addBtn">
+                <i class="el-icon-circle-plus"></i>
+              </button>
+              <button class="btn mini" @click="deleteBtn">
+                <i class="el-icon-delete"></i>
+              </button>
             </div>
           </div>
-        </el-col>
-        <el-col :xs="14" :sm="14" :md="14" :lg="14" :xl="14">
-          <div class="grid-content bg-purple panel">
-            <div class="panelHeading">
-              <div>
-                <svg-icon icon-class="edit" />{{ leftName }}：{{ firstNode }}
-              </div>
-            </div>
-            <div class="source">
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" v-loading="loading">
-                <el-form-item label="名称" prop="name" required>
-                  <el-input v-model="ruleForm.name"></el-input>
-                </el-form-item>
-                <el-form-item label="排序" prop="sort">
-                  <el-input type="number" v-model="ruleForm.sort"></el-input>
-                </el-form-item>
-                <el-form-item label="描述" prop="desc">
-                  <el-input type="textarea" v-model="ruleForm.desc" :rows="4"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-                </el-form-item>
-              </el-form>
+          <div class="source panel-body">
+            <el-tree :data="dataArray" node-key="id" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current></el-tree>
+          </div>
+        </div>
+      </el-col>
+      <el-col :xs="14" :sm="14" :md="14" :lg="14" :xl="14">
+        <div class="panel">
+          <div class="panelHeading">
+            <div>
+              <svg-icon icon-class="edit" />{{ leftName }}：{{ firstNode }}
             </div>
           </div>
-        </el-col>
-      </el-row>
-    </div>
+          <div class="source">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" v-loading="loading">
+              <el-form-item label="名称" prop="name" required>
+                <el-input v-model="ruleForm.name"></el-input>
+              </el-form-item>
+              <el-form-item label="排序" prop="sort">
+                <el-input type="number" v-model="ruleForm.sort"></el-input>
+              </el-form-item>
+              <el-form-item label="描述" prop="desc">
+                <el-input type="textarea" v-model="ruleForm.desc" :rows="4"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
@@ -159,7 +157,6 @@ export default {
     handleNodeClick(data) {
       console.log("节点信息", data)
       this.leftName = "编辑站点"
-
       this.nodeData = data
       this.firstNode = this.nodeData.label
       this.ruleForm.name = this.nodeData.label
@@ -216,11 +213,16 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.widget-all-system-body {
+.app-container {
   .panel {
     margin-bottom: 0;
-    height: 86vh;
+    min-height: 86vh;
     overflow: auto;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-color: #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
     .panelHeading {
       color: #333;
       background-color: #f5f5f5;
@@ -230,6 +232,10 @@ export default {
       justify-content: space-between;
       align-items: center;
       height: 39px;
+      padding: 8px 15px;
+      border-bottom: 1px solid transparent;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
       .svg-icon {
         margin: 0 5px;
       }
@@ -248,19 +254,5 @@ export default {
       height: calc(86vh - 41px);
     }
   }
-}
-.panel {
-  margin-bottom: 20px;
-  background-color: #fff;
-  border: 1px solid transparent;
-  border-color: #ddd;
-  border-radius: 4px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-}
-.panelHeading {
-  padding: 8px 15px;
-  border-bottom: 1px solid transparent;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
 }
 </style>

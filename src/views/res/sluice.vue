@@ -1,305 +1,85 @@
 <template>
-  <div class="app-container">
-    <div class="filter-container"> 
-       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
-      </el-select> 
-       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-       <el-button
-			 type="primary"
-			 icon="el-icon-plus"
-			 @click="visible=true"
-			>新增</el-button>
-    </div>
-      <el-table :data="list" row-key="id"  stripe style="width: 100%">
-                <el-table-column prop="name" label="名称"/>
-        <el-table-column prop="code" label="编码"/>
-        <el-table-column prop="lat" label="经度"/>
-        <el-table-column prop="lng" label="纬度"/>
-        <el-table-column prop="province" label="省"/>
-        <el-table-column prop="region" label="地区"/>
-        <el-table-column prop="county" label="县"/>
-        <el-table-column prop="town" label="乡（镇）"/>
-        <el-table-column prop="village" label="街（村）"/>
-        <el-table-column prop="regimeCode" label="行政区划代码"/>
-        <el-table-column prop="threeCode" label="所在水资源三级区名称及编码"/>
-        <el-table-column prop="riverName" label="所在河流（湖、库、渠、海堤）名称"/>
-        <el-table-column prop="riverCode" label="所在河流（湖、库、渠、海堤）编码"/>
-        <el-table-column prop="coloum1" label="所在灌区(引调水工程)名称"/>
-        <el-table-column prop="coloum2" label="所在灌区(引调水工程)编码"/>
-        <el-table-column prop="coloum3" label="是否为闸站工程"/>
-        <el-table-column prop="coloum4" label="是否为套闸工程"/>
-        <el-table-column prop="coloum5" label="工程建设情况"/>
-        <el-table-column prop="coloum6" label="建成时间（年）"/>
-        <el-table-column prop="coloum7" label="建成时间（月）"/>
-        <el-table-column prop="coloum8" label="开工时间（年）"/>
-        <el-table-column prop="coloum9" label="开工时间（月）"/>
-        <el-table-column prop="coloum10" label="工程等别"/>
-        <el-table-column prop="coloum11" label="主要建筑物级别"/>
-        <el-table-column prop="coloum12" label="闸孔数量（孔）"/>
-        <el-table-column prop="coloum13" label="闸孔总净宽（米）"/>
-        <el-table-column prop="coloum14" label="副闸闸孔数量（孔）"/>
-        <el-table-column prop="coloum15" label="副闸闸孔总净宽（米）"/>
-        <el-table-column prop="coloum16" label="水闸类型"/>
-        <el-table-column prop="coloum17" label="分(泄)洪闸过闸流量(立方米/秒)"/>
-        <el-table-column prop="coloum18" label="分(泄)洪闸设计洪水标准［重现期］（年）"/>
-        <el-table-column prop="coloum19" label="分(泄)洪闸校核洪水标准［重现期］（（年）"/>
-        <el-table-column prop="coloum20" label="节制闸过闸流量(立方米/秒)"/>
-        <el-table-column prop="coloum21" label="节制闸设计洪水标准［重现期］（年）"/>
-        <el-table-column prop="coloum22" label="节制闸校核洪水标准［重现期］（年）"/>
-        <el-table-column prop="coloum23" label="排(退)水闸过闸流量(立方米/秒)"/>
-        <el-table-column prop="coloum24" label="排(退)水闸设计洪水标准［重现期］（年）"/>
-        <el-table-column prop="coloum25" label="排(退)水闸校核洪水标准［重现期］（年）"/>
-        <el-table-column prop="coloum26" label="排(退)水闸是否为引排双向闸"/>
-        <el-table-column prop="coloum27" label="引(进)水闸过闸流量(立方米/秒)"/>
-        <el-table-column prop="coloum28" label="引(进)水闸设计洪水标准［重现期］（年）"/>
-        <el-table-column prop="coloum29" label="引(进)水闸校核洪水标准［重现期］（年）"/>
-        <el-table-column prop="coloum30" label="引(进)水闸引水能力(万立方米)"/>
-        <el-table-column prop="coloum31" label="引(进)水闸引水用途供水对象"/>
-        <el-table-column prop="coloum32" label="引(进)水闸引水用途灌区名称"/>
-        <el-table-column prop="coloum33" label="引(进)水闸是否为引排双向闸"/>
-        <el-table-column prop="coloum34" label="挡潮闸过闸流量(立方米/秒)"/>
-        <el-table-column prop="coloum35" label="挡潮闸设计潮水标准［重现期］（年）"/>
-        <el-table-column prop="coloum36" label="挡潮闸校核潮水标准［重现期］（年）"/>
-        <el-table-column prop="coloum37" label="橡胶坝坝高（米）"/>
-        <el-table-column prop="coloum38" label="橡胶坝坝长（米）"/>
-        <el-table-column prop="coloum39" label="橡胶坝高程系统"/>
-        <el-table-column prop="coloum40" label="橡胶坝坝顶高程（米）"/>
-        <el-table-column prop="coloum41" label="水闸管理单位名称"/>
-        <el-table-column prop="coloum42" label="水闸管理单位代码"/>
-        <el-table-column prop="coloum43" label="水闸归口管理部门"/>
-        <el-table-column prop="division" label="是否完成划界"/>
-        <el-table-column prop="confirm" label="是否完成确权"/>
-        <el-table-column prop="recordMan" label="填表人员"/>
-        <el-table-column prop="recordPhone" label="填表联系人电话"/>
-        <el-table-column prop="reviewMan" label="复核人员"/>
-        <el-table-column prop="reviewPhone" label="复核人联系电话"/>
-        <el-table-column prop="auditMan" label="审查人员"/>
-        <el-table-column prop="auditSymbol" label="审核标志"/>
-        <el-table-column prop="regionAudit" label="地区审核"/>
-        <el-table-column prop="provinceAudit" label="省级审核"/>
-        <el-table-column prop="nationAudit" label="中央审核"/>
-		<el-table-column prop="id" label="操作" width="100"   >
-        	<template slot-scope="scope">
-            	<el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
-			<el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete"/>
-        	</template>
-        </el-table-column>
+    <div class="filter-container">  
+	  <div class="filter-container">
+		<el-input placeholder="检索水闸编码、名称" v-model="listQuery.search" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/> 
+		<el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+		<el-upload :action="uploadaction"  :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo"
+              :before-upload="beforeUpload"  :file-list="fileList"
+				:data="uploaddata"   :on-success="handleSuccess"   :on-error="handlError">
+				<el-button  class="filter-item"  type="primary">点击上传</el-button> 
+		</el-upload>
+	  </div> 
+		<el-table  v-loading="listLoading" :data="list"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%">
+        <el-table-column prop="name" label="名称" min-width="110"/>
+        <el-table-column prop="code" label="编码" min-width="160"/>
+        <el-table-column prop="lat" label="经度" min-width="160"/>
+        <el-table-column prop="lng" label="纬度" min-width="160"/>
+        <el-table-column prop="province" label="省" min-width="110"/>
+        <el-table-column prop="region" label="地区" min-width="110"/>
+        <el-table-column prop="county" label="县" min-width="110"/>
+        <el-table-column prop="town" label="乡（镇）" min-width="200" :show-overflow-tooltip="true"/>
+        <el-table-column prop="village" label="街（村）" min-width="220" :show-overflow-tooltip="true"/>
+        <el-table-column prop="regimeCode" label="行政区划代码" min-width="220"/>
+        <el-table-column prop="threeCode" label="所在水资源三级区名称及编码"     min-width="220"/>
+        <el-table-column prop="riverName" label="所在河流（湖、库、渠、海堤）名称" min-width="250"/>
+        <el-table-column prop="riverCode" label="所在河流（湖、库、渠、海堤）编码" min-width="250"/>
+        <el-table-column prop="coloum1" label="所在灌区(引调水工程)名称" min-width="220"/>
+        <el-table-column prop="coloum2" label="所在灌区(引调水工程)编码" min-width="220"/>
+        <el-table-column prop="coloum3" label="是否为闸站工程" min-width="220"/>
+        <el-table-column prop="coloum4" label="是否为套闸工程" min-width="220"/>
+        <el-table-column prop="coloum5" label="工程建设情况" min-width="220"/>
+        <el-table-column prop="coloum6" label="建成时间（年）" min-width="220"/>
+        <el-table-column prop="coloum7" label="建成时间（月）" min-width="220"/>
+        <el-table-column prop="coloum8" label="开工时间（年）" min-width="220"/>
+        <el-table-column prop="coloum9" label="开工时间（月）" min-width="220"/>
+        <el-table-column prop="coloum10" label="工程等别" min-width="220"/>
+        <el-table-column prop="coloum11" label="主要建筑物级别" min-width="220"/>
+        <el-table-column prop="coloum12" label="闸孔数量（孔）" min-width="220"/>
+        <el-table-column prop="coloum13" label="闸孔总净宽（米）" min-width="220"/>
+        <el-table-column prop="coloum14" label="副闸闸孔数量（孔）" min-width="220"/>
+        <el-table-column prop="coloum15" label="副闸闸孔总净宽（米）" min-width="220"/>
+        <el-table-column prop="coloum16" label="水闸类型" min-width="140"/>
+        <el-table-column prop="coloum17" label="分(泄)洪闸过闸流量(立方米/秒)" min-width="220"/>
+        <el-table-column prop="coloum18" label="分(泄)洪闸设计洪水标准［重现期］（年）" min-width="330"/>
+        <el-table-column prop="coloum19" label="分(泄)洪闸校核洪水标准［重现期］（（年）" min-width="330"/>
+        <el-table-column prop="coloum20" label="节制闸过闸流量(立方米/秒)" min-width="250"/>
+        <el-table-column prop="coloum21" label="节制闸设计洪水标准［重现期］（年）" min-width="280"/>
+        <el-table-column prop="coloum22" label="节制闸校核洪水标准［重现期］（年）" min-width="280"/>
+        <el-table-column prop="coloum23" label="排(退)水闸过闸流量(立方米/秒)" min-width="220"/>
+        <el-table-column prop="coloum24" label="排(退)水闸设计洪水标准［重现期］（年）" min-width="330"/>
+        <el-table-column prop="coloum25" label="排(退)水闸校核洪水标准［重现期］（年）" min-width="330"/>
+        <el-table-column prop="coloum26" label="排(退)水闸是否为引排双向闸" min-width="220"/>
+        <el-table-column prop="coloum27" label="引(进)水闸过闸流量(立方米/秒)" min-width="220"/>
+        <el-table-column prop="coloum28" label="引(进)水闸设计洪水标准［重现期］（年）" min-width="330"/>
+        <el-table-column prop="coloum29" label="引(进)水闸校核洪水标准［重现期］（年）" min-width="330"/>
+        <el-table-column prop="coloum30" label="引(进)水闸引水能力(万立方米)" min-width="220"/>
+        <el-table-column prop="coloum31" label="引(进)水闸引水用途供水对象" min-width="220"/>
+        <el-table-column prop="coloum32" label="引(进)水闸引水用途灌区名称" min-width="220"/>
+        <el-table-column prop="coloum33" label="引(进)水闸是否为引排双向闸" min-width="220"/>
+        <el-table-column prop="coloum34" label="挡潮闸过闸流量(立方米/秒)" min-width="220"/>
+        <el-table-column prop="coloum35" label="挡潮闸设计潮水标准［重现期］（年）" min-width="330"/>
+        <el-table-column prop="coloum36" label="挡潮闸校核潮水标准［重现期］（年）" min-width="330"/>
+        <el-table-column prop="coloum37" label="橡胶坝坝高（米）" min-width="220"/>
+        <el-table-column prop="coloum38" label="橡胶坝坝长（米）" min-width="220"/>
+        <el-table-column prop="coloum39" label="橡胶坝高程系统" min-width="220"/>
+        <el-table-column prop="coloum40" label="橡胶坝坝顶高程（米）" min-width="220"/>
+        <el-table-column prop="coloum41" label="水闸管理单位名称" min-width="320" :show-overflow-tooltip="true"/>
+        <el-table-column prop="coloum42" label="水闸管理单位代码" min-width="220"/>
+        <el-table-column prop="coloum43" label="水闸归口管理部门" min-width="220"/>
+        <el-table-column prop="division" label="是否完成划界" min-width="220"/>
+        <el-table-column prop="confirm" label="是否完成确权" min-width="220"/>
+        <el-table-column prop="recordMan" label="填表人员" min-width="220"/>
+        <el-table-column prop="recordPhone" label="填表联系人电话" min-width="220"/>
+        <el-table-column prop="reviewMan" label="复核人员" min-width="150"/>
+        <el-table-column prop="reviewPhone" label="复核人联系电话" min-width="150"/>
+        <el-table-column prop="auditMan" label="审查人员" min-width="150"/>
+        <el-table-column prop="auditSymbol" label="审核标志" min-width="150"/>
+        <el-table-column prop="regionAudit" label="地区审核" min-width="150"/>
+        <el-table-column prop="provinceAudit" label="省级审核" min-width="150"/>
+        <el-table-column prop="nationAudit" label="中央审核" min-width="150"/> 
       </el-table>  
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" /> 
-  
-  
-  <el-dialog :visible.sync="visible" title="编辑">
-  	<el-form :model="form">
-			<el-form-item label="名称">
-				<el-input v-model="form.name"/>
-			</el-form-item>
-			<el-form-item label="编码">
-				<el-input v-model="form.code"/>
-			</el-form-item>
-			<el-form-item label="经度">
-				<el-input v-model="form.lat"/>
-			</el-form-item>
-			<el-form-item label="纬度">
-				<el-input v-model="form.lng"/>
-			</el-form-item>
-			<el-form-item label="省">
-				<el-input v-model="form.province"/>
-			</el-form-item>
-			<el-form-item label="地区">
-				<el-input v-model="form.region"/>
-			</el-form-item>
-			<el-form-item label="县">
-				<el-input v-model="form.county"/>
-			</el-form-item>
-			<el-form-item label="乡（镇）">
-				<el-input v-model="form.town"/>
-			</el-form-item>
-			<el-form-item label="街（村）">
-				<el-input v-model="form.village"/>
-			</el-form-item>
-			<el-form-item label="行政区划代码">
-				<el-input v-model="form.regimeCode"/>
-			</el-form-item>
-			<el-form-item label="所在水资源三级区名称及编码">
-				<el-input v-model="form.threeCode"/>
-			</el-form-item>
-			<el-form-item label="所在河流（湖、库、渠、海堤）名称">
-				<el-input v-model="form.riverName"/>
-			</el-form-item>
-			<el-form-item label="所在河流（湖、库、渠、海堤）编码">
-				<el-input v-model="form.riverCode"/>
-			</el-form-item>
-			<el-form-item label="所在灌区(引调水工程)名称">
-				<el-input v-model="form.coloum1"/>
-			</el-form-item>
-			<el-form-item label="所在灌区(引调水工程)编码">
-				<el-input v-model="form.coloum2"/>
-			</el-form-item>
-			<el-form-item label="是否为闸站工程">
-				<el-input v-model="form.coloum3"/>
-			</el-form-item>
-			<el-form-item label="是否为套闸工程">
-				<el-input v-model="form.coloum4"/>
-			</el-form-item>
-			<el-form-item label="工程建设情况">
-				<el-input v-model="form.coloum5"/>
-			</el-form-item>
-			<el-form-item label="建成时间（年）">
-				<el-input v-model="form.coloum6"/>
-			</el-form-item>
-			<el-form-item label="建成时间（月）">
-				<el-input v-model="form.coloum7"/>
-			</el-form-item>
-			<el-form-item label="开工时间（年）">
-				<el-input v-model="form.coloum8"/>
-			</el-form-item>
-			<el-form-item label="开工时间（月）">
-				<el-input v-model="form.coloum9"/>
-			</el-form-item>
-			<el-form-item label="工程等别">
-				<el-input v-model="form.coloum10"/>
-			</el-form-item>
-			<el-form-item label="主要建筑物级别">
-				<el-input v-model="form.coloum11"/>
-			</el-form-item>
-			<el-form-item label="闸孔数量（孔）">
-				<el-input v-model="form.coloum12"/>
-			</el-form-item>
-			<el-form-item label="闸孔总净宽（米）">
-				<el-input v-model="form.coloum13"/>
-			</el-form-item>
-			<el-form-item label="副闸闸孔数量（孔）">
-				<el-input v-model="form.coloum14"/>
-			</el-form-item>
-			<el-form-item label="副闸闸孔总净宽（米）">
-				<el-input v-model="form.coloum15"/>
-			</el-form-item>
-			<el-form-item label="水闸类型">
-				<el-input v-model="form.coloum16"/>
-			</el-form-item>
-			<el-form-item label="分(泄)洪闸过闸流量(立方米/秒)">
-				<el-input v-model="form.coloum17"/>
-			</el-form-item>
-			<el-form-item label="分(泄)洪闸设计洪水标准［重现期］（年）">
-				<el-input v-model="form.coloum18"/>
-			</el-form-item>
-			<el-form-item label="分(泄)洪闸校核洪水标准［重现期］（（年）">
-				<el-input v-model="form.coloum19"/>
-			</el-form-item>
-			<el-form-item label="节制闸过闸流量(立方米/秒)">
-				<el-input v-model="form.coloum20"/>
-			</el-form-item>
-			<el-form-item label="节制闸设计洪水标准［重现期］（年）">
-				<el-input v-model="form.coloum21"/>
-			</el-form-item>
-			<el-form-item label="节制闸校核洪水标准［重现期］（年）">
-				<el-input v-model="form.coloum22"/>
-			</el-form-item>
-			<el-form-item label="排(退)水闸过闸流量(立方米/秒)">
-				<el-input v-model="form.coloum23"/>
-			</el-form-item>
-			<el-form-item label="排(退)水闸设计洪水标准［重现期］（年）">
-				<el-input v-model="form.coloum24"/>
-			</el-form-item>
-			<el-form-item label="排(退)水闸校核洪水标准［重现期］（年）">
-				<el-input v-model="form.coloum25"/>
-			</el-form-item>
-			<el-form-item label="排(退)水闸是否为引排双向闸">
-				<el-input v-model="form.coloum26"/>
-			</el-form-item>
-			<el-form-item label="引(进)水闸过闸流量(立方米/秒)">
-				<el-input v-model="form.coloum27"/>
-			</el-form-item>
-			<el-form-item label="引(进)水闸设计洪水标准［重现期］（年）">
-				<el-input v-model="form.coloum28"/>
-			</el-form-item>
-			<el-form-item label="引(进)水闸校核洪水标准［重现期］（年）">
-				<el-input v-model="form.coloum29"/>
-			</el-form-item>
-			<el-form-item label="引(进)水闸引水能力(万立方米)">
-				<el-input v-model="form.coloum30"/>
-			</el-form-item>
-			<el-form-item label="引(进)水闸引水用途供水对象">
-				<el-input v-model="form.coloum31"/>
-			</el-form-item>
-			<el-form-item label="引(进)水闸引水用途灌区名称">
-				<el-input v-model="form.coloum32"/>
-			</el-form-item>
-			<el-form-item label="引(进)水闸是否为引排双向闸">
-				<el-input v-model="form.coloum33"/>
-			</el-form-item>
-			<el-form-item label="挡潮闸过闸流量(立方米/秒)">
-				<el-input v-model="form.coloum34"/>
-			</el-form-item>
-			<el-form-item label="挡潮闸设计潮水标准［重现期］（年）">
-				<el-input v-model="form.coloum35"/>
-			</el-form-item>
-			<el-form-item label="挡潮闸校核潮水标准［重现期］（年）">
-				<el-input v-model="form.coloum36"/>
-			</el-form-item>
-			<el-form-item label="橡胶坝坝高（米）">
-				<el-input v-model="form.coloum37"/>
-			</el-form-item>
-			<el-form-item label="橡胶坝坝长（米）">
-				<el-input v-model="form.coloum38"/>
-			</el-form-item>
-			<el-form-item label="橡胶坝高程系统">
-				<el-input v-model="form.coloum39"/>
-			</el-form-item>
-			<el-form-item label="橡胶坝坝顶高程（米）">
-				<el-input v-model="form.coloum40"/>
-			</el-form-item>
-			<el-form-item label="水闸管理单位名称">
-				<el-input v-model="form.coloum41"/>
-			</el-form-item>
-			<el-form-item label="水闸管理单位代码">
-				<el-input v-model="form.coloum42"/>
-			</el-form-item>
-			<el-form-item label="水闸归口管理部门">
-				<el-input v-model="form.coloum43"/>
-			</el-form-item>
-			<el-form-item label="是否完成划界">
-				<el-input v-model="form.division"/>
-			</el-form-item>
-			<el-form-item label="是否完成确权">
-				<el-input v-model="form.confirm"/>
-			</el-form-item>
-			<el-form-item label="填表人员">
-				<el-input v-model="form.recordMan"/>
-			</el-form-item>
-			<el-form-item label="填表联系人电话">
-				<el-input v-model="form.recordPhone"/>
-			</el-form-item>
-			<el-form-item label="复核人员">
-				<el-input v-model="form.reviewMan"/>
-			</el-form-item>
-			<el-form-item label="复核人联系电话">
-				<el-input v-model="form.reviewPhone"/>
-			</el-form-item>
-			<el-form-item label="审查人员">
-				<el-input v-model="form.auditMan"/>
-			</el-form-item>
-			<el-form-item label="审核标志">
-				<el-input v-model="form.auditSymbol"/>
-			</el-form-item>
-			<el-form-item label="地区审核">
-				<el-input v-model="form.regionAudit"/>
-			</el-form-item>
-			<el-form-item label="省级审核">
-				<el-input v-model="form.provinceAudit"/>
-			</el-form-item>
-			<el-form-item label="中央审核">
-				<el-input v-model="form.nationAudit"/>
-			</el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="visible = false">取 消</el-button>
-                <el-button @click="save()" type="primary">确 定</el-button>
-            </div>
-        </el-dialog>
-       </div>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />  
+   </div>
 </template> 
 <script> 
 import Pagination from '@/components/Pagination' 
@@ -308,6 +88,7 @@ import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
+import { getToken } from '@/utils/auth'
 export default {
   components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -322,7 +103,9 @@ export default {
   },
    data() {
       return {
-      visible: false,
+	  visible: false,
+	  listLoading:null,
+	  fileList:[],
 	  form: {
 	  	name: null,	  	
 	  	code: null,	  	
@@ -392,7 +175,8 @@ export default {
 	  	provinceAudit: null,	  	
 	  	nationAudit: null	  	
 	  },
-      list: null, 
+	  list: null, 
+	  uploadaction: process.env.BASE_API+'/api/res/sluice/import2?token='+getToken(),
       total: 0 ,
       listQuery: {
         pageNo: 1,
@@ -401,6 +185,10 @@ export default {
         search: undefined,
         type: undefined,
         sort: '+id'
+	  },
+	  uploaddata:{
+        bizId:10001,
+        bizType:"SZ"
       },
       importanceOptions: [1, 2, 3]
     }
@@ -417,11 +205,32 @@ export default {
            this.list = response.data.list
            this.total = response.data.count
         })
-    },
+	},
+	 beforeUpload(file){ 
+		  this.listLoading = true 
+ 	 },
      handleFilter() {
       this.listQuery.pageNo = 1
-      this.getList()
-    },
+	  this.getList();
+	  
+	}, 
+	handleSuccess(){  
+		this.$message({
+          message: '导入数据成功',
+          type: 'success'
+        }); 
+		this.fileList = [];
+		this.getList(); 
+	},
+
+	handlError(){  
+		this.$message({
+          message: '导入数据失败',
+          type: 'error'
+        }); 
+		this.fileList = [];
+		this.getList(); 
+	}, 
 	edit(row) {
 		//console.log(JSON.stringify(row));
 		this.visible = true
@@ -435,7 +244,46 @@ export default {
 	del(row) {
 		var self = this
 		//console.log(row); 
-	}  
+	},
+	
+	elTableHeadFunction(h,l,fontSize) { 
+			let f = 14;
+			if(typeof(fontSize) != "undefined" && fontSize != null){
+				f = fontSize;
+			}
+			//列头的实际宽度
+			let width = l.column.realWidth;
+			//14：字体大小 32 是el表格的左右 padding 的合
+			let maxFontCount = Math.floor((width-32)/f)-1;
+			let chars =  l.column.label.split("");
+			var label = "";
+			if(maxFontCount < chars.length){
+				for (let i = 0; i < maxFontCount; i++){
+					label += chars[i];
+				}
+				label +="..";
+			}else{
+				label = l.column.label;
+			}
+			console.log(label);
+			return label;
+	},
+	labelHead(h,{column,index}){
+                    let l = column.label.length
+                    let f = 16 //每个字大小，其实是每个字的比例值，大概会比字体大小差不多大一点，
+                   column.minWidth = f*l //字大小乘个数即长度 ,注意不要加px像素，这里minWidth只是一个比例值，不是真正的长度
+　　　　　　　　　　　　//然后将列标题放在一个div块中，注意块的宽度一定要100%，否则表格显示不完全
+                  return h('div',{class:'table-head',style:{width:'100%'}},[column.label])
+     
+    }
   }
 }
 </script>
+<style <style lang="scss" scoped>
+.el-table th>.cell {
+	white-space: nowrap;
+}
+.upload-demo {
+	display: inline-block;
+}
+</style>

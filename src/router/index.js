@@ -98,10 +98,10 @@ export const constantRouterMap = [
   },
   {
     path: '/form',
-    name: 'Form',
+    name: '表单',
     component: Layout,
     meta: {
-      title: 'Form',
+      title: '表单',
       icon: 'toushu'
     },
     children: [
@@ -109,25 +109,25 @@ export const constantRouterMap = [
         path: 'map',
         name: 'testMap',
         component: () => import('@/views/test/map'),
-        meta: { title: '地图', icon: 'form' }
+        meta: { title: '地图' }
       },
       {
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        meta: { title: 'Form' }
       },
       {
         path: 'demo',
         name: '示例',
         component: () => import('@/views/form/demo'),
-        meta: { title: '表单示例', icon: 'form' }
+        meta: { title: '表单示例' }
       },
       {
         path: 'gencode2',
         name: '代码自动生成',
         component: () => import('@/views/test/list'),
-        meta: { title: '代码自动生成示例2', icon: 'form' }
+        meta: { title: '代码自动生成示例2' }
       }
     ]
   },
@@ -258,12 +258,19 @@ export const asyncRouterMap = [
   {
     path: '/tab',
     component: Layout,
+    meta: { title: 'tab', icon: 'tab' },
     children: [
       {
         path: 'index',
         component: () => import('@/views/tab/index'),
-        name: 'Tab',
-        meta: { title: 'tab', icon: 'tab' }
+        name: 'Tab1',
+        meta: { title: 'tab1', icon: 'tab' }
+      },
+      {
+        path: 'index2',
+        component: () => import('@/views/tab/index2'),
+        name: 'Tab2',
+        meta: { title: 'tab2', icon: 'tab' }
       }
     ]
   },
@@ -423,6 +430,12 @@ export const asyncRouterMap = [
         name: 'addressBook',
         component: () => import('@/views/setting/addressBook'),
         meta: { title: '通讯录' }
+      },
+      {
+        path: 'unitRole',
+        name: 'unitRole',
+        component: () => import('@/views/setting/unitRole'),
+        meta: { title: '单位角色' }
       }
     ]
   },

@@ -84,9 +84,9 @@ export default {
       loading: false
     }
   },
-  created() { 
-    this.getList()
-    console.log("create:::,");
+  created() {
+    //alert(1);
+    //this.getList()
   },
   methods: {
     getList() {

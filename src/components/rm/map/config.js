@@ -73,7 +73,7 @@ export const cfg = {
     minZoom: 6,
     zoom: 9,
     bglayers: [
-        { id: 'googleS', name: 'google卫星', layer: googleS, visible: true },
+        { id: 'googleS', name: 'google卫星', layer: googleS, visible: false },
         { id: 'google', name: 'google电子', layer: google, visible: false },
         { id: 'tiandi', name: '天地图电子', layer: tiandi, visible: false },
         { id: 'tiandiS', name: '天地图卫星', layer: tiandiS, visible: false }],

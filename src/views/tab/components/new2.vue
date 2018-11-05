@@ -84,9 +84,9 @@ export default {
       loading: false
     }
   },
-  created() { 
+  created() {
     this.getList()
-    console.log("create:::,");
+    console.log("new2");
   },
   methods: {
     getList() {

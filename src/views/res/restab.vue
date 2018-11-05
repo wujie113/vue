@@ -5,7 +5,7 @@
     <el-tabs v-model="activeName" style="margin-top:15px;" type="border-card">
       <el-tab-pane v-for="item in tabMapOptions" :label="item.label" :key="item.key" :name="item.key">
         <keep-alive>
-          <tab-pane v-if="activeName==item.key" :type="item.key" @create="showCreatedTimes"/>
+          <tab-pane v-if="activeName==item.key" :type="item.key" />
         </keep-alive>
       </el-tab-pane>
     </el-tabs>
@@ -13,10 +13,13 @@
 </template>
 
 <script>
-import tabPane from './components/tabPane' 
+import tabPane from './components/tabPane'
+
+import tabPane2 from './components/tabPane2'
+
 export default {
   name: 'Tab',
-  components: { tabPane },
+  components: { tabPane ,tabPane2},
   data() {
     return {
       tabMapOptions: [
