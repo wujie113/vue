@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 11:57:16 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-05 11:58:10
+ * @Last Modified time: 2018-11-05 16:20:31
  */
 <template>
   <div class="app-container">
@@ -14,7 +14,7 @@
         <div class="panel">
           <div class="panelHeading">
             <div>
-              <svg-icon icon-class="server" />单位机构-萍乡县XXX
+              <svg-icon icon-class="server" />单位机构 - {{ unitObj.label }}
             </div>
           </div>
           <div class="source panel-body">
@@ -25,11 +25,11 @@
             <el-table :data="tableData" stripe style="width: 100%" @selection-change="handleSelectionChange1" border>
               <el-table-column type="selection" align="center">
               </el-table-column>
-              <el-table-column prop="date" label="名称" align="center">
+              <el-table-column prop="name" label="名称" align="center">
               </el-table-column>
-              <el-table-column prop="name" label="备注" align="center">
+              <el-table-column prop="area" label="备注" align="center">
               </el-table-column>
-              <el-table-column prop="address" label="操作" align="center">
+              <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
                   <el-button @click="unitEdit(scope.$index, scope.row)" type="text" title="编辑">
                     <svg-icon icon-class="editColor" />
@@ -59,7 +59,7 @@
               </el-table-column>
               <el-table-column prop="name" label="描述" align="center">
               </el-table-column>
-              <el-table-column prop="address" label="操作" align="center">
+              <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
                   <el-button @click="roleEdit(scope.$index, scope.row)" type="text" title="编辑">
                     <svg-icon icon-class="editColor" />
@@ -102,7 +102,7 @@
   </div>
 </template>
 <script>
-import { AreaTree } from '@/api/setting/unitRole'
+import { AreaTree, getDepList, getDepUser } from '@/api/setting/unitRole'
 import LeftTree from './components/leftTree'
 import Pagination from '@/components/Pagination'
 
@@ -113,29 +113,16 @@ export default {
       parentMsg: "hello,child",
       dataArray: [],
       selectNodeData: {},
-      defaultData: [],
+      // defaultData: [],
       loading: true,
       isShowTabbar: false,
       unitEditDialog: false,
       roleEditDialog: false,
       authDialog: false,
-      tableData: [{
-        date: '05-02',
-        name: '王小虎',
-        address: ' 1518 弄'
-      }, {
-        date: '05-04',
-        name: '王小虎',
-        address: ' 1517 弄'
-      }, {
-        date: '05-01',
-        name: '王小虎',
-        address: ' 1519 弄'
-      }, {
-        date: '05-03',
-        name: '王小虎',
-        address: ' 1516 弄'
-      }]
+      unitObj: {
+
+      },
+      tableData: []
     }
   },
   created() {
@@ -144,14 +131,31 @@ export default {
   methods: {
     AreaTreeFun() {
       AreaTree().then(res => {
-        this.dataArray = res.data.list
-        this.defaultData = res.data.list[0]
         this.loading = false
+
+        this.dataArray = res.data.list
+        // this.defaultData = res.data.list[0]
+        this.unitObj = res.data.list[0]
+        let params = {
+          "area.id": this.unitObj.id
+        }
+        getDepList(params).then((res) => {
+          console.log("部门列表", res)
+          this.tableData = res.data.list
+          // getDepUser(params).then(res => {
+          //   console.log(res)
+          // }).catch(errorRes => { })
+        }).catch((errorRes) => {
+          this.loading = false
+        })
+
         // this.firstNode = res.data.list[0].label
         // this.ruleForm.name = res.data.list[0].label
         // this.ruleForm.sort = res.data.list[0].sort
         // this.nodeData = res.data.list[0]
       }).catch(errorRes => {
+        this.loading = false
+
         this.$message({
           type: "error",
           message: "网络错误!"
@@ -164,6 +168,21 @@ export default {
     selectNode(data) {
       console.log('父组件data', data)
       this.selectNodeData = data
+      let params = {
+        "area.id": data.id
+      }
+      this.loading = true
+      getDepList(params).then((res) => {
+        this.loading = false
+
+        console.log("部门列表", res)
+        this.tableData = res.data.list
+        // getDepUser(params).then(res => {
+        //   console.log(res)
+        // }).catch(errorRes => { })
+      }).catch((errorRes) => {
+        this.loading = false
+      })
     },
     // 添加单位
     addUnitBtn() {
