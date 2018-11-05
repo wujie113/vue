@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 14:40:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-05 14:42:40
+ * @Last Modified time: 2018-11-05 17:02:07
  */
 import request from "@/utils/request";
 export function AreaTree(params) {
@@ -26,5 +26,21 @@ export function getDepUser(params) {
     url: "/api/sys/office/user",
     method: "get",
     params
+  });
+}
+// 组织机构树
+export function name(params) {
+  return request({
+    url: "/api/sys/office/org/tree",
+    method: "get",
+    params
+  });
+}
+// 删除部门
+export function deleteDep(params) {
+  return request({
+    url: "/api/sys/office/del",
+    method: "post",
+    data: params
   });
 }

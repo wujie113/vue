@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 11:57:16 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-05 16:20:31
+ * @Last Modified time: 2018-11-05 18:36:12
  */
 <template>
   <div class="app-container">
@@ -42,67 +42,48 @@
       </el-col>
       <el-col :xs="8" :sm="8" :md="8" :lg="9" :xl="9">
         <div class="panel">
-          <div class="panelHeading">
-            <div>
-              <svg-icon icon-class="server" />部门角色-萍乡市河长办
-            </div>
-          </div>
-          <div class="source panel-body">
-            <div class="filter-container">
-              <el-button class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="addRoleBtn" size="mini">添加角色</el-button>
-              <el-button class="filter-item" type="info" icon="el-icon-delete" @click="deleteBtn" size="mini">删除</el-button>
-            </div>
-            <el-table :data="tableData" stripe style="width: 100%" @selection-change="handleSelectionChange2" border>
-              <el-table-column type="selection" align="center">
-              </el-table-column>
-              <el-table-column prop="date" label="角色名称" align="center">
-              </el-table-column>
-              <el-table-column prop="name" label="描述" align="center">
-              </el-table-column>
-              <el-table-column label="操作" align="center">
-                <template slot-scope="scope">
-                  <el-button @click="roleEdit(scope.$index, scope.row)" type="text" title="编辑">
-                    <svg-icon icon-class="editColor" />
-                  </el-button>
-                  <el-button @click="authBtn(scope.$index, scope.row)" type="text" title="授权">
-                    <svg-icon icon-class="authorizationColor" />
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
+          不要了
         </div>
         <!-- <left-tree @getMsgs="getWay" :message="parentMsg" /> -->
       </el-col>
     </el-row>
     <!-- 单位编辑弹窗 -->
     <el-dialog :visible.sync="unitEditDialog" width="30%" title="编辑">
-      单位编辑弹窗
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
+        <el-form-item prop="area" label="所属区划">
+          {{ form.area }}
+        </el-form-item>
+        <el-form-item prop="depName" label="所属部门" required>
+          <el-select v-model="form.depName" placeholder="请选择部门" clearable class="filter-item">
+            <el-option v-for="item in departments" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="name" label="名 称" required>
+          <el-input v-model="form.name" />
+        </el-form-item>
+        <el-form-item prop="sex" label="部门类型">
+          <el-select v-model="form.depType" placeholder="请选择性别" clearable class="filter-item">
+            <!-- <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" /> -->
+            <el-option label="男" value="male"></el-option>
+            <el-option label="女" value="female"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="sort" label="排序" required>
+          <el-input type="number" v-model="form.sort" />
+        </el-form-item>
+        <el-form-item label="描述" prop="desc">
+          <el-input type="textarea" v-model="form.desc"></el-input>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="unitEditDialog = false">取 消</el-button>
         <el-button @click="unitEditSave" type="primary">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- 角色编辑弹窗 -->
-    <el-dialog :visible.sync="roleEditDialog" width="30%" title="编辑">
-      角色编辑弹窗
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="roleEditDialog = false">取 消</el-button>
-        <el-button @click="roleEditSave" type="primary">确 定</el-button>
-      </div>
-    </el-dialog>
-    <!-- 授权弹窗 -->
-    <el-dialog :visible.sync="authDialog" width="30%" title="菜单授权">
-      2授权弹窗22
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="authDialog = false">取 消</el-button>
-        <el-button @click="authSave" type="primary">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
-import { AreaTree, getDepList, getDepUser } from '@/api/setting/unitRole'
+import { AreaTree, getDepList, getDepUser, deleteDep } from '@/api/setting/unitRole'
 import LeftTree from './components/leftTree'
 import Pagination from '@/components/Pagination'
 
@@ -122,6 +103,14 @@ export default {
       unitObj: {
 
       },
+      form: {
+        area: "",
+        depName: "",
+        name: "",
+        depType: "",
+        sort: "",
+        desc: ""
+      },
       tableData: []
     }
   },
@@ -132,30 +121,20 @@ export default {
     AreaTreeFun() {
       AreaTree().then(res => {
         this.loading = false
-
         this.dataArray = res.data.list
         // this.defaultData = res.data.list[0]
         this.unitObj = res.data.list[0]
         let params = {
-          "area.id": this.unitObj.id
+          "area.id": this.unitObj.parentId
         }
         getDepList(params).then((res) => {
-          console.log("部门列表", res)
           this.tableData = res.data.list
-          // getDepUser(params).then(res => {
-          //   console.log(res)
-          // }).catch(errorRes => { })
         }).catch((errorRes) => {
           this.loading = false
         })
 
-        // this.firstNode = res.data.list[0].label
-        // this.ruleForm.name = res.data.list[0].label
-        // this.ruleForm.sort = res.data.list[0].sort
-        // this.nodeData = res.data.list[0]
       }).catch(errorRes => {
         this.loading = false
-
         this.$message({
           type: "error",
           message: "网络错误!"
@@ -169,7 +148,7 @@ export default {
       console.log('父组件data', data)
       this.selectNodeData = data
       let params = {
-        "area.id": data.id
+        "area.id": data.parentId
       }
       this.loading = true
       getDepList(params).then((res) => {
@@ -188,21 +167,66 @@ export default {
     addUnitBtn() {
 
     },
-    // 添加角色
-    addRoleBtn() {
-
-    },
     // 点击 单位 编辑按钮
     unitEdit() {
       this.unitEditDialog = true
     },
-    // 点击 角色 编辑按钮
-    roleEdit() {
-      this.roleEditDialog = true
+    unitEditSave() {
+
     },
-    // 点击 授权 按钮
-    authBtn() {
-      this.authDialog = true
+    // 全选,单选
+    handleSelectionChange1(val) {
+      if (val.length > 0) {
+        let ids = [], idsStr = ""
+        val.map(item => {
+          let id = item.id
+          ids.push(item.id)
+          console.log('ids', ids)
+        })
+        idsStr = ids.join()
+        this.deleteDepIDs = idsStr
+      }
+    },
+    // 删除部门
+    deleteBtn() {
+      this.$confirm("确认删除当前部门?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        let params = {
+          ids: this.deleteDepIDs
+        }
+        deleteDep(params).then((res) => {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          })
+          this.loading = true
+          let params = {
+            "area.id": this.unitObj.parentId
+          }
+          getDepList(params).then((res) => {
+            this.loading = false
+            this.tableData = res.data.list
+          }).catch((errorRes) => {
+            this.loading = false
+            this.$message({
+              type: "error",
+              message: "网络错误!"
+            })
+          })
+        }).catch((errorRes) => {
+          this.loading = false
+          this.$message({
+            type: "error",
+            message: "网络错误!"
+          })
+        })
+      }).catch(() => {
+        // 用户取消删除
+      })
+
     }
   }
 }

@@ -143,7 +143,8 @@
     <el-dialog :visible.sync="dialogVisible1" width="30%" title="用户详情">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
         <el-form-item prop="unit" label="单位">
-          <el-input type="text" v-model="form.unit" disabled="disabled" />
+          {{ form.unit }}
+          <!-- <el-input type="text" v-model="form.unit" disabled="disabled" /> -->
         </el-form-item>
         <el-form-item prop="department" label="部门" required>
           <el-select v-model="form.department" placeholder="请选择部门" clearable class="filter-item">
@@ -414,6 +415,10 @@ export default {
     },
     // 表单编辑
     handleEdit(index, row) {
+      if (this.$refs.form != undefined) {
+        this.$refs.form.resetFields()
+        // Object.assign(this.form, this.$options.data().form)
+      }
       this.dialogVisible1 = true
       console.log('表单编辑', row)
       // this.form2 = row
