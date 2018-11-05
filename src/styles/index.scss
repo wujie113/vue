@@ -198,7 +198,20 @@ code {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+// 这里是我们自定义的通用样式-----start
+
 .el-dialog {
+  // 改写 ====   把element的dialog组件上下左右居中显示
+  position: absolute !important;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  margin-top: 0 !important;
   .el-form .el-select {
     width: 100%;
   }
@@ -231,3 +244,13 @@ code {
     background: rgba(0, 0, 0, 0.1);
   }
 }
+// table表格里面按钮的大小
+.el-table__body-wrapper .el-button .svg-icon {
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+}
+.el-table__body-wrapper .el-button i {
+  font-size: 16px;
+}
+
+// 这里是我们自定义的通用样式-----end

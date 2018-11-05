@@ -4,7 +4,7 @@
       <div>
         <svg-icon icon-class="tree" />{{titleName}}
       </div>
-      <div class="btn-group">
+      <div class="btn-group" v-show="isShowTabbar">
         <button class="btn mini" @click="refreshBtn">
           <i class="el-icon-refresh"></i>
         </button>
@@ -53,6 +53,10 @@ export default {
     },
     dataArray: {
       type: Array,
+      required: true
+    },
+    isShowTabbar: {
+      type: Boolean,
       required: true
     }
   },

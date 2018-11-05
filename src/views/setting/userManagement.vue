@@ -62,7 +62,7 @@
               <el-table-column prop="address" label="操作" align="center" width="150px">
                 <template slot-scope="scope">
                   <el-button @click="handleEdit(scope.$index, scope.row)" type="text" title="编辑">
-                    <svg-icon icon-class="edit" />
+                    <svg-icon icon-class="editColor" />
                   </el-button>
                   <el-button type="text" @click="ModifyPassword(scope.$index, scope.row)" title="修改密码">
                     <svg-icon icon-class="password1" />
@@ -490,7 +490,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-button--text .svg-icon {
+.el-button .svg-icon {
   width: 1.2rem;
   height: 1.2rem;
 }
