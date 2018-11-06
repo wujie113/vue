@@ -97,6 +97,22 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/work',
+    component: Layout,
+    redirect: '/work/work',
+    name: 'work',
+    meta: { title: '工单管理', icon: 'kaohe' },
+    children: [
+      
+      {
+        path: 'complaint',
+        name: 'complaint',
+        component: () => import('@/views/work/complaint'),
+        meta: { title: '投诉管理', icon: 'table' }
+      }
+    ]
+  },
+  {
     path: '/form',
     name: '表单',
     component: Layout,

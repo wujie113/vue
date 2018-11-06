@@ -6,57 +6,57 @@
   </el-select>
 </template> 
 <script>
-  import { getdictList } from "@/components/rm/dict/dict.js"
-  export default {
-    name: "RmDict",
-    props: {
-      value: {
-        required: false
-      },
-      placeholder: {
-        required: false,
-        type: String,
-        default: "--请选择--"
-      },
-      title: {
-        required: false,
-        type: String,
-        default: "--"
-      },
-      type: {
-        required: true,
-        type: String
-      }
+import { getdictList } from "@/components/rm/dict/dict.js"
+export default {
+  name: "RmDict",
+  props: {
+    value: {
+      required: false
     },
-    data() {
-      return {
-        optionlists: [] 
-      }
+    placeholder: {
+      required: false,
+      type: String,
+      default: "--请选择--"
     },
-    computed: {},
-    created() {
-      this.getDictList()
+    title: {
+      required: false,
+      type: String,
+      default: "--"
     },
-    methods: {
-      getDictList() {
-        getdictList(this.type).then(response => {
-          this.optionlists = response.data.list
-          console.log(" this.optionlists ", this.optionlists)
-        })
-      },
-      handleInput(val) {
-        this.$emit("input", val)
-      }
+    type: {
+      required: true,
+      type: String
+    }
+  },
+  data() {
+    return {
+      optionlists: []
+    }
+  },
+  computed: {},
+  created() {
+    this.getDictList()
+  },
+  methods: {
+    getDictList() {
+      getdictList(this.type).then(response => {
+        this.optionlists = response.data.list
+        console.log(" this.optionlists ", this.optionlists)
+      })
+    },
+    handleInput(val) {
+      this.$emit("input", val)
     }
   }
+}
 </script>
 
 <style scoped>
-  .pagination-container {
-    background: #fff;
-    padding: 32px 16px;
-  }
-  .pagination-container.hidden {
-    display: none;
-  }
+.pagination-container {
+  background: #fff;
+  padding: 32px 16px;
+}
+.pagination-container.hidden {
+  display: none;
+}
 </style>

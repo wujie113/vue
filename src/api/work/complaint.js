@@ -10,7 +10,7 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/work/complaint/list',
+	    url: '/api/work/complaint/get',
 	    method: 'get',
 	    params:{id:id}
 	  })

@@ -1,22 +1,15 @@
 <template>
   <div class="app-container">
     <div class="filter-container"> 
-       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
-      </el-select> 
-       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-       <el-button
-			 type="primary"
-			 icon="el-icon-plus"
-			 @click="visible=true"
-			>新增</el-button>
+       <el-input placeholder="请输入问题描述" v-model="listQuery.description" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+       <rm-dict class="filter-item" title="请选择类型" placeholder="请选择类型" type="work_complan"  v-model="listQuery.type"/>
+       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button> 
     </div>
-      <el-table :data="list" row-key="id"  stripe style="width: 100%">
+      <el-table :data="list"  v-loading="listLoading"  row-key="id"  stripe style="width: 100%">
                 <el-table-column prop="lat" label="纬度"/>
         <el-table-column prop="lng" label="经度"/>
         <el-table-column prop="area.id" label="所属区域"/>
-        <el-table-column prop="type" label="问题类型"/>
+        <el-table-column prop="typename" label="问题类型"/>
         <el-table-column prop="address" label="事发地点"/>
         <el-table-column prop="report" label="上报人"/>
         <el-table-column prop="reportPhone" label="上报电话"/>
@@ -29,54 +22,42 @@
         	</template>
         </el-table-column>
       </el-table>  
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" /> 
-  
-  
-  <el-dialog :visible.sync="visible" title="编辑">
-  	<el-form :model="form">
-			<el-form-item label="纬度">
-				<el-input v-model="form.lat"/>
-			</el-form-item>
-			<el-form-item label="经度">
-				<el-input v-model="form.lng"/>
-			</el-form-item>
-			<el-form-item label="所属区域">
-				 <rm-area-select v-model="form.area.id"  />
-			</el-form-item>
-			<el-form-item label="问题类型">
-				<el-input v-model="form.type"/>
-			</el-form-item>
-			<el-form-item label="事发地点">
-				<el-input v-model="form.address"/>
-			</el-form-item>
-			<el-form-item label="上报人">
-				<el-input v-model="form.report"/>
-			</el-form-item>
-			<el-form-item label="上报电话">
-				<el-input v-model="form.reportPhone"/>
-			</el-form-item>
-			<el-form-item label="上报时间">
-				 <el-date-picker v-model="form.reportDate" type="date" placeholder="Pick a date" style="width: 100%;"/>
-				<!-- <span class="help-inline"><font color="red">*</font> </span>-->
-			</el-form-item>
-			<el-form-item label="问题描述">
-				<el-input v-model="form.description"/>
-			</el-form-item>
-            </el-form>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />  
+  <el-dialog :visible.sync="visible" title="投诉详情" l>
+  	<el-form :model="form" abel-width="80px" size="mini"> 
+      <el-form-item label="问题类型">
+			 {{form.typename}}
+			</el-form-item>  
+     <el-form-item label="纬度纬度">
+				{{form.lat}},{{form.lng}}
+			</el-form-item>  
+      <el-form-item label="上报人">
+				  {{form.report}}
+			</el-form-item> 
+			<el-form-item label="上报电话"> 
+         {{form.reportPhone}}
+			</el-form-item> 
+	    <el-form-item label="上报时间"> 
+        {{form.reportDate}}
+			</el-form-item>  
+			<el-form-item label="问题描述">  
+          {{form.description}}
+			</el-form-item> 
+      </el-form> 
+      <vue-preview :slides="slide1" @close="handleClose"></vue-preview> 
             <div slot="footer" class="dialog-footer">
-                <el-button @click="visible = false">取 消</el-button>
-                <el-button @click="save()" type="primary">确 定</el-button>
+                <el-button @click="visible = false">关 闭</el-button> 
             </div>
-        </el-dialog>
-       </div>
+      </el-dialog>
+    </div>
 </template> 
 <script> 
 import Pagination from '@/components/Pagination' 
-import { getList } from '@/api/work/complaint.js'
+import { getList ,get} from '@/api/work/complaint.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
-import RmAreaSelect from "@/components/rm/areaselect"
+import RmAreaSelect from "@/components/rm/areaselect" 
 export default {
   components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -92,17 +73,20 @@ export default {
    data() {
       return {
       visible : false,
-	  form: {
-	  	lat:null,	  	
-	  	lng:null,	  	
-	  	area.id:null,	  	
-	  	type:null,	  	
-	  	address:null,	  	
-	  	report:null,	  	
-	  	reportPhone:null,	  	
-	  	reportDate:null,	  	
-	  	description:null,	  	
-	  },
+      listLoading:false,
+      slide1: null,
+      form: {
+        lat:null,	  	
+        lng:null,	  	
+        area:{id:null},	  	
+        type:null,	  	
+        address:null,	  	
+        report:null,	  	
+        reportPhone:null,	  	
+        reportDate:null,	  	
+        description:null,	
+        typename:null  	
+      },
       list:  null, 
       total: 0 ,
       listQuery: {
@@ -110,6 +94,7 @@ export default {
         pageSize: 10, 
         importance: undefined,
         search: undefined,
+        description:null,
         type: undefined,
         sort: '+id'
       },
@@ -121,8 +106,7 @@ export default {
   },
   methods: {
     getList() {  
-        this.listLoading = true ;
-        console.log("this.listQuery::::",this.listQuery);
+        this.listLoading = true ; 
         getList(this.listQuery).then(response => { 
           this.listLoading = false 
            this.list = response.data.list
@@ -135,8 +119,25 @@ export default {
     },
 	edit(row){
 		//console.log(JSON.stringify(row));
-		this.visible=true;
-		this.form=row;
+		this.visible=true; 
+    get(row.id).then(response => {  
+      this.form=response.data;
+      console.log("form:::",this.form); this.slide1=[]; 
+        const imagelist=this.form.imageurl; 
+        imagelist.forEach((value,index)=> { 
+            this.slide1.push(
+              {
+                src:value.url,
+                msrc:value.url,
+                alt:value.name,
+                title:value.name,
+                w: 1200,
+                h: 900
+              }
+            )
+        }); 
+    });
+    
 	},
 	save(){
 		//console.log('保存:',JSON.stringify(this.form),this.selectUser);
@@ -146,7 +147,10 @@ export default {
 	del(row){
 		var self=this;
 		//console.log(row); 
-	}  
+  } ,
+  handleClose(){
+    console.log(".......")
+  } 
   }
 }
 </script>

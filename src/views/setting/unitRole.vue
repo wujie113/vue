@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 11:57:16 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-05 18:36:12
+ * @Last Modified time: 2018-11-06 19:02:30
  */
 <template>
   <div class="app-container">
@@ -14,7 +14,7 @@
         <div class="panel">
           <div class="panelHeading">
             <div>
-              <svg-icon icon-class="server" />单位机构 - {{ unitObj.label }}
+              <svg-icon icon-class="server" />部门机构 - {{ unitObj.label }}
             </div>
           </div>
           <div class="source panel-body">
@@ -42,39 +42,37 @@
       </el-col>
       <el-col :xs="8" :sm="8" :md="8" :lg="9" :xl="9">
         <div class="panel">
-          不要了
+          buycle
+          <!-- <vue-preview :slides="slide1" @close="handleClose"></vue-preview> -->
         </div>
         <!-- <left-tree @getMsgs="getWay" :message="parentMsg" /> -->
       </el-col>
     </el-row>
     <!-- 单位编辑弹窗 -->
-    <el-dialog :visible.sync="unitEditDialog" width="30%" title="编辑">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
-        <el-form-item prop="area" label="所属区划">
-          {{ form.area }}
+    <el-dialog :visible.sync="unitEditDialog" width="30%" title="编辑" v-loading="dialogLoading">
+      <el-form ref="form" :model="form" label-width="80px" status-icon>
+        <el-form-item label="所属区划">
+          {{ form.area ? form.area : unitObj.label}}
         </el-form-item>
-        <el-form-item prop="depName" label="所属部门" required>
-          <el-select v-model="form.depName" placeholder="请选择部门" clearable class="filter-item">
-            <el-option v-for="item in departments" :key="item" :label="item" :value="item" />
+        <el-form-item label="所属部门">
+          <el-select v-model="form.name" placeholder="请选择部门" clearable class="filter-item" @change="selectList">
+            <el-option v-for="item in tableData" :key="item.id" :value="item.name" :label="item.name" />
           </el-select>
         </el-form-item>
-        <el-form-item prop="name" label="名 称" required>
+        <el-form-item label="名 称">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item prop="sex" label="部门类型">
-          <el-select v-model="form.depType" placeholder="请选择性别" clearable class="filter-item">
-            <!-- <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" /> -->
-            <el-option label="男" value="male"></el-option>
-            <el-option label="女" value="female"></el-option>
-          </el-select>
+        <el-form-item label="部门类型">
+          <rm-dict type="sys_office_type" placeholder="请选择部门类型" @input="inputSelect" v-model="form.depType" />
         </el-form-item>
-        <el-form-item prop="sort" label="排序" required>
+        <el-form-item label="排序">
           <el-input type="number" v-model="form.sort" />
         </el-form-item>
-        <el-form-item label="描述" prop="desc">
+        <el-form-item label="描述">
           <el-input type="textarea" v-model="form.desc"></el-input>
         </el-form-item>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="unitEditDialog = false">取 消</el-button>
         <el-button @click="unitEditSave" type="primary">确 定</el-button>
@@ -83,12 +81,13 @@
   </div>
 </template>
 <script>
-import { AreaTree, getDepList, getDepUser, deleteDep } from '@/api/setting/unitRole'
+import { AreaTree, getDepList, getDepUser, deleteDep, save } from '@/api/setting/unitRole'
 import LeftTree from './components/leftTree'
 import Pagination from '@/components/Pagination'
+import RmDict from '@/components/rm/dict'
 
 export default {
-  components: { LeftTree, Pagination },
+  components: { LeftTree, Pagination, RmDict },
   data() {
     return {
       parentMsg: "hello,child",
@@ -96,20 +95,22 @@ export default {
       selectNodeData: {},
       // defaultData: [],
       loading: true,
+      dialogLoading: false,
       isShowTabbar: false,
       unitEditDialog: false,
       roleEditDialog: false,
       authDialog: false,
-      unitObj: {
-
-      },
+      unitObj: {},
       form: {
-        area: "",
-        depName: "",
-        name: "",
-        depType: "",
-        sort: "",
-        desc: ""
+        id: null,
+        "area.id": null,
+        parentId: null,
+        area: null,
+        depName: null,
+        name: null,
+        depType: null,
+        sort: null,
+        desc: null,
       },
       tableData: []
     }
@@ -127,6 +128,8 @@ export default {
         let params = {
           "area.id": this.unitObj.parentId
         }
+        // 把局域id存储起来,编辑和新增的时候需要用到
+        this.AreaId = this.unitObj.parentId
         getDepList(params).then((res) => {
           this.tableData = res.data.list
         }).catch((errorRes) => {
@@ -145,33 +148,100 @@ export default {
       console.log(msg)
     },
     selectNode(data) {
-      console.log('父组件data', data)
+      this.unitObj = data
       this.selectNodeData = data
       let params = {
         "area.id": data.parentId
       }
+      // 把局域id存储起来,编辑和新增的时候需要用到
+      this.AreaId = data.parentId
       this.loading = true
       getDepList(params).then((res) => {
         this.loading = false
-
-        console.log("部门列表", res)
         this.tableData = res.data.list
-        // getDepUser(params).then(res => {
-        //   console.log(res)
-        // }).catch(errorRes => { })
       }).catch((errorRes) => {
         this.loading = false
       })
     },
+    inputSelect(data) {
+      console.log('数字字典', data)
+
+    },
     // 添加单位
     addUnitBtn() {
+      this.unitEditDialog = true
+
+      if (this.$refs.form != undefined) {
+        this.$refs.form.resetFields()
+        Object.assign(this.form, this.$options.data().form)
+      }
 
     },
     // 点击 单位 编辑按钮
-    unitEdit() {
+    unitEdit(index, row) {
+      // if (this.$refs.form != undefined) {
+      //   this.$refs.form.resetFields()
+      // }
       this.unitEditDialog = true
+
+      Object.assign(this.form, row)
     },
-    unitEditSave() {
+    selectList(selectdata) {
+      console.log('选择', selectdata)
+      let obj = {};
+      obj = this.tableData.find((item) => {
+        return item.name === selectdata;
+      });
+      console.log(obj.parentId)
+      this.parentId = obj.parentId
+    },
+    // 弹窗编辑保存
+    unitEditSave(v) {
+      let params = {
+        "area.id": this.AreaId,//区域ID
+        "parent.id": this.form.parentId,//所属部门
+        name: this.form.name,//名称
+        grade: this.form.depType,//部门类型
+        sort: this.form.sort,
+        remarks: this.form.desc
+      }
+      if (this.form.id) {
+        params.id = this.form.id
+      }
+      if (this.form.parentId) {
+        params["parent.id"] = this.form.parentId
+      } else {
+        params["parent.id"] = this.parentId
+      }
+      this.dialogLoading = true
+      save(params).then(res => {
+        this.dialogLoading = false
+        this.unitEditDialog = false
+        this.$message({
+          type: "success",
+          message: "修改成功!"
+        })
+        let p = {
+          "area.id": this.AreaId
+        }
+        getDepList(p).then((res) => {
+          // this.loading = false
+          this.tableData = res.data.list
+        }).catch((errorRes) => {
+          // this.loading = false
+        })
+      }).catch(errorRes => {
+        this.dialogLoading = false
+
+        this.unitEditDialog = false
+
+        this.$message({
+          type: "error",
+          message: "网络错误!"
+        })
+      })
+      console.log('params', params)
+      console.log('this.form', this.form)
 
     },
     // 全选,单选

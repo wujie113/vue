@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container"> 
-       <el-input placeholder="输入标题" v-model="query.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-      <rm-dict title="请选择类型"  placeholder="请选择类型"  type="yes_no"     :name.sync="query.type" />
+       <el-input placeholder="输入标题1111" v-model="query.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <rm-dict class="filter-item" title="请选择类型" placeholder="请选择类型" type="yes_no"  v-model="query.type"/>
        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
        <el-button type="primary" icon="el-icon-plus" @click="create">新增</el-button>
     </div>
