@@ -253,4 +253,30 @@ code {
   font-size: 16px;
 }
 
+.el-container {
+  .el-aside {
+    width: 25% !important;
+    margin-right: 1%;
+  }
+  .el-header,
+  .el-main {
+    border: 1px solid transparent;
+    border-color: #ddd;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    width: 100%;
+  }
+  .el-header {
+    margin-bottom: 1%;
+    .topTitle {
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .filter-container {
+      padding: 25px 0 !important;
+    }
+  }
+}
 // 这里是我们自定义的通用样式-----end

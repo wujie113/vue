@@ -87,12 +87,28 @@ export const constantRouterMap = [
         path: 'river2',
         name: 'river2',
         component: () => import('@/views/res/river'),
-        meta: { title: '河流管理', icon: 'table' }
+        meta: { title: '河流管理' }
       }, {
         path: 'drainage',
         name: 'drainage',
         component: () => import('@/views/res/drainage'),
-        meta: { title: '水系管理', icon: 'table' }
+        meta: { title: '水系管理' }
+      } , {
+        path: 'lakeb',
+        name: 'lakeb',
+        component: () => import('@/views/res/lakebase'),
+        meta: { title: '湖泊区域', icon: 'table' }
+      }
+      , {
+        path: 'lake',
+        name: 'lake',
+        component: () => import('@/views/res/lake'),
+        meta: { title: '山塘(湖泊)', icon: 'table' }
+      } , {
+        path: 'duty',
+        name: 'duty',
+        component: () => import('@/views/res/dutyPart'),
+        meta: { title: '责任段', icon: 'table' }
       } 
     ]
   },
@@ -102,22 +118,48 @@ export const constantRouterMap = [
     redirect: '/work/work',
     name: 'work',
     meta: { title: '工单管理', icon: 'kaohe' },
-    children: [
-      
+    children: [    
       {
         path: 'complaint',
         name: 'complaint',
         component: () => import('@/views/work/complaint'),
-        meta: { title: '投诉管理', icon: 'table' }
+        meta: { title: '投诉管理', icon: 'complaint' }
+      }
+    ]
+  },
+  {
+    path: '/regula',
+    component: Layout,
+    redirect: '/regula/regula',
+    name: 'regula',
+    meta: { title: '巡河图监管', icon: 'kaohe' },
+    children: [ 
+      {
+        path: 'river2',
+        name: 'river2',
+        component: () => import('@/views/regula/rivergula'),
+        meta: { title: '河流监管', icon: 'table' }
+      },
+      {
+        path: 'rivermap',
+        name: 'rivermap',
+        component: () => import('@/views/regula/riverresmap'),
+        meta: { title: '河流管理', icon: 'table' }
+      },
+      {
+        path: 'restabmap',
+        name: 'restabmap',
+        component: () => import('@/views/regula/restabMap'),
+        meta: { title: '资源管理', icon: 'table' }
       }
     ]
   },
   {
     path: '/form',
-    name: '表单',
+    name: 'Form1',
     component: Layout,
     meta: {
-      title: '表单',
+      title: 'Form',
       icon: 'toushu'
     },
     children: [
@@ -125,25 +167,25 @@ export const constantRouterMap = [
         path: 'map',
         name: 'testMap',
         component: () => import('@/views/test/map'),
-        meta: { title: '地图' }
+        meta: { title: '地图', icon: 'form' }
       },
       {
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: 'Form' }
+        meta: { title: 'Form', icon: 'form' }
       },
       {
         path: 'demo',
         name: '示例',
         component: () => import('@/views/form/demo'),
-        meta: { title: '表单示例' }
+        meta: { title: '表单示例', icon: 'form' }
       },
       {
         path: 'gencode2',
         name: '代码自动生成',
         component: () => import('@/views/test/list'),
-        meta: { title: '代码自动生成示例2' }
+        meta: { title: '代码自动生成示例2', icon: 'form' }
       }
     ]
   },
@@ -452,6 +494,12 @@ export const asyncRouterMap = [
         name: 'unitRole',
         component: () => import('@/views/setting/unitRole'),
         meta: { title: '单位角色' }
+      },
+      {
+        path: 'basketball',
+        name: 'basketball',
+        component: () => import('@/views/demos/basketball'),
+        meta: { title: 'NBA' }
       }
     ]
   },

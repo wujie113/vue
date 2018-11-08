@@ -13,6 +13,7 @@
       <el-table-column prop="area.name" label="责任主体" />
       <el-table-column prop="code" label="水系编码" />
       <el-table-column prop="chief" label="河长办" />
+       <el-table-column prop="sort" label="排序" />
       <el-table-column prop="id" label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit" />
@@ -29,6 +30,9 @@
         <el-form-item prop="area" label="责任主体">
           <rm-area-select v-model="form.area" />
         </el-form-item>
+          <el-form-item   prop="sort"  label="排序">
+           <el-input v-model="form.sort"/>
+        </el-form-item> 
         <el-form-item prop="description" label="水系描述">
           <el-input v-model="form.description" :rows="4" type="textarea" />
         </el-form-item> 
@@ -88,6 +92,7 @@ export default {
         bizType: "R",
       },
       form: {
+        id:null,
         type: "SX",
         name: null,
         lng: null,
@@ -95,7 +100,8 @@ export default {
         description: null,
         area: null,
         code: null,
-        river: null
+        river: null,
+        sort:null
       },
       list: null,
       total: 0,
@@ -160,6 +166,7 @@ export default {
            } else{ 
              this.getList(); 
            } 
+           this.visible=false;
       }).catch(error => { 
           this.listLoading = false 
          console.log("出错了。。。。。：：：",error);

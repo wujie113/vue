@@ -84,8 +84,12 @@ export default {
     return {
      listLoading:null,
 	  fileList:[],
-	  uploadaction: process.env.BASE_API+'/api/res/sluice/import?token='+getToken(),
+	  uploadaction: process.env.BASE_API+'/api/res/cradle/import?token='+getToken(),
       list: null, 
+      uploaddata:{
+        bizId:10001,
+        bizType:"SZ"
+      },
       total: 0 ,
       listQuery: {
         pageNo: 1,
@@ -104,7 +108,6 @@ export default {
   methods: {
     getList() {  
         this.listLoading = true 
-        console.log("this.listQuery::::",this.listQuery)
         getList(this.listQuery).then(response => { 
           this.listLoading = false 
            this.list = response.data.list
@@ -137,23 +140,31 @@ export default {
 	  this.getList();
 	  
 	}, 
-	handleSuccess(){  
-		this.$message({
-          message: '导入数据成功',
-          type: 'success'
-        }); 
+	handleSuccess(respone){  
+		if(respone.success==true){
+			this.$message({
+				message: '导入数据成功',
+				type: 'success'
+        	}); 
+		}else{
+			this.$message({
+				message: respone.msg,
+				type: 'error'
+        	}); 
+		}
+		this.listQuery.search = ""
 		this.fileList = [];
 		this.getList(); 
 	},
-
 	handlError(){  
 		this.$message({
           message: '导入数据失败',
           type: 'error'
-        }); 
+		}); 
+		this.listQuery.search = ""
 		this.fileList = [];
 		this.getList(); 
-	},
+	}, 
   }
 }
 </script>

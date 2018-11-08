@@ -1,7 +1,7 @@
 <template>
     <div class="filter-container">  
 	  <div class="filter-container">
-		<el-input placeholder="检索水闸编码、名称" v-model="listQuery.search" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/> 
+		<el-input placeholder="检索水闸名称、编码" v-model="listQuery.search" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/> 
 		<el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
 		<el-upload :action="uploadaction"  :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo"
               :before-upload="beforeUpload"  :file-list="fileList"
@@ -212,22 +212,29 @@ export default {
      handleFilter() {
       this.listQuery.pageNo = 1
 	  this.getList();
-	  
 	}, 
-	handleSuccess(){  
-		this.$message({
-          message: '导入数据成功',
-          type: 'success'
-        }); 
+handleSuccess(respone){  
+		if(respone.success==true){
+			this.$message({
+				message: '导入数据成功',
+				type: 'success'
+        	}); 
+		}else{
+			this.$message({
+				message: respone.msg,
+				type: 'error'
+        	}); 
+		}
+		this.listQuery.search = ""
 		this.fileList = [];
 		this.getList(); 
 	},
-
 	handlError(){  
 		this.$message({
           message: '导入数据失败',
           type: 'error'
-        }); 
+		}); 
+		this.listQuery.search = ""
 		this.fileList = [];
 		this.getList(); 
 	}, 

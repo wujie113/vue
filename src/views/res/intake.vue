@@ -1,16 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container"> 
-       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
-      </el-select> 
+       <el-input placeholder="检索取水口名称、编码" v-model="listQuery.search" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-       <el-button
-			 type="primary"
-			 icon="el-icon-plus"
-			 @click="visible=true"
-			>新增</el-button>
+       <el-upload :action="uploadaction"  :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo"
+              :before-upload="beforeUpload"  :file-list="fileList"
+				:data="uploaddata"   :on-success="handleSuccess"   :on-error="handlError">
+				<el-button  class="filter-item"  type="primary">点击上传</el-button> 
+		</el-upload>
     </div>
       <el-table :data="list" row-key="id"  stripe style="width: 100%">
                 <el-table-column prop="name" label="取水口名称"/>
@@ -252,6 +249,7 @@ import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
+import { getToken } from '@/utils/auth'
 export default {
   components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -266,7 +264,8 @@ export default {
   },
    data() {
       return {
-      visible: false,
+	  visible: false,
+	   fileList:[],
 	  form: {
 	  	name: null,	  	
 	  	code: null,	  	
@@ -322,7 +321,8 @@ export default {
 	  	provinceAudit: null,	  	
 	  	nationAudit: null	  	
 	  },
-      list: null, 
+	  list: null, 
+	  uploadaction: process.env.BASE_API+'/api/res/intake/import?token='+getToken(),
       total: 0 ,
       listQuery: {
         pageNo: 1,
@@ -331,6 +331,10 @@ export default {
         search: undefined,
         type: undefined,
         sort: '+id'
+	  },
+	 uploaddata:{
+        bizId:10001,
+        bizType:"SZ"
       },
       importanceOptions: [1, 2, 3]
     }
@@ -347,7 +351,35 @@ export default {
            this.list = response.data.list
            this.total = response.data.count
         })
-    },
+	},
+	 beforeUpload(file){ 
+		  this.listLoading = true 
+ 	 },
+	handleSuccess(respone){  
+		if(respone.success==true){
+			this.$message({
+				message: '导入数据成功',
+				type: 'success'
+        	}); 
+		}else{
+			this.$message({
+				message: respone.msg,
+				type: 'error'
+        	}); 
+		}
+		this.listQuery.search = ""
+		this.fileList = [];
+		this.getList(); 
+	},
+	handlError(){  
+		this.$message({
+          message: '导入数据失败',
+          type: 'error'
+		}); 
+		this.listQuery.search = ""
+		this.fileList = [];
+		this.getList(); 
+	}, 
      handleFilter() {
       this.listQuery.pageNo = 1
       this.getList()
@@ -369,3 +401,10 @@ export default {
   }
 }
 </script>
+upload-demo
+
+	<style <style lang="scss" scoped>
+	.upload-demo {
+		display: inline-block;
+	}
+	</style>

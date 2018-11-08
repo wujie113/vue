@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="aaaa">
         <rm-map v-model="map"></rm-map>
     </div>
 </template> 
@@ -23,4 +23,11 @@
     }
 </script>
 <style>
+    .aaaa {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
 </style>

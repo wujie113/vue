@@ -20,7 +20,12 @@ import './permission' // permission control
 import './mock' // simulation data
 
 import * as filters from './filters' // global filters
+import vuePicturePreview from "vue-picture-preview";
+import VuePreview from "vue-preview";
 
+// defalut install
+Vue.use(VuePreview);
+Vue.use(vuePicturePreview);
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)
@@ -39,7 +44,4 @@ new Vue({
   i18n,
   render: h => h(App)
 })
-import VuePreview from 'vue-preview'
 
-// defalut install
-Vue.use(VuePreview)

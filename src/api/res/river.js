@@ -39,6 +39,13 @@ import request from '@/utils/request'
 	    params: { type: "SX" }
 	  })
 	}  
+	export function tree() {
+		return request({
+	    url: '/api/res/river/tree',
+	    method: 'get'
+	  })
+	}  
+	
 	//发送图片上传
 	export function	uploadFile(data){  
 		return request({

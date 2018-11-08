@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="mapContainer">
         <el-button icon="el-icon-location" size="mini" @click="centerView([113.88, 27.67],16)">定位</el-button>
         <div id="map" class="map"></div>
         <div id="mapctrl" class="map-ctrl-panel">
@@ -198,6 +198,13 @@
     }
 </script>
 <style>
+    .mapContainer {
+        width: 100%;
+        height: 100%;
+    }
+    .map {
+        height: 100%;
+    }
     .ol-mouse-position {
       top: auto;
       bottom: 25px;

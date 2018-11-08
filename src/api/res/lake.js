@@ -7,7 +7,13 @@ import request from '@/utils/request'
 	    params
 	  })
 	}
-	
+	export function getqlist(type) {
+	  return request({
+	    url: '/api/res/lake/qylist',
+	    method: 'get',
+	    params:{type:type}
+	  })
+	}
 	export function get(id) {
 	  return request({
 	    url: '/api/res/lake/list',
@@ -16,6 +22,7 @@ import request from '@/utils/request'
 	  })
 	}
 	export function save(data) {
+		console.log("data::",data)
 	  return request({
 	    url: '/api/res/lake/save',
 	    method: 'post',
@@ -30,3 +37,9 @@ import request from '@/utils/request'
 	    params:{ids:ids}
 	  })
 	}
+	export function hptree() {
+		return request({
+	    url: '/api/res/lake/tree',
+	    method: 'get'
+	  })
+	}  

@@ -2,15 +2,15 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 11:57:16 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-06 19:02:30
+ * @Last Modified time: 2018-11-07 14:42:21
  */
 <template>
   <div class="app-container">
     <el-row :gutter="20" v-loading="loading">
-      <el-col :xs="8" :sm="8" :md="8" :lg="6" :xl="6">
+      <el-col :xs="10" :sm="10" :md="10" :lg="6" :xl="6">
         <left-tree titleName="行政区域" :dataArray="dataArray" @areaData="selectNode" :isShowTabbar="isShowTabbar" />
       </el-col>
-      <el-col :xs="8" :sm="8" :md="8" :lg="9" :xl="9">
+      <el-col :xs="14" :sm="14" :md="14" :lg="18" :xl="18">
         <div class="panel">
           <div class="panelHeading">
             <div>
@@ -39,13 +39,6 @@
             </el-table>
           </div>
         </div>
-      </el-col>
-      <el-col :xs="8" :sm="8" :md="8" :lg="9" :xl="9">
-        <div class="panel">
-          buycle
-          <!-- <vue-preview :slides="slide1" @close="handleClose"></vue-preview> -->
-        </div>
-        <!-- <left-tree @getMsgs="getWay" :message="parentMsg" /> -->
       </el-col>
     </el-row>
     <!-- 单位编辑弹窗 -->
@@ -251,7 +244,6 @@ export default {
         val.map(item => {
           let id = item.id
           ids.push(item.id)
-          console.log('ids', ids)
         })
         idsStr = ids.join()
         this.deleteDepIDs = idsStr

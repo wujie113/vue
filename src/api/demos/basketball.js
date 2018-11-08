@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 	export function getList(params) {
 	  return request({
-	    url: '/api/work/dutyPart/list',
+	    url: '/api/demos/basketball/list',
 	    method: 'get',
 	    params
 	  })
@@ -10,14 +10,14 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/work/dutyPart/list',
+	    url: '/api/demos/basketball/list',
 	    method: 'get',
 	    params:{id:id}
 	  })
 	}
 	export function save(data) {
 	  return request({
-	    url: '/api/work/dutyPart/save',
+	    url: '/api/demos/basketball/save',
 	    method: 'post',
 	    data
 	  })
@@ -25,7 +25,7 @@ import request from '@/utils/request'
 	
 	export function del(ids) {
 	  return request({
-	    url: '/api/work/dutyPart/del',
+	    url: '/api/demos/basketball/del',
 	    method: 'post',
 	    params:{ids:ids}
 	  })

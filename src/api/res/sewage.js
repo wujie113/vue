@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 	export function getList(params) {
 	  return request({
-	    url: '/api/work/complaint/list',
+	    url: '/api/res/sewage/list',
 	    method: 'get',
 	    params
 	  })
@@ -10,15 +10,14 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/work/complaint/get',
+	    url: '/api/res/sewage/list',
 	    method: 'get',
 	    params:{id:id}
 	  })
 	}
-	
 	export function save(data) {
 	  return request({
-	    url: '/api/work/complaint/save',
+	    url: '/api/res/sewage/save',
 	    method: 'post',
 	    data
 	  })
@@ -26,7 +25,7 @@ import request from '@/utils/request'
 	
 	export function del(ids) {
 	  return request({
-	    url: '/api/work/complaint/del',
+	    url: '/api/res/sewage/del',
 	    method: 'post',
 	    params:{ids:ids}
 	  })

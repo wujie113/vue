@@ -18,10 +18,10 @@
       </el-aside>
       <el-container>
         <el-header height="125px">
-          <div style="text-align: left;border-bottom: 1px solid #ccc;padding: 10px 0">
+          <div style="" class="topTitle">
             用户列表
           </div>
-          <div class="filter-container" style="padding: 25px 0">
+          <div class="filter-container" style="">
             <el-input placeholder="输入姓名、帐号或角色搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="handleFilter" v-model="listQuery.search" />
             状态：
             <el-select placeholder="请选择状态" clearable style="width: 140px" class="filter-item" v-model="listQuery.state">
@@ -326,63 +326,6 @@ export default {
         name: '王小虎',
         address: '上海市普陀区金沙江路 1518 弄',
         isStart: true
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: true
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: false
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: false
-
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: true
-
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: true
-
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        address: '上海市普陀区金沙18 弄',
-        isStart: true
-
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: true
-
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路',
-        isStart: true
-
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        address: '上海沙江路 1518 弄',
-        isStart: true
-
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        address: '上金沙江路 1518 弄',
-        isStart: false
       }],
       multipleSelection: []
     }
@@ -505,24 +448,7 @@ export default {
 // .cell .el-button--text:nth-of-type(3) .svg-icon {
 //   fill: #f25c5c;
 // }
-.el-container {
-  .el-aside {
-    width: 25% !important;
-    margin-right: 1%;
-  }
-  .el-header,
-  .el-main {
-    border: 1px solid transparent;
-    border-color: #ddd;
-    border-radius: 4px;
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    width: 100%;
-  }
-  .el-header {
-    margin-bottom: 1%;
-  }
-}
+
 .app-container {
   .panel {
     margin-bottom: 0;
@@ -571,5 +497,33 @@ export default {
   border-bottom: 1px solid transparent;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
+}
+</style>
+<style lang="scss">
+.el-container {
+  .el-aside {
+    width: 25% !important;
+    margin-right: 1%;
+  }
+  .el-header,
+  .el-main {
+    border: 1px solid transparent;
+    border-color: #ddd;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    width: 100%;
+  }
+  .el-header {
+    margin-bottom: 1%;
+    .topTitle {
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .filter-container {
+      padding: 25px 0 !important;
+    }
+  }
 }
 </style>

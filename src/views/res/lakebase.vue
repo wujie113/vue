@@ -1,10 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container"> 
-       <el-input placeholder="输入名称搜索" v-model="listQuery.name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.type" placeholder="请选择类型" clearable style="width: 90px" class="filter-item"> 
-            <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key"/>
-      </el-select> 
+       <el-input placeholder="输入名称搜索" v-model="listQuery.name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/> 
        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
        <el-button
 			 type="primary"
@@ -15,10 +12,9 @@
       <el-table  v-loading="listLoading" :data="list"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%">
           <el-table-column type="index" label="序号" width="80"/> 
           <el-table-column prop="name" label="名称"/> 
-          <el-table-column prop="typename" label="类型(湖泊山塘)"/> 
-          <el-table-column prop="lake.name" label="所属区域"/>
+          <el-table-column prop="typename" label="类型"/> 
           <el-table-column prop="area.name" label="责任主体"/>
-          <el-table-column prop="description" label="描述"/>  
+          <el-table-column prop="description" label="描述"/> 
           <el-table-column prop="id" label="操作" width="100"   >
               <template slot-scope="scope">
                   <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
@@ -32,23 +28,12 @@
     <el-form ref="form" :model="form" label-width="80px">
 			<el-form-item label="名称">
 				<el-input v-model="form.name"/>
-			</el-form-item>  
-      <el-form-item   prop="type"  label="类型">
-          <el-select v-model="form.type" placeholder="请选择类型" clearable class="filter-item" >
-            <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key"/>
-          </el-select>
-      </el-form-item>  
-       <el-form-item   label="所属区域">
-            <el-select v-model="form.lake.id" placeholder="请选择水系" clearable class="filter-item" >
-              <el-option v-for="item in quOptions" :key="item.key" :label="item.label" :value="item.key"/>
-            </el-select>
-        </el-form-item>  
+			</el-form-item>   
 			<el-form-item label="责任主体">
 				 <rm-area-select v-model="form.area"  />
 			</el-form-item>
-     
-			<el-form-item label="描述"> 
-          <el-input v-model="form.description" :rows="4" type="textarea" />
+			<el-form-item label="描述">
+		      <el-input v-model="form.description" :rows="4" type="textarea" />
 			</el-form-item> 
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -60,7 +45,7 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination' 
-import { getList,save,get,del ,getqlist} from '@/api/res/lake.js'
+import { getList,save,get,del } from '@/api/res/lake.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
@@ -81,7 +66,6 @@ export default {
       return {
       visible : false,
       listLoading:false,
-      quOptions:null,
 	  form: {
       id:null,
 	  	name:null,	  	
@@ -89,13 +73,11 @@ export default {
 	  	region:null,	  	
 	  	county:null,	  	
 	  	town:null,	  	
-	  	type:null,	  	
+	  	type: "B",	  	
 	  	lng:null,	  	
 	  	lat:null,	  	
-      area:null,	  	
-      lake:{id:null},
-	  	description:null,	  	
-	  	pid:null,	  	
+	  	area:null,	  	
+	  	description:null 	  	
 	  },
       list:  null, 
       total: 0 ,
@@ -103,18 +85,14 @@ export default {
         pageNo: 1,
         pageSize: 10, 
         importance: undefined,
-        name: undefined,
-        type: undefined,
+        name: undefined, 
+        type: "B",
         sort: '+id'
-      }, 
-      typeOptions: [{ label: '山塘', key: 'ST' }, { label: '湖泊', key: 'HP' }],
+      } 
     }
     },
   created() {
-    this.getList();
-    getqlist("B").then(response => {  
-            this.quOptions = response.data.list  
-    })
+    this.getList()
   },
   methods: {
     getList() {  
@@ -130,7 +108,6 @@ export default {
       this.listQuery.pageNo = 1
       this.getList()
     },
-    
     add(){
       this.visible=true;
       if (this.$refs.form != undefined) {
