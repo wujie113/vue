@@ -471,7 +471,7 @@ export const asyncRouterMap = [
         path: 'areaManagement',
         name: 'areaManagement',
         component: () => import('@/views/setting/areaManagement'),
-        meta: { title: '区域管理' }
+        meta: { title: '区域管理', noCache: false }
       }, {
         path: 'logManagement',
         name: 'logManagement',
@@ -482,7 +482,7 @@ export const asyncRouterMap = [
         path: 'userManagement',
         name: 'userManagement',
         component: () => import('@/views/setting/userManagement'),
-        meta: { title: '用户管理' }
+        meta: { title: '用户管理', noCache: false }
       }, {
         path: 'addressBook',
         name: 'addressBook',
@@ -493,7 +493,7 @@ export const asyncRouterMap = [
         path: 'unitRole',
         name: 'unitRole',
         component: () => import('@/views/setting/unitRole'),
-        meta: { title: '单位角色' }
+        meta: { title: '单位角色', noCache: false }
       },
       {
         path: 'basketball',

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="widget-all-system-body">
-      
+
     </div>
     <h1>这是通讯录</h1>
 
@@ -9,9 +9,10 @@
 </template>
 <script>
 export default {
+  name: 'addressBook',
   data() {
     return {
-      aa:"",
+      aa: "",
     }
   },
   created() {

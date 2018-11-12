@@ -217,6 +217,7 @@
 import { tree, tableList } from '@/api/setting/userMangement'
 import Pagination from '@/components/Pagination'
 export default {
+  name: 'userManagement',
   components: { Pagination },
   data() {
     // 自定义校验规则

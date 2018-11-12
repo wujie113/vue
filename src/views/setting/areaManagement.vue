@@ -55,6 +55,7 @@
 <script>
 import { AreaTree, AreaMytree, Delete, Add, Datails } from "@/api/setting/areaTree"
 export default {
+  name: 'areaManagement',
   data() {
     return {
       ruleForm: {

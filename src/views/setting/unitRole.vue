@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 11:57:16 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-07 14:42:21
+ * @Last Modified time: 2018-11-12 17:40:36
  */
 <template>
   <div class="app-container">
@@ -80,6 +80,7 @@ import Pagination from '@/components/Pagination'
 import RmDict from '@/components/rm/dict'
 
 export default {
+  name: 'unitRole',
   components: { LeftTree, Pagination, RmDict },
   data() {
     return {
