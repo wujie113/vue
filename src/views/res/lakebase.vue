@@ -66,6 +66,7 @@ export default {
       return {
       visible : false,
       listLoading:false,
+      
 	  form: {
       id:null,
 	  	name:null,	  	

@@ -66,6 +66,7 @@ import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
 export default {
+  name:"lake",
   components: { Pagination,RmDict,RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
     statusFilter(status) {
@@ -82,6 +83,7 @@ export default {
       visible : false,
       listLoading:false,
       quOptions:null,
+      listLoading:null,
 	  form: {
       id:null,
 	  	name:null,	  	

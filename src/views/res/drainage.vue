@@ -68,6 +68,7 @@ import RmUserSelect from "@/components/rm/userselect"
 import { getToken } from '@/utils/auth'
 import RmAreaSelect from "@/components/rm/areaselect"
 export default {
+   name: 'drainage',
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
     statusFilter(status) {
@@ -91,6 +92,7 @@ export default {
         bizId:"",
         bizType: "R",
       },
+      listLoading:null,
       form: {
         id:null,
         type: "SX",

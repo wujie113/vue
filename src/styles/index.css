@@ -574,49 +574,64 @@ code a:hover {
   z-index: 1000 !important;
 }
 
-.el-dialog {
-  position: absolute !important;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-  margin-top: 0 !important;
+.el-dialog__wrapper {
+  position: absolute;
+}
+
+.el-dialog__wrapper .el-dialog {
   /*滚动条样式*/
 }
 
-.el-dialog .el-form .el-select {
+.el-dialog__wrapper .el-dialog .el-dialog__headerbtn {
+  top: 14px;
+}
+
+.el-dialog__wrapper .el-dialog .el-form .el-select {
   width: 100%;
 }
 
-.el-dialog .el-dialog__header {
+.el-dialog__wrapper .el-dialog .el-dialog__header {
   background-color: #f8f8f8;
   border-bottom: 1px solid #eee;
   padding: 10px 20px 10px;
 }
 
-.el-dialog .el-dialog__body {
-  max-height: 500px;
+.el-dialog__wrapper .el-dialog .el-dialog__header .dialog-title-rm {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.el-dialog__wrapper .el-dialog .el-dialog__header .dialog-title-rm span:last-child {
+  padding-right: 2em;
+  cursor: pointer;
+  line-height: 25px;
+}
+
+.el-dialog__wrapper .el-dialog .el-dialog__header .dialog-title-rm span:last-child :hover {
+  color: #45a0ff;
+}
+
+.el-dialog__wrapper .el-dialog .el-dialog__body {
+  max-height: 600px;
   overflow-y: auto;
 }
 
-.el-dialog .el-dialog__body::-webkit-scrollbar {
+.el-dialog__wrapper .el-dialog .el-dialog__body::-webkit-scrollbar {
   /*滚动条整体样式*/
   width: 4px;
   /*高宽分别对应横竖滚动条的尺寸*/
   height: 4px;
 }
 
-.el-dialog .el-dialog__body::-webkit-scrollbar-thumb {
+.el-dialog__wrapper .el-dialog .el-dialog__body::-webkit-scrollbar-thumb {
   /*滚动条里面小方块*/
   border-radius: 5px;
   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   background: rgba(0, 0, 0, 0.2);
 }
 
-.el-dialog .el-dialog__body::-webkit-scrollbar-track {
+.el-dialog__wrapper .el-dialog .el-dialog__body::-webkit-scrollbar-track {
   /*滚动条里面轨道*/
   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   border-radius: 0;
@@ -659,4 +674,56 @@ code a:hover {
 
 .el-container .el-header .filter-container {
   padding: 25px 0 !important;
+}
+
+.el-table th > .cell,
+.el-table tr td .cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.el-mindiv {
+  position: fixed;
+  z-index: 10001;
+  left: 195px;
+  bottom: 5em;
+  width: 150px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  border-radius: 2px;
+  pointer-events: auto;
+}
+
+.el-mindiv .layui-layer-title {
+  padding: 0 40px 0 20px;
+  height: 42px;
+  line-height: 42px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
+  overflow: hidden;
+  background-color: #f8f8f8;
+  border-radius: 2px 2px 0 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.el-mindiv .layui-layer-setwin {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  line-height: initial;
+}
+
+.el-mindiv .layui-layer-setwin .svg-icon {
+  margin: 0 0.5em;
+}
+
+.el-mindiv .layui-layer-setwin i,
+.el-mindiv .layui-layer-setwin .svg-icon {
+  cursor: pointer;
 }

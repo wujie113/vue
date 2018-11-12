@@ -1,0 +1,18 @@
+/*
+ * @Author: 刘小康 
+ * @Date: 2018-11-09 17:21:57 
+ * @Last Modified by: 刘小康
+ * @Last Modified time: 2018-11-09 17:26:39
+ */
+/* 这里是element-ui使用第三方图标(比如:iconfont)的样式代码,其中el-icon-ali是自定义的样式类名前缀,相当于element官方的el-icon */
+
+/* 参考链接:https://www.jianshu.com/p/8379597e3f97 */
+
+[class^="el-icon-ali"],
+[class*="el-icon-ali"] {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -30,3 +30,11 @@ import request from '@/utils/request'
 	    params:{ids:ids}
 	  })
 	}
+	
+	export function	getfiles(data){  
+		return request({
+	    url: '/c/common/fileRecord/getFiles',
+	    method: 'get',
+	    params: data
+	  })
+	}

@@ -1,6 +1,5 @@
-<template>
+<template> 
     <div class="mapContainer">
-        <el-button icon="el-icon-location" size="mini" @click="centerView([113.88, 27.67],16)">定位</el-button>
         <div id="map" class="map"></div>
         <div id="mapctrl" class="map-ctrl-panel">
             <el-popover popper-class="map-ctrl-tool" width="460" placement="left" visible-arrow="false" trigger="manual" v-model="v.tool">
@@ -151,11 +150,19 @@
                     var viewResolution = /** @type {number} */ (self.map.getView().getResolution())
                     self.map.forEachLayerAtPixel(pixel, function(layer) {
                         //console.log('cb:',layer)
-                        //从geoserver获取feature信息URL
-                        var url = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapCfg.projection, { 'INFO_FORMAT': 'text/html' })
+                        //从geoserver获取feature信息URL,'INFO_FORMAT': 'text/html',application/json
+                        var url = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapCfg.projection, 
+                        { 'INFO_FORMAT': 'application/json' })
                         console.log('f url:', url)
                         if (url) {
                             //document.getElementById('info').innerHTML = '<iframe seamless src="' + url + '"></iframe>'
+                            mapUtils.getFeatureInfo(url).then(response => {
+                                console.log(response.features)
+                                if (response.features.length > 0) {
+                                   var f = response.features[0]  
+                                    console.log(f.properties.id,f.properties.name)
+                                }
+                            })
                         }
                         return true
                     }, {
@@ -192,7 +199,7 @@
 
 
                 //将map对象传给父页面
-                this.$emit("input", { rmap: this,map: this.map })
+                this.$emit("input", this)
             }
         }
     }
@@ -203,7 +210,7 @@
         height: 100%;
     }
     .map {
-        height: 100%;
+        height: 83vh;
     }
     .ol-mouse-position {
       top: auto;

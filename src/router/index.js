@@ -87,28 +87,28 @@ export const constantRouterMap = [
         path: 'river2',
         name: 'river2',
         component: () => import('@/views/res/river'),
-        meta: { title: '河流管理' }
+        meta: { title: '河流管理' ,noCache: false}
       }, {
         path: 'drainage',
         name: 'drainage',
         component: () => import('@/views/res/drainage'),
-        meta: { title: '水系管理' }
+        meta: { title: '水系管理' ,noCache: false }
       } , {
         path: 'lakeb',
         name: 'lakeb',
         component: () => import('@/views/res/lakebase'),
-        meta: { title: '湖泊区域', icon: 'table' }
+        meta: { title: '湖泊区域', icon: 'table' ,noCache: false }
       }
       , {
         path: 'lake',
         name: 'lake',
         component: () => import('@/views/res/lake'),
-        meta: { title: '山塘(湖泊)', icon: 'table' }
+        meta: { title: '山塘(湖泊)', icon: 'table' ,noCache: false }
       } , {
         path: 'duty',
         name: 'duty',
         component: () => import('@/views/res/dutyPart'),
-        meta: { title: '责任段', icon: 'table' }
+        meta: { title: '责任段', icon: 'table' ,noCache: false }
       } 
     ]
   },
@@ -135,8 +135,8 @@ export const constantRouterMap = [
     meta: { title: '巡河图监管', icon: 'kaohe' },
     children: [ 
       {
-        path: 'river2',
-        name: 'river2',
+        path: 'rivergula',
+        name: 'rivergula',
         component: () => import('@/views/regula/rivergula'),
         meta: { title: '河流监管', icon: 'table' }
       },

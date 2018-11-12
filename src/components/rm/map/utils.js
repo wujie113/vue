@@ -16,6 +16,19 @@ var __wmtsCapabilities = null
 
 //工具类
 export const utils = {
+    getFeatureInfo: function(url) {
+        return request({
+            url: url,
+            method: 'get',
+            transformResponse: [function(data) {
+                // 拦截器返回的数据不是json，而是文本
+                var json = JSON.parse(data)
+                var data2 = { success: true, features: json.features }
+                //console.log('data:',data,data2)
+                return data2
+            }]
+        }) 
+    },
     initBgLayers: function(map, bglayers) {
         bglayers.forEach((k) => {
             k.layer.set('code', k.id)

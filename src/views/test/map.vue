@@ -1,5 +1,6 @@
 <template>
     <div class="aaaa">
+        <el-button icon="el-icon-location" size="mini" @click="centerView()">定位</el-button>
         <rm-map v-model="map"></rm-map>
     </div>
 </template> 
@@ -18,7 +19,9 @@
             console.log('================',this.map)
         },
         methods: {
-
+            centerView() {
+                this.map.centerView([113.88, 27.67],16)
+            }
         }
     }
 </script>

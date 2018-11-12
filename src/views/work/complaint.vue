@@ -50,42 +50,48 @@
                       </li>
                     </ul>
                   </div>
-                  <div class="widget-divContent-main-footer">
-                    <div>
-                      <span>
-                        <a href="javascript:void(0)" title="经纬度">
-                          <svg-icon icon-class="location" />
+                  <el-row :gutter="10">
+                    <el-col :xs="12" :sm="12" :md="15" :lg="17" :xl="18" class="hidden-sm-and-down">
+                      <div class="grid-content bg-purple">
+                        <span>
+                          <a href="javascript:void(0)" title="经纬度">
+                            <svg-icon icon-class="location" />
+                          </a>
+                          {{ list.lng }},{{ list.lat }}
+                        </span>
+                        <span>
+                          <a href="javascript:void(0)" title="上报人">
+                            <svg-icon icon-class="user1" />
+                          </a>
+                          {{ list.report }}
+                        </span>
+                        <span>
+                          <a href="javascript:void(0)" title="所属区域">
+                            <svg-icon icon-class="areaColor" />
+                          </a>
+                          {{ list['area.id'] }}
+                        </span>
+                      </div>
+                    </el-col>
+                    <el-col :xs="12" :sm="12" :md="9" :lg="7" :xl="6">
+                      <div class="grid-content bg-purple-light">
+                        <a href="javascript:void(0)" title="生成工单">
+                          <svg-icon icon-class="addColor" />
                         </a>
-                        {{ list.lng }},{{ list.lat }}
-                      </span>
-                      <span>
-                        <a href="javascript:void(0)" title="上报人">
-                          <svg-icon icon-class="user1" />
+                        <a href="javascript:void(0)" title="定位">
+                          <svg-icon icon-class="locationColor" />
                         </a>
-                        {{ list.report }}
-                      </span>
-                      <span>
-                        <a href="javascript:void(0)" title="所属区域">
-                          <svg-icon icon-class="areaColor" />
+                        <a href="javascript:void(0)" title="详情" @click="detailBtn(list.id)">
+                          <svg-icon icon-class="detailColor" />
                         </a>
-                        {{ list['area.id'] }}
-                      </span>
-                    </div>
-                    <div>
-                      <a href="javascript:void(0)" title="生成工单">
-                        <svg-icon icon-class="addColor" />
-                      </a>
-                      <a href="javascript:void(0)" title="定位">
-                        <svg-icon icon-class="locationColor" />
-                      </a>
-                      <a href="javascript:void(0)" title="详情" @click="detailBtn(list.id)">
-                        <svg-icon icon-class="detailColor" />
-                      </a>
-                      <a href="javascript:void(0)" title="回复" @click="replayBtn(list.id)">
-                        <svg-icon icon-class="replayColor" />
-                      </a>
-                    </div>
-                  </div>
+                        <a href="javascript:void(0)" title="回复" @click="replayBtn(list.id)">
+                          <svg-icon icon-class="replayColor" />
+                        </a>
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <!-- <div class="widget-divContent-main-footer">
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -414,6 +420,20 @@ export default {
             }
           }
         }
+        .bg-purple {
+          span {
+            line-height: 24px;
+            color: #888888;
+            margin-right: 0.5em;
+          }
+        }
+        .bg-purple-light {
+          text-align: right;
+          .svg-icon {
+            margin: 0 0.4em;
+          }
+        }
+
         .widget-divContent-main-footer {
           padding: 0.5em 0;
           display: flex;

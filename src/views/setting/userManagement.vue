@@ -38,7 +38,7 @@
         </el-header>
         <!-- <div style="height:2%;width:100%;background-color:#f5f5f5"></div> -->
         <el-main>
-          <div class="filter-container">
+          <div class=" filter-container">
             <el-button class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="addBtn">新增用户</el-button>
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="deleteBtn">删除</el-button>
           </div>
@@ -195,6 +195,7 @@
         <el-button @click="save" type="primary">确 定</el-button>
       </div>
     </el-dialog>
+
     <!-- 修改密码弹窗 -->
     <el-dialog :visible.sync="dialogVisible2" width="30%" title="修改密码" top="20%">
       <el-form :model="form2" status-icon :rules="rules2" ref="form2" label-width="80px" status-icon>

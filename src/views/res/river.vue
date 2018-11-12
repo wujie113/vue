@@ -159,7 +159,7 @@ export default {
             this.sxOptions = response.data.list  
       })
     },
-    addRiver() {    
+    addRiver() {   
       this.visible = true   
       // this.form={};
       if (this.$refs.form != undefined) {

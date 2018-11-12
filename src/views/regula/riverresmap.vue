@@ -1,31 +1,31 @@
 <template>
   <div class="app-container">
     <el-container v-loading="loading">
-        <rm-map/>
-    </el-container> 
+      <rm-map />
+    </el-container>
     <!--弹出窗口-->
-     <el-dialog :visible.sync="dialogVisible"  width="70%"  modal="false" title="河流管理">
-           <el-tabs v-model="activeName" type="border-card">
-              <el-tab-pane name="1">
-                <span slot="label"><i class="el-icon-date"></i> 河流</span>
-                <keep-alive> 
-                     <river/>
-                </keep-alive>
-              </el-tab-pane>
-              <el-tab-pane name="2">
-                <span slot="label"><i class="el-icon-date"></i> 山塘、湖库</span>
-                <keep-alive> 
-                       <lake/>
-                </keep-alive>
-              </el-tab-pane>
-              <el-tab-pane name="3">
-                <span slot="label"><i class="el-icon-date"></i> 责任段</span>
-                <keep-alive> 
-                        <dutypart/>
-                </keep-alive>
-              </el-tab-pane>
-           </el-tabs> 
-     </el-dialog>
+    <el-dialog :visible.sync="dialogVisible" width="70%" title="河流管理" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+      <el-tabs v-model="activeName" type="border-card">
+        <el-tab-pane name="1">
+          <span slot="label"><i class="el-icon-date"></i> 河流</span>
+          <keep-alive>
+            <river />
+          </keep-alive>
+        </el-tab-pane>
+        <el-tab-pane name="2">
+          <span slot="label"><i class="el-icon-date"></i> 山塘、湖库</span>
+          <keep-alive>
+            <lake />
+          </keep-alive>
+        </el-tab-pane>
+        <el-tab-pane name="3">
+          <span slot="label"><i class="el-icon-date"></i> 责任段</span>
+          <keep-alive>
+            <dutypart />
+          </keep-alive>
+        </el-tab-pane>
+      </el-tabs>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -37,16 +37,17 @@ import lake from '../res/lake.vue' //湖泊
 import dutypart from '../res/dutyPart.vue' //责任段
 import RmMap from "@/components/rm/map"
 export default {
-  components: { Pagination ,RmMap,river,lake,dutypart},
-  data() { 
+  name: "rivermap",
+  components: { Pagination, RmMap, river, lake, dutypart },
+  data() {
     return {
-      activeName:"1",
+      activeName: "1",
       loading: true,
       tableLoading: false,
       checked: false,
       dataArray: [],
-      hpdataarray:[], 
-      dialogVisible: true, 
+      hpdataarray: [],
+      dialogVisible: true,
       defaultProps: {
         children: "children",
         label: "label"
@@ -55,7 +56,7 @@ export default {
   },
   created() {
     this.loadLeftTree()
-     this.loadHpTree();
+    this.loadHpTree();
   },
   methods: {
     loadLeftTree() {
@@ -68,8 +69,8 @@ export default {
         this.loading = false
       })
     },
-    loadHpTree(){
-        hptree().then((res) => {
+    loadHpTree() {
+      hptree().then((res) => {
         console.log("左边树22", res)
         const data = res.data.list
         this.hpdataarray = data
@@ -78,10 +79,10 @@ export default {
         this.loading = false
       })
     },
-    handleClick(tab){ 
-       
+    handleClick(tab) {
+
     },
-    handleNodeClick(){
+    handleNodeClick() {
       // console.log("tab:::",tab);
     }
   }
@@ -144,7 +145,7 @@ export default {
     }
     .source {
       padding-left: 10px;
-       padding-right: 10px;
+      padding-right: 10px;
     }
     .panel-body {
       overflow: auto;

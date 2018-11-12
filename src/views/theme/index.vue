@@ -73,6 +73,9 @@ export default {
       radio: 3
     }
   },
+ created() {
+   alert(1); 
+  },  
   watch: {
     theme() {
       toggleClass(document.body, 'custom-theme')

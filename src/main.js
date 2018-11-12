@@ -20,9 +20,10 @@ import './permission' // permission control
 import './mock' // simulation data
 
 import * as filters from './filters' // global filters
-import vuePicturePreview from "vue-picture-preview";
+import vuePicturePreview from 'vue-picture-preview'
 import VuePreview from "vue-preview";
-
+import 'element-ui/lib/theme-chalk/display.css'
+import './icons/iconfont.css' //使用第三方图标
 // defalut install
 Vue.use(VuePreview);
 Vue.use(vuePicturePreview);

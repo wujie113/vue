@@ -1,52 +1,57 @@
 <template>
   <div class="app-container">
     <el-container v-loading="loading">
-        <rm-map/>
+      <el-aside>
+        <div class="panel"> 
+          <div class="source panel-body">
+            <el-tabs v-model="activeName" @tab-click="handleClick">
+              <el-tab-pane label="河流" name="hl">  
+                    <el-tree :data="dataArray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current>
+                      <span class="custom-tree-node" slot-scope="{ node, data }">
+                        <span>{{ node.label }}</span>
+                        <span>
+                          <el-button
+                            type="text" class="el-icon-tickets"
+                            size="mini" @click="detailClick(node)" > 
+                          </el-button> 
+                        </span>
+                      </span> 
+                  </el-tree>
+              </el-tab-pane>
+              <el-tab-pane label="湖泊" name="hp">
+                     <el-tree :data="hpdataarray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current></el-tree>
+              </el-tab-pane> 
+            </el-tabs> 
+          </div>
+        </div>
+      </el-aside>
+      <el-container>
+          <!--插入地图-->
+          <rm-map/>
+      </el-container>
     </el-container> 
-    <!--弹出窗口-->
-     <el-dialog :visible.sync="dialogVisible"  width="70%"  title="河流管理">
-           <el-tabs v-model="activeName" type="border-card">
-              <el-tab-pane name="1">
-                <span slot="label"><i class="el-icon-date"></i> 河流</span>
-                <keep-alive> 
-                     <river/>
-                </keep-alive>
-              </el-tab-pane>
-              <el-tab-pane name="2">
-                <span slot="label"><i class="el-icon-date"></i> 山塘、湖库</span>
-                <keep-alive> 
-                       <lake/>
-                </keep-alive>
-              </el-tab-pane>
-              <el-tab-pane name="3">
-                <span slot="label"><i class="el-icon-date"></i> 责任段</span>
-                <keep-alive> 
-                        <dutypart/>
-                </keep-alive>
-              </el-tab-pane>
-           </el-tabs> 
-     </el-dialog>
   </div>
 </template>
 <script>
 import { tree } from '@/api/res/river'
 import { hptree } from '@/api/res/lake'
 import Pagination from '@/components/Pagination'
-import river from '../res/river.vue' //河流 
-import lake from '../res/lake.vue' //湖泊 
-import dutypart from '../res/dutyPart.vue' //责任段
+
 import RmMap from "@/components/rm/map"
 export default {
-  components: { Pagination ,RmMap,river,lake,dutypart},
+  name:"rivergula",
+  components: { Pagination ,RmMap},
   data() { 
     return {
-      activeName:"1",
+      activeName:"hl",
       loading: true,
       tableLoading: false,
       checked: false,
       dataArray: [],
-      hpdataarray:[], 
-      dialogVisible: true, 
+      hpdataarray:[],
+      dialogVisible: false,
+      dialogVisible1: false,
+      dialogVisible2: false,
       defaultProps: {
         children: "children",
         label: "label"
@@ -83,6 +88,9 @@ export default {
     },
     handleNodeClick(){
       // console.log("tab:::",tab);
+    },
+    detailClick(node){
+      console.log("node::::",node);
     }
   }
 }
@@ -152,7 +160,14 @@ export default {
     }
   }
 }
-
+  .custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+  }
 .panel {
   margin-bottom: 20px;
   background-color: #fff;
