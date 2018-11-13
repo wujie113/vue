@@ -12,7 +12,7 @@
                         <span>
                           <el-button
                             type="text" class="el-icon-tickets"
-                            size="mini" @click="detailClick(node)" > 
+                            size="mini" @click="detailClick(data)" > 
                           </el-button> 
                         </span>
                       </span> 
@@ -30,14 +30,74 @@
           <rm-map/>
       </el-container>
     </el-container> 
+      <el-dialog :visible.sync="detailvisible" :title="dialogtitle">
+         <el-tabs v-model="activeNamedetail" type="border-card">
+          <el-tab-pane name="1">
+            <span slot="label"><i class="el-icon-date"></i> 基本信息</span>
+             <el-form :model="form" abel-width="80px" size="mini">
+                <el-form-item label="河流名称">
+                    {{form.name}}
+                  </el-form-item>
+                    <el-form-item label="责任主体">
+                    {{form.area.name}}
+                  </el-form-item>
+                    <el-form-item label="河 长 办">
+                    {{form.chief}}
+                  </el-form-item>
+                    <el-form-item label="描   述">
+                    {{form.description}}
+                  </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane name="2">
+            <span slot="label"><i class="el-icon-date"></i> 周边资源</span>
+           
+          </el-tab-pane>
+          <el-tab-pane name="3">
+            <span slot="label"><i class="el-icon-date" ></i> 一河一档、一河一策</span>  
+               <el-upload :action="fileup.uploadaction"  :show-file-list="false" :limit="1" accept=".pdf" class="upload-demo"
+                        :before-upload="beforeUpload"
+                  :data="fileup.uploaddata"   :on-success="handleSuccess"   :on-error="handlError">
+                  <el-button  class="filter-item"  type="primary">点击上传</el-button> 
+              </el-upload>
+                 <el-table  v-loading="fileup.fileListLoading"   :data="fileList"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%">
+                      <el-table-column type="index" label="序号" width="80"/> 
+                      <el-table-column prop="name" label="名称"/> 
+                     	<el-table-column prop="id" label="操作" width="100"   > 
+                      <template slot-scope="scope">
+                          <el-button @click="see(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
+                          <el-button @click="delfile(scope.row)" type="text" size="mini" icon="el-icon-delete"/>
+                      </template>
+                      </el-table-column>
+                 </el-table>   
+          </el-tab-pane>
+          <el-tab-pane name="4">
+            <span slot="label"><i class="el-icon-date"></i> 管理人员</span> 
+              <el-table  v-loading="usermangers.userloading"   :data="usermangers.userlist"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%">
+                      <el-table-column type="index" label="序号" width="80"/>  
+                      
+               </el-table>   
+          </el-tab-pane>
+       
+        </el-tabs> 
+        
+        <!-- <vue-preview :slides="slide1" @close="handleClose"></vue-preview> --> 
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="detailvisible = false">关 闭</el-button>
+        </div>
+    </el-dialog> 
+         
   </div>
 </template>
 <script>
 import { tree } from '@/api/res/river'
 import { hptree } from '@/api/res/lake'
-import Pagination from '@/components/Pagination'
-
-import RmMap from "@/components/rm/map"
+import Pagination from '@/components/Pagination' 
+import RmMap from "@/components/rm/map" 
+import { get} from '@/api/res/river.js' 
+import { getfiles,delfiles,uploadFile} from '@/api/core/file.js' 
+import { getToken } from '@/utils/auth' 
+import { getAreausers } from '@/api/core/area' 
 export default {
   name:"rivergula",
   components: { Pagination ,RmMap},
@@ -48,13 +108,47 @@ export default {
       tableLoading: false,
       checked: false,
       dataArray: [],
-      hpdataarray:[],
-      dialogVisible: false,
-      dialogVisible1: false,
-      dialogVisible2: false,
+      hpdataarray:[], 
+      activeNamedetail:"1",
+      dialogtitle:"",
+      detailvisible:false,
       defaultProps: {
         children: "children",
         label: "label"
+      },
+      fileList:null, 
+      fileup:{
+            uploaddata:{
+                bizId:null,
+                bizType:"yzyc"
+            },
+            uploadaction: process.env.BASE_API+'/api/res/sluice/import?token='+getToken(),
+            fileListLoading:null,
+      }, 
+      usermangers:{
+            userlist: null,
+            userloading:false
+      }, 
+      isshowpdf:false,
+      form: {
+         id:null,
+          type: null,	  	
+          province: null,	  	
+          region: null,	  	
+          county: null,	  	
+          town: null,	  	
+          name: null,	  	
+          lng: null,	  	
+          lat: null, 	  	
+          description: null,	  	
+          area: {
+            id:null,
+            name:null
+          },	
+          sort:null,
+          river: {
+            id:null
+          }	  	
       }
     }
   },
@@ -83,6 +177,21 @@ export default {
         this.loading = false
       })
     },
+    getfilesLists(){
+       getfiles(this.fileup.uploaddata).then(response => {  
+          this.fileList=response.data;
+          this.fileup.fileListLoading=false;
+      })
+    },
+    getriver(idx){ 
+       this.fileup.uploaddata.bizId=idx;
+       get(idx).then(response => {
+           this.activeNamedetail="1";
+           this.form = response.data; 
+           this.detailvisible=true;
+      });
+      this.getfilesLists();
+    },
     handleClick(tab){ 
        
     },
@@ -90,7 +199,45 @@ export default {
       // console.log("tab:::",tab);
     },
     detailClick(node){
-      console.log("node::::",node);
+      console.log("node::::",node); 
+    
+      this.dialogtitle=node.label+"详情";
+      this.getriver(node.id)
+    },
+    see(row){
+         window.open(row.url);
+    },
+    delfile(row){
+      console.log("row:::",row);
+          this.fileup.fileListLoading=true;
+        delfiles({ids:row.id}).then(response => {  
+          this.fileList=response.data;
+          this.getfilesLists();
+      })
+    },
+    handleSuccess(respone){
+        	if(respone.success==true){
+            this.$message({
+              message: '导入数据成功',
+              type: 'success'
+                }); 
+          }else{
+            this.$message({
+              message: respone.msg,
+              type: 'error'
+                }); 
+          } 
+          this.fileList = [];
+          this.getfilesLists(); 
+    },
+    handlError(){
+
+    },
+    beforeUpload(){
+      this.fileup.fileListLoading=true
+    },
+    getuserlist(){
+      
     }
   }
 }

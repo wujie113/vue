@@ -2,9 +2,18 @@
   <div class="app-container">
     <el-container v-loading="loading">
       <rm-map />
+       <div class="el-mindiv" v-show="!dialogVisible" @click="dialogVisible=!dialogVisible">
+        <div class="layui-layer-title">河流管理</div>
+        <span class="layui-layer-setwin">
+          <!-- <svg-icon icon-class="huanyuan" /> -->
+          <i class="el-icon-ali-diejia"></i>
+        </span>
+      </div>
     </el-container>
     <!--弹出窗口-->
-    <el-dialog :visible.sync="dialogVisible" width="70%" title="河流管理" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+    <el-dialog :visible.sync="dialogVisible" width="70%" title="河流管理" 
+    :append-to-body="false" :close-on-click-modal="false"
+   :modal="false" :modal-append-to-body="false">
       <el-tabs v-model="activeName" type="border-card">
         <el-tab-pane name="1">
           <span slot="label"><i class="el-icon-date"></i> 河流</span>
@@ -167,5 +176,21 @@ export default {
   border-bottom: 1px solid transparent;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
+}
+</style>
+<style lang="scss" scoped>
+
+.title {
+  padding: 0 80px 0 20px;
+  height: 42px;
+  line-height: 42px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-color: #f8f8f8;
+  border-radius: 2px 2px 0 0;
 }
 </style>

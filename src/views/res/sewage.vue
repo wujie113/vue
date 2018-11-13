@@ -3,12 +3,6 @@
     <div class="filter-container"> 
        <el-input placeholder="检索排污口名称、编码" v-model="query.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-
-       <el-upload :action="uploadaction"  :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo"
-              :before-upload="beforeUpload"  
-				:data="uploaddata"   :on-success="handleSuccess"   :on-error="handlError">
-				<el-button  class="filter-item"  type="primary">点击上传</el-button> 
-		</el-upload>
 		<el-button icon="el-icon-download" type="primary" @click="downloadExcel">下载排污口数据模板</el-button>
 		<el-button icon="el-icon-refresh" type="primary" @click="updateData">更新排污口数据</el-button>
 
@@ -74,7 +68,7 @@
    <el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
       <el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe width="90%">
         <el-table-column type="index" label="序号" />
-        <el-table-column prop="CreateDate" label="上传时间" width="95"/>
+        <el-table-column prop="CreateDate" label="上传时间" width="150"/>
         <el-table-column prop="name" label="文件名" width="250" />
         <el-table-column prop="id" label="操作" min-width="120">
           <template slot-scope="scope">
@@ -85,13 +79,15 @@
       </el-table>
     </el-dialog>
 
-    <el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
-          <div style="float:left">文件格式要求为： <span style="color:red">.xls</span>(Excel 97-2018工作簿)</div><br />
-          <div style="float:left">文件必需包含字段：</div> 
+  <el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+          <div style="float:left;">文件格式要求为： <span style="color:red">.xls</span>(Excel 97-2018工作簿)</div><br />
+          <div style="float:left;">文件必需包含字段：</div> 
           <div style="margin-left: 125px">
             名称<br />县名<br/>经度（如：113.8569）<br/>纬度（如：27.6253）<br/>
           </div>
-          <el-button type="primary" size="mini">去上传</el-button>
+          <el-upload :action="uploadaction" :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
+        <el-button type="primary" size="mini">去上传</el-button>
+      </el-upload>
     </el-dialog>
        </div>
 </template> 
@@ -129,7 +125,7 @@ export default {
       query: {
       	total: 0 ,
         pageNo: 1,
-        pageSize: 2, 
+        pageSize: 10, 
         search: undefined,
         type: undefined
 			},
@@ -137,7 +133,6 @@ export default {
         bizId:10010,
         bizType:"pwk"
 	  },
-		 fileList:[],
 		 listLoading:null,
 		  listLoadingHistory: null,
 	  form: {
@@ -218,7 +213,8 @@ export default {
       this.v.formupdate = true
     },
 		 beforeUpload(file){ 
-		  this.listLoading = true 
+      this.listLoading = true 
+      this.v.formupdate =false
  	 },
 handleSuccess(respone){  
 		if(respone.success==true){
@@ -233,7 +229,6 @@ handleSuccess(respone){
         	}); 
 		}
 		this.query.search = ""
-		this.fileList = [];
 		this.getList(); 
 	},
 	handlError(){  
@@ -242,7 +237,6 @@ handleSuccess(respone){
           type: 'error'
 		}); 
 		this.query.search= ""
-		this.fileList = [];
 		this.getList(); 
 	}, 
      handleFilter() {

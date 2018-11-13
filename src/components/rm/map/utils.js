@@ -3,7 +3,6 @@ import { cfg as mapCfg } from "@/components/rm/map/config.js"
 import GeoJSON from 'ol/format/GeoJSON.js'
 import { Vector as VectorLayer, Layer } from 'ol/layer.js'
 import { Vector as VectorSource } from 'ol/source.js'
-import { Fill, Stroke, Style } from 'ol/style.js'
 import TileLayer from 'ol/layer/Tile.js'
 import TileWMS from 'ol/source/TileWMS.js'
 import { getWidth, getTopLeft } from 'ol/extent.js'
@@ -11,6 +10,10 @@ import { get as getProjection } from 'ol/proj.js'
 import WMTSTileGrid from 'ol/tilegrid/WMTS.js'
 import WMTSCapabilities from 'ol/format/WMTSCapabilities.js'
 import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS.js'
+import { bbox as bboxStrategy } from 'ol/loadingstrategy.js'
+import { searchResultStyleFunc, searchSelectStyleFunc, drawingStyleFunc } from "@/components/rm/map/style.js"
+import { vectorStyleFunc } from './style'
+
 
 var __wmtsCapabilities = null
 
@@ -27,7 +30,7 @@ export const utils = {
                 //console.log('data:',data,data2)
                 return data2
             }]
-        }) 
+        })
     },
     initBgLayers: function(map, bglayers) {
         bglayers.forEach((k) => {
@@ -85,20 +88,34 @@ export const utils = {
     createWMSTileLayer: function(item) {
         return new TileLayer({
             source: new TileWMS({
-                url: mapCfg.wmsServerUrl,
+                url: item.server || mapCfg.wmsServerUrl,
                 crossOrigin: 'anonymous',
-                attributions: '©国土局',
-                params: { 'LAYERS': item.code || item.id, 'TILED': true },
+                params: { 'VERSION': '1.1.1', 'LAYERS': item.code || item.id, 'TILED': true },
                 serverType: 'geoserver',
                 // Countries have transparency, so do not fade tiles:
                 transition: 0
             })
         })
     },
+    createWFSTileLayer: function(item) {
+        return new VectorLayer({
+            source: new VectorSource({
+                format: new GeoJSON(),
+                url: function(extent) {
+                    return mapCfg.wfsServerUrl + '?service=WFS&' +
+                        'version=1.1.0&request=GetFeature&typename=' + item.code + '&' +
+                        'outputFormat=application/json&srsname=' + mapCfg.projection + '&' +
+                        'bbox=' + extent.join(',') + ',' + mapCfg.projection
+                },
+                strategy: bboxStrategy
+            }),
+            style: vectorStyleFunc
+        })
+    },
     createWMTSTileLayer: function(item, callback) {
         var layer = null
         var layerCode = item.code || item.id
-        this.getCapabilities(layerCode).then(options => {            
+        this.getCapabilities(layerCode).then(options => {
             // console.log('server-->', JSON.stringify(options))
             //new WMTS(/** @type {!module:ol/source/WMTS~Options} */ (options))
             layer = new TileLayer({
@@ -153,6 +170,8 @@ export const utils = {
         layers.forEach((k) => {
             if (k.layer instanceof Layer) {
                 k.layer.set('code', k.id)
+                k.layer.set('name', k.name)
+                k.layer.set('ltype', k.type)
                 k.layer.setVisible(k.visible)
                 map.addLayer(k.layer)
             } else {
@@ -163,13 +182,30 @@ export const utils = {
                     this.createWMTSTileLayer(k, function(layer2) {
                         k.layer = layer2
                         k.layer.set('code', k.id)
+                        k.layer.set('name', k.name)
+                        k.layer.set('ltype', 'wmts')
                         k.layer.setVisible(k.visible)
                         map.addLayer(layer2)
                     })
+                } else if (k.type === 'wfs') {
+                    //vector feature 图层
+                    k.layer = this.createWFSTileLayer(k)
+                    if (k.zindex) {
+                        k.layer.setZIndex(k.zindex)
+                    }
+                    k.layer.set('code', k.id)
+                    k.layer.set('name', k.name)
+                    k.layer.set('ltype', 'wfs')
+                    k.layer.setVisible(k.visible)
+                    map.addLayer(k.layer)
                 } else {
                     k.layer = this.createWMSTileLayer(k)
+                    if (k.zindex) {
+                        k.layer.setZIndex(k.zindex)
+                    }
                     k.layer.set('code', k.id)
-                    k.layer.set('ltype', 'data')
+                    k.layer.set('name', k.name)
+                    k.layer.set('ltype', 'wms')
                     k.layer.setVisible(k.visible)
                     map.addLayer(k.layer)
                 }
@@ -178,24 +214,11 @@ export const utils = {
     },
     //初始化基础图层
     initBaseLayer: function(map) {
-        var styleFunction = function(feature) {
-            return new Style({
-                stroke: new Stroke({
-                    color: 'red',
-                    width: 2
-                }),
-                fill: new Fill({
-                    color: 'rgba(255,0,0,0.2)'
-                })
-            })
-        }
-
-
         // TODO 
         var _drawLayer = new VectorLayer({
             zIndex: 98,
             source: new VectorSource({ format: new GeoJSON() }),
-            style: styleFunction//'createDrawStyleFunction'
+            style: drawingStyleFunc//'createDrawStyleFunction'
         })
 
 
@@ -208,7 +231,7 @@ export const utils = {
         var _searchLayer = new VectorLayer({
             zIndex: 99,
             source: new VectorSource({ format: new GeoJSON() }),
-            style: styleFunction//'createSelectionStyleFunction'
+            style: searchResultStyleFunc//'createSelectionStyleFunction'
         })
         _searchLayer.set('code', 'searchlayer')
         _searchLayer.set('ltype', 'base')
@@ -218,7 +241,7 @@ export const utils = {
         var _selectionDrawLayer = new VectorLayer({
             zIndex: 100,
             source: new VectorSource({ format: new GeoJSON() }),
-            style: styleFunction//'createSelectionStyleFunction'
+            style: searchSelectStyleFunc//'createSelectionStyleFunction'
         })
         _selectionDrawLayer.set('code', 'selectionDrawLayer')
         _selectionDrawLayer.set('ltype', 'base')

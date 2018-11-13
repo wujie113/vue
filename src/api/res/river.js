@@ -10,7 +10,7 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/res/river/list',
+	    url: '/api/res/river/get',
 	    method: 'get',
 	    params: { id: id }
 	  })

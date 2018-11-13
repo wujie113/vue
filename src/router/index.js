@@ -87,28 +87,28 @@ export const constantRouterMap = [
         path: 'river2',
         name: 'river2',
         component: () => import('@/views/res/river'),
-        meta: { title: '河流管理' ,noCache: false}
+        meta: { title: '河流管理', noCache: false}
       }, {
         path: 'drainage',
         name: 'drainage',
         component: () => import('@/views/res/drainage'),
-        meta: { title: '水系管理' ,noCache: false }
+        meta: { title: '水系管理', noCache: false }
       } , {
         path: 'lakeb',
         name: 'lakeb',
         component: () => import('@/views/res/lakebase'),
-        meta: { title: '湖泊区域', icon: 'table' ,noCache: false }
+        meta: { title: '湖泊区域', noCache: false }
       }
       , {
         path: 'lake',
         name: 'lake',
         component: () => import('@/views/res/lake'),
-        meta: { title: '山塘(湖泊)', icon: 'table' ,noCache: false }
+        meta: { title: '山塘(湖泊)', noCache: false }
       } , {
         path: 'duty',
         name: 'duty',
         component: () => import('@/views/res/dutyPart'),
-        meta: { title: '责任段', icon: 'table' ,noCache: false }
+        meta: { title: '责任段', noCache: false }
       } 
     ]
   },
@@ -138,19 +138,19 @@ export const constantRouterMap = [
         path: 'rivergula',
         name: 'rivergula',
         component: () => import('@/views/regula/rivergula'),
-        meta: { title: '河流监管', icon: 'table' }
+        meta: { title: '河流监管' }
       },
       {
         path: 'rivermap',
         name: 'rivermap',
         component: () => import('@/views/regula/riverresmap'),
-        meta: { title: '河流管理', icon: 'table' }
+        meta: { title: '河流管理' }
       },
       {
         path: 'restabmap',
         name: 'restabmap',
         component: () => import('@/views/regula/restabMap'),
-        meta: { title: '资源管理', icon: 'table' }
+        meta: { title: '资源管理' }
       }
     ]
   },
@@ -167,25 +167,25 @@ export const constantRouterMap = [
         path: 'map',
         name: 'testMap',
         component: () => import('@/views/test/map'),
-        meta: { title: '地图', icon: 'form' }
+        meta: { title: '地图' }
       },
       {
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        meta: { title: 'Form' }
       },
       {
         path: 'demo',
         name: '示例',
         component: () => import('@/views/form/demo'),
-        meta: { title: '表单示例', icon: 'form' }
+        meta: { title: '表单示例' }
       },
       {
         path: 'gencode2',
         name: '代码自动生成',
         component: () => import('@/views/test/list'),
-        meta: { title: '代码自动生成示例2', icon: 'form' }
+        meta: { title: '代码自动生成示例2' }
       }
     ]
   },

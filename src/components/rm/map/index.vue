@@ -1,4 +1,4 @@
-<template> 
+<template>
     <div class="mapContainer">
         <div id="map" class="map"></div>
         <div id="mapctrl" class="map-ctrl-panel">
@@ -25,7 +25,7 @@
                 <el-collapse v-model="activeNames">
                     <el-collapse-item title="数据图层" name="datalayer">
                         <div class="map-c-layer-box" v-for="item in datalayers" :key="item.value" v-bind:class="{active: item.visible}" @click="switchDatalayer(item)">
-                            <img :src="'/static/map/'+item.id +'.png'" />
+                            <img :src="'/static/map/'+(item.icon || item.id )+'.png'" />
                             <span>{{item.name}}</span>
                         </div>
                     </el-collapse-item>
@@ -58,6 +58,7 @@
     //import XYZ from 'ol/source/XYZ.js'
     import { cfg as mapCfg } from "@/components/rm/map/config.js"
     import { utils as mapUtils } from "@/components/rm/map/utils.js"
+    import { draw as mapDraw } from "@/components/rm/map/draw.js"
     export default {
         name: "RmMap",
         props: {
@@ -78,6 +79,11 @@
             this.initMap()
         },
         methods: {
+            /**绘制责任段 */
+            drawLine(options, callbackFunc) { 
+                console.log(mapDraw)
+                mapDraw.draw(this.map, 'LineString', options, callbackFunc)
+            },
             resetView() {
                 this.centerView(mapCfg.center, mapCfg.zoom)
             },
@@ -151,16 +157,16 @@
                     self.map.forEachLayerAtPixel(pixel, function(layer) {
                         //console.log('cb:',layer)
                         //从geoserver获取feature信息URL,'INFO_FORMAT': 'text/html',application/json
-                        var url = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapCfg.projection, 
-                        { 'INFO_FORMAT': 'application/json' })
+                        var url = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapCfg.projection,
+                            { 'INFO_FORMAT': 'application/json' })
                         console.log('f url:', url)
                         if (url) {
                             //document.getElementById('info').innerHTML = '<iframe seamless src="' + url + '"></iframe>'
                             mapUtils.getFeatureInfo(url).then(response => {
                                 console.log(response.features)
                                 if (response.features.length > 0) {
-                                   var f = response.features[0]  
-                                    console.log(f.properties.id,f.properties.name)
+                                    var f = response.features[0]
+                                    console.log(f.properties.id, f.properties.name)
                                 }
                             })
                         }
@@ -168,7 +174,7 @@
                     }, {
                             layerFilter: function(l) {
                                 //只检查数据图层
-                                return l.get('ltype') === "data"
+                                return l.get('ltype') === "wms"
                             },
                             hitTolerance: 10
                         })
@@ -187,7 +193,7 @@
                         }, {
                                 layerFilter: function(l) {
                                     //只检查数据图层
-                                    return l.get('ltype') === "data"
+                                    return l.get('ltype') === "wms"
                                 },
                                 hitTolerance: 10
                             })
@@ -206,11 +212,11 @@
 </script>
 <style>
     .mapContainer {
-        width: 100%;
-        height: 100%;
+      width: 100%;
+      height: 100%;
     }
     .map {
-        height: 83vh;
+      height: 83vh;
     }
     .ol-mouse-position {
       top: auto;

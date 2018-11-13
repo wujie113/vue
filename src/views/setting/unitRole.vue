@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 11:57:16 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-12 17:40:36
+ * @Last Modified time: 2018-11-13 11:59:02
  */
 <template>
   <div class="app-container">
@@ -42,7 +42,7 @@
       </el-col>
     </el-row>
     <!-- 单位编辑弹窗 -->
-    <el-dialog :visible.sync="unitEditDialog" width="30%" title="编辑" v-loading="dialogLoading">
+    <el-dialog :visible.sync="unitEditDialog" width="30%" :title="dialogTitle" v-loading="dialogLoading">
       <el-form ref="form" :model="form" label-width="80px" status-icon>
         <el-form-item label="所属区划">
           {{ form.area ? form.area : unitObj.label}}
@@ -95,6 +95,7 @@ export default {
       roleEditDialog: false,
       authDialog: false,
       unitObj: {},
+      dialogTitle: "",
       form: {
         id: null,
         "area.id": null,
@@ -164,7 +165,7 @@ export default {
     // 添加单位
     addUnitBtn() {
       this.unitEditDialog = true
-
+      this.dialogTitle = "添加"
       if (this.$refs.form != undefined) {
         this.$refs.form.resetFields()
         Object.assign(this.form, this.$options.data().form)
@@ -176,6 +177,7 @@ export default {
       // if (this.$refs.form != undefined) {
       //   this.$refs.form.resetFields()
       // }
+      this.dialogTitle = "编辑"
       this.unitEditDialog = true
 
       Object.assign(this.form, row)
