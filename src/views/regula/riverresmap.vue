@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-container v-loading="loading">
       <rm-map />
-       <div class="el-mindiv" v-show="!dialogVisible" @click="dialogVisible=!dialogVisible">
+      <div class="el-mindiv" v-show="!dialogVisible" @click="dialogVisible=!dialogVisible">
         <div class="layui-layer-title">河流管理</div>
         <span class="layui-layer-setwin">
           <!-- <svg-icon icon-class="huanyuan" /> -->
@@ -11,9 +11,7 @@
       </div>
     </el-container>
     <!--弹出窗口-->
-    <el-dialog :visible.sync="dialogVisible" width="70%" title="河流管理" 
-    :append-to-body="false" :close-on-click-modal="false"
-   :modal="false" :modal-append-to-body="false">
+    <el-dialog :visible.sync="dialogVisible" width="80%" title="河流管理" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" top="5vh">
       <el-tabs v-model="activeName" type="border-card">
         <el-tab-pane name="1">
           <span slot="label"><i class="el-icon-date"></i> 河流</span>
@@ -178,8 +176,7 @@ export default {
   border-top-right-radius: 3px;
 }
 </style>
-<style lang="scss" scoped>
-
+<style>
 .title {
   padding: 0 80px 0 20px;
   height: 42px;
@@ -192,5 +189,9 @@ export default {
   white-space: nowrap;
   background-color: #f8f8f8;
   border-radius: 2px 2px 0 0;
+}
+
+.el-dialog__body {
+  padding-top: 10px;
 }
 </style>

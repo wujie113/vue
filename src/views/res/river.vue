@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div>
     <div class="filter-container">
       <el-input placeholder="输入河流湖泊名称" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.type" placeholder="请选择类型" clearable class="filter-item" style="width: 130px">
@@ -8,7 +8,7 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button type="primary" icon="el-icon-plus" @click="addRiver">新增</el-button>
     </div>
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row row-key="id" stripe style="width: 100%">
+    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row row-key="id" stripe size="mini">
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="river.name" label="所属水系" />
       <el-table-column prop="typename" label="河流类型" />
@@ -27,7 +27,7 @@
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
-    <el-dialog :visible.sync="areauser.visible" width="30%" title="关联管理人员">
+    <el-dialog :visible.sync="areauser.visible" title="关联管理人员" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
       <el-table v-loading="areauser.userloading" :data="areauser.userlist" border fit highlight-current-row row-key="id" stripe style="width: 100%">
         <el-table-column prop="index" label="序号" />
         <el-table-column prop="name" label="姓名" />
@@ -40,7 +40,7 @@
       </el-table>
     </el-dialog>
 
-    <el-dialog :visible.sync="visible" width="30%" :title="dialogTitle">
+    <el-dialog :visible.sync="visible" :title="dialogTitle" top="1vh" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item prop="name" label="河流名称">
           <el-input v-model="form.name" />
@@ -74,7 +74,7 @@
       </div>
     </el-dialog>
     <!-- 图片预览的弹窗 -->
-    <el-dialog :visible.sync="dialogVisibleImg" title="图片预览">
+    <el-dialog :visible.sync="dialogVisibleImg" title="图片预览" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
       <img width="100%" :src="dialogImageUrl" alt>
     </el-dialog>
 
@@ -242,3 +242,6 @@ export default {
   }
 }
 </script>
+
+
+

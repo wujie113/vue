@@ -617,6 +617,10 @@ code a:hover {
   overflow-y: auto;
 }
 
+.el-dialog__wrapper .el-dialog .el-dialog__body .upload-demo {
+  text-align: center;
+}
+
 .el-dialog__wrapper .el-dialog .el-dialog__body::-webkit-scrollbar {
   /*滚动条整体样式*/
   width: 4px;

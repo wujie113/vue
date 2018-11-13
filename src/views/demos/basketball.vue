@@ -107,7 +107,8 @@ export default {
 		//console.log(JSON.stringify(row));
 		this.v.form=true;
 		this.form=row;
-	},
+  },
+  
     save() {
         //console.log('保存:',JSON.stringify(this.form),this.selectUser);         
         save(this.form).then(response => {

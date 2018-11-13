@@ -4,63 +4,63 @@
       <el-input placeholder="检索农饮工程编码、名称" v-model="query.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button icon="el-icon-download" type="primary" @click="downloadExcel">下载农饮工程数据模板</el-button>
-      <el-button icon="el-icon-refresh" type="primary" @click="updateData" >更新农饮工程数据</el-button>
+      <el-button icon="el-icon-refresh" type="primary" @click="updateData">更新农饮工程数据</el-button>
     </div>
-    <el-table v-loading="listLoading" :data="list" row-key="id" stripe style="width: 100%" fit>
-      <el-table-column prop="name" label="工程名称" ::show-overflow-tooltip="true" min-width="200px"/>
-      <el-table-column prop="code" label="工程编码" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="lat" label="经度" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="lng" label="纬度" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="province" label="省" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="region" label="地区" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="county" label="县" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="tower" label="乡（镇）"  :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="village" label="街（村）" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="regimeCode" label="行政区划代码" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="threeCode" label="所在水资源三级区名称及编码" :show-overflow-tooltip="true" min-width="250px"/>
-      <el-table-column prop="type" label="取水水源类型" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="isReservoir" label="是否为水库水" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="projectType" label="工程类型" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="benefitVillageNum" label="受益行政村数量（个）" :show-overflow-tooltip="true" min-width="200px"/>
-      <el-table-column prop="drinkWay" label="供水方式"  :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="isCertificate" label="是否有取水许可证" :show-overflow-tooltip="true" min-width="200px"/>
-      <el-table-column prop="certificateCode" label="取水许可证编号" :show-overflow-tooltip="true" min-width="200px"/>
-      <el-table-column prop="isHealth" label="是否取得卫生许可" :show-overflow-tooltip="true" min-width="200px"/>
+    <el-table v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%" fit>
+      <el-table-column prop="name" label="工程名称" ::show-overflow-tooltip="true" min-width="200px" />
+      <el-table-column prop="code" label="工程编码" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="lat" label="经度" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="lng" label="纬度" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="province" label="省" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="region" label="地区" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="county" label="县" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="tower" label="乡（镇）" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="village" label="街（村）" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="regimeCode" label="行政区划代码" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="threeCode" label="所在水资源三级区名称及编码" :show-overflow-tooltip="true" min-width="250px" />
+      <el-table-column prop="type" label="取水水源类型" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="isReservoir" label="是否为水库水" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="projectType" label="工程类型" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="benefitVillageNum" label="受益行政村数量（个）" :show-overflow-tooltip="true" min-width="200px" />
+      <el-table-column prop="drinkWay" label="供水方式" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="isCertificate" label="是否有取水许可证" :show-overflow-tooltip="true" min-width="200px" />
+      <el-table-column prop="certificateCode" label="取水许可证编号" :show-overflow-tooltip="true" min-width="200px" />
+      <el-table-column prop="isHealth" label="是否取得卫生许可" :show-overflow-tooltip="true" min-width="200px" />
       <el-table-column prop="healthCode" label="卫生许可证编号" :show-overflow-tooltip="true" min-width="150px" />
-      <el-table-column prop="pipeLength" label="入户前的管网长度（km）" :show-overflow-tooltip="true" min-width="200px"/>
-      <el-table-column prop="power" label="配套功率（kw）" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="construction" label="工程建设情况" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="buildedYear" label="建成时间（年）" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="buildedMonth" label="建成时间（月）" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="buildYear" label="开工时间（年）" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="buildMonth" label="开工时间（月）" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="scale" label="设计供水规模（立方米/d）" :show-overflow-tooltip="true" min-width="200px"/>
-      <el-table-column prop="planPerson" label="设计供水人口(人)" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="gross" label="年实际供水总量（万立方米）" :show-overflow-tooltip="true" min-width="250px"/>
-      <el-table-column prop="grossLife" label="年实际生活供水量（万立方米）" :show-overflow-tooltip="true" min-width="250px"/>
-      <el-table-column prop="grossProduction" label="年实际生产供水量（万立方米）" :show-overflow-tooltip="true" min-width="250px"/>
-      <el-table-column prop="person" label="年实际供水人口 （人）" :show-overflow-tooltip="true" min-width="200px"/>
-      <el-table-column prop="excessiveNum" label="水质超标项目" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="purification" label="净水处理" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="detectionEqui" label="水质检测设备" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="detectionWay" label="水质检测方式" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="mangerName" label="管理单位名称" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="mangerCode" label="管理单位代码" :show-overflow-tooltip="true" min-width="150px"/>
-      <el-table-column prop="manger" label="管理主体" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="charge" label="收费形式" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="measureMoney" label="计量收费执行居民生活水价（元/立方米）" :show-overflow-tooltip="true" min-width="300px"/>
-      <el-table-column prop="totalMeasureMoney" label="计量收费年实收水费（万元）" :show-overflow-tooltip="true" min-width="250px"/>
-      <el-table-column prop="fixedMoney" label="固定收费执行居民生活水价（元/户&middot;月）" :show-overflow-tooltip="true" min-width="350px"/>
-      <el-table-column prop="totalFixedMoney" label="固定收费年实收水费（万元）" :show-overflow-tooltip="true" min-width="250px"/>
-      <el-table-column prop="recordMan" label="填表人员" :show-overflow-tooltip="true" min-width="100px"/>
+      <el-table-column prop="pipeLength" label="入户前的管网长度（km）" :show-overflow-tooltip="true" min-width="200px" />
+      <el-table-column prop="power" label="配套功率（kw）" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="construction" label="工程建设情况" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="buildedYear" label="建成时间（年）" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="buildedMonth" label="建成时间（月）" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="buildYear" label="开工时间（年）" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="buildMonth" label="开工时间（月）" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="scale" label="设计供水规模（立方米/d）" :show-overflow-tooltip="true" min-width="200px" />
+      <el-table-column prop="planPerson" label="设计供水人口(人)" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="gross" label="年实际供水总量（万立方米）" :show-overflow-tooltip="true" min-width="250px" />
+      <el-table-column prop="grossLife" label="年实际生活供水量（万立方米）" :show-overflow-tooltip="true" min-width="250px" />
+      <el-table-column prop="grossProduction" label="年实际生产供水量（万立方米）" :show-overflow-tooltip="true" min-width="250px" />
+      <el-table-column prop="person" label="年实际供水人口 （人）" :show-overflow-tooltip="true" min-width="200px" />
+      <el-table-column prop="excessiveNum" label="水质超标项目" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="purification" label="净水处理" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="detectionEqui" label="水质检测设备" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="detectionWay" label="水质检测方式" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="mangerName" label="管理单位名称" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="mangerCode" label="管理单位代码" :show-overflow-tooltip="true" min-width="150px" />
+      <el-table-column prop="manger" label="管理主体" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="charge" label="收费形式" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="measureMoney" label="计量收费执行居民生活水价（元/立方米）" :show-overflow-tooltip="true" min-width="300px" />
+      <el-table-column prop="totalMeasureMoney" label="计量收费年实收水费（万元）" :show-overflow-tooltip="true" min-width="250px" />
+      <el-table-column prop="fixedMoney" label="固定收费执行居民生活水价（元/户&middot;月）" :show-overflow-tooltip="true" min-width="350px" />
+      <el-table-column prop="totalFixedMoney" label="固定收费年实收水费（万元）" :show-overflow-tooltip="true" min-width="250px" />
+      <el-table-column prop="recordMan" label="填表人员" :show-overflow-tooltip="true" min-width="100px" />
       <el-table-column prop="recordPhone" label="填表联系人电话" :show-overflow-tooltip="true" min-width="150px" />
-      <el-table-column prop="reviewMan" label="复核人员" :show-overflow-tooltip="true" min-width="100px"/>
+      <el-table-column prop="reviewMan" label="复核人员" :show-overflow-tooltip="true" min-width="100px" />
       <el-table-column prop="reviewPhone" label="复核人联系电话" :show-overflow-tooltip="true" min-width="150px" />
-      <el-table-column prop="auditMan" label="审查人员" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="auditSymbol" label="审核标志" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="regionAudit" label="地区审核" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="provinceAudit" label="省级审核" :show-overflow-tooltip="true" min-width="100px"/>
-      <el-table-column prop="nationAudit" label="中央审核" :show-overflow-tooltip="true" min-width="100px"/>
+      <el-table-column prop="auditMan" label="审查人员" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="auditSymbol" label="审核标志" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="regionAudit" label="地区审核" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="provinceAudit" label="省级审核" :show-overflow-tooltip="true" min-width="100px" />
+      <el-table-column prop="nationAudit" label="中央审核" :show-overflow-tooltip="true" min-width="100px" />
       <el-table-column prop="id" label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit" />
@@ -71,26 +71,29 @@
     <pagination v-show="query.total>0" :total="query.total" :page.sync="query.pageNo" :limit.sync="query.pageSize" @pagination="getList" />
 
     <el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
-      <el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe width="90%">
-        <el-table-column type="index" label="序号" />
-        <el-table-column prop="CreateDate" label="上传时间" width="150"/>
+      <el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe width="90%" border>
+        <el-table-column type="index" label="序号" width="50" />
+        <el-table-column prop="CreateDate" label="上传时间" width="150" />
         <el-table-column prop="name" label="文件名" width="250" />
         <el-table-column prop="id" label="操作" min-width="120">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini">导出</el-button>
-            <el-button type="primary" size="mini">恢复</el-button>
+            <el-button type="primary" size="mini" title="导出该时间上传资源文件"><a :href="(scope.row.url)">导出</a></el-button>
+            <el-button type="primary" size="mini" title="资源恢复到该时间上传的文件">恢复</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
 
     <el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
-          <div style="float:left;">文件格式要求为： <span style="color:red">.xls</span>(Excel 97-2018工作簿)</div><br />
-          <div style="float:left;">文件必需包含字段：</div> 
-          <div style="margin-left: 125px">
-            名称<br />县名<br/>经度（如：113.8569）<br/>纬度（如：27.6253）<br/>
-          </div>
-          <el-upload :action="uploadaction" :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
+      <el-form :model="form" abel-width="80px" size="mini" class="leftBox">
+        <el-form-item label="文件格式要求为：">
+          <span style="color:red">.xls</span>(Excel 97-2018工作簿)
+        </el-form-item>
+        <el-form-item label="文件必需包含字段：">
+          名称<br />县名<br />经度（如：113.8569）<br />纬度（如：27.6253）<br />
+        </el-form-item>
+      </el-form>
+      <el-upload :action="uploadaction" :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
         <el-button type="primary" size="mini">去上传</el-button>
       </el-upload>
     </el-dialog>
@@ -214,7 +217,7 @@ export default {
 
     beforeUpload(file) {
       this.listLoading = true
-      this.v.formupdate =false
+      this.v.formupdate = false
     },
     handleFilter() {
       this.query.pageNo = 1
@@ -294,8 +297,8 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.upload-demo {
-	display: inline-block;
+<style>
+.leftBox .el-form-item__content {
+  float: left;
 }
 </style>

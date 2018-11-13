@@ -2,6 +2,7 @@
   <div class="app-container">
     <el-container>
       <rm-map />
+      <!-- 最大化按钮 -->
       <div class="el-mindiv" v-show="digLogMini" @click="digLogMiniBtn">
         <div class="layui-layer-title">资源管理</div>
         <span class="layui-layer-setwin">
@@ -13,7 +14,7 @@
 
     <el-container>
       <!--弹出窗口-->
-      <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="beforeClose()" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" title="资源管理1" top="10vh">
+      <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="beforeClose()" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" title="资源管理1" top="5vh">
         <span slot="title" class="dialog-title-rm">
           <span>资源管理1</span>
           <span @click="digLogMiniBtn">
@@ -23,7 +24,7 @@
         <el-tabs v-model="activeName" type="border-card">
           <el-tab-pane label="水闸" name="1">
             <keep-alive>
-              <sluice v-if="activeName==1"/>
+              <sluice v-if="activeName==1" />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane label="水源地" name="2">
@@ -150,6 +151,11 @@ export default {
   white-space: nowrap;
   background-color: #f8f8f8;
   border-radius: 2px 2px 0 0;
+}
+</style>
+<style>
+.leftBox .el-form-item__content {
+  float: left;
 }
 </style>
 

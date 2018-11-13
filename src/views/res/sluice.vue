@@ -79,257 +79,267 @@
 		<pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
 		<el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
-			<el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe width="90%">
-				<el-table-column type="index" label="序号" />
+			<el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe width="90%" border>
+				<el-table-column type="index" label="序号" width="50" />
 				<el-table-column prop="CreateDate" label="上传时间" width="150" />
 				<el-table-column prop="name" label="文件名" width="250" />
 				<el-table-column prop="id" label="操作" min-width="120">
 					<template slot-scope="scope">
-						<el-button type="primary" size="mini" @click="exportExcel(scope.$index,scope.row)">导出</el-button>
-						<el-button type="primary" size="mini">恢复</el-button>
+						 <el-button type="primary" size="mini"  title="导出该时间上传资源文件"><a :href="(scope.row.url)" >导出</a></el-button>
+            			 <el-button @click="get(scope.row)" type="primary" size="mini" title="资源恢复到该时间上传的文件"  >恢复</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-dialog>
 		<el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
-			<div style="float:left;">文件格式要求为： <span style="color:red">.xls</span>(Excel 97-2018工作簿)</div><br />
-			<div style="float:left;">文件必需包含字段：</div>
-			<div style="margin-left: 125px">
-				名称<br />县名<br />经度（如：113.8569）<br />纬度（如：27.6253）<br />
-			</div>
+			<el-form :model="form" abel-width="80px" size="mini" class="leftBox">
+				<el-form-item label="文件格式要求为：">
+					<span style="color:red">.xls</span>(Excel 97-2018工作簿)
+				</el-form-item>
+				<el-form-item label="文件必需包含字段：">
+					名称<br />县名<br />经度（如：113.8569）<br />纬度（如：27.6253）<br />
+				</el-form-item>
+			</el-form>
 			<el-upload :action="uploadaction" :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
 				<el-button type="primary" size="mini">去上传</el-button>
 			</el-upload>
 		</el-dialog>
 	</div>
 </template> 
-<script> 
-import Pagination from '@/components/Pagination'
-import { getList, getfiles } from '@/api/res/sluice.js'
-import RmDict from '@/components/rm/dict'
-import RmOrgSelect from "@/components/rm/orgselect"
-import RmUserSelect from "@/components/rm/userselect"
-import RmAreaSelect from "@/components/rm/areaselect"
-import { getToken } from '@/utils/auth'
+<script>
+import Pagination from "@/components/Pagination";
+import { getList, getfiles } from "@/api/res/sluice.js";
+import RmDict from "@/components/rm/dict";
+import RmOrgSelect from "@/components/rm/orgselect";
+import RmUserSelect from "@/components/rm/userselect";
+import RmAreaSelect from "@/components/rm/areaselect";
+import { getToken } from "@/utils/auth";
 export default {
-	components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
-	filters: {
-		statusFilter(status) {
-			const statusMap = {
-				published: 'success',
-				draft: 'gray',
-				deleted: 'danger'
-			}
-			return statusMap[status]
-		}
-	},
-	data() {
-		return {
-			v: {
-				form: false,
-				formhistory: false,
-				loading: false,
-				formupdate: false
-			},
-			visible: false,
-			listLoading: null,
-			listLoadingHistory: null,
-			form: {
-				name: null,
-				code: null,
-				lat: null,
-				lng: null,
-				province: null,
-				region: null,
-				county: null,
-				town: null,
-				village: null,
-				regimeCode: null,
-				threeCode: null,
-				riverName: null,
-				riverCode: null,
-				coloum1: null,
-				coloum2: null,
-				coloum3: null,
-				coloum4: null,
-				coloum5: null,
-				coloum6: null,
-				coloum7: null,
-				coloum8: null,
-				coloum9: null,
-				coloum10: null,
-				coloum11: null,
-				coloum12: null,
-				coloum13: null,
-				coloum14: null,
-				coloum15: null,
-				coloum16: null,
-				coloum17: null,
-				coloum18: null,
-				coloum19: null,
-				coloum20: null,
-				coloum21: null,
-				coloum22: null,
-				coloum23: null,
-				coloum24: null,
-				coloum25: null,
-				coloum26: null,
-				coloum27: null,
-				coloum28: null,
-				coloum29: null,
-				coloum30: null,
-				coloum31: null,
-				coloum32: null,
-				coloum33: null,
-				coloum34: null,
-				coloum35: null,
-				coloum36: null,
-				coloum37: null,
-				coloum38: null,
-				coloum39: null,
-				coloum40: null,
-				coloum41: null,
-				coloum42: null,
-				coloum43: null,
-				division: null,
-				confirm: null,
-				recordMan: null,
-				recordPhone: null,
-				reviewMan: null,
-				reviewPhone: null,
-				auditMan: null,
-				auditSymbol: null,
-				regionAudit: null,
-				provinceAudit: null,
-				nationAudit: null
-			},
-			list: null,
-			listDate: null,
-			uploadaction: process.env.BASE_API + '/api/res/sluice/import?token=' + getToken(),
-			total: 0,
-			listQuery: {
-				pageNo: 1,
-				pageSize: 10,
-				importance: undefined,
-				search: undefined,
-				type: undefined,
-				sort: '+id'
-			},
-			uploaddata: {
-				bizId: 10001,
-				bizType: "sz"
-			},
-			importanceOptions: [1, 2, 3]
-		}
-	},
-	created() {
-		this.getList()
-	},
-	methods: {
-		getList() {
-			this.listLoading = true
-			getList(this.listQuery).then(response => {
-				this.listLoading = false
-				this.list = response.data.list
-				this.total = response.data.count
-			})
-		},
-		downloadExcel() {
-			this.v.formhistory = true
-			this.listLoadingHistory = true
-			getfiles(this.uploaddata).then(response => {
-				this.listDate = response.data;
-				this.listLoadingHistory = false
-			})
-		},
-		updateData() {
-			this.v.formupdate = true
-		},
-		exportExcel(index, row) {
-			this.v.formhistory = false;
-			alert(row.id);
-		},
-		beforeUpload(file) {
-			this.listLoading = true
-			this.v.formupdate = false
-		},
-		handleFilter() {
-			this.listQuery.pageNo = 1
-			this.getList();
-		},
-		handleSuccess(respone) {
-			if (respone.success == true) {
-				this.$message({
-					message: '导入数据成功',
-					type: 'success'
-				});
-			} else {
-				this.$message({
-					message: respone.msg,
-					type: 'error'
-				});
-			}
-			this.listQuery.search = ""
-			this.getList();
-		},
-		handlError() {
-			this.$message({
-				message: '导入数据失败',
-				type: 'error'
-			});
-			this.listQuery.search = ""
-			this.getList();
-		},
-		edit(row) {
-			//console.log(JSON.stringify(row));
-			this.visible = true
-			this.form = row
-		},
-		save() {
-			//console.log('保存:',JSON.stringify(this.form),this.selectUser);
-			this.visible = false
-			//
-		},
-		del(row) {
-			var self = this
-			//console.log(row); 
-		},
+  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: "success",
+        draft: "gray",
+        deleted: "danger"
+      };
+      return statusMap[status];
+    }
+  },
+  data() {
+    return {
+      v: {
+        form: false,
+        formhistory: false,
+        loading: false,
+        formupdate: false
+      },
+      visible: false,
+      listLoading: null,
+      listLoadingHistory: null,
+      form: {
+        name: null,
+        code: null,
+        lat: null,
+        lng: null,
+        province: null,
+        region: null,
+        county: null,
+        town: null,
+        village: null,
+        regimeCode: null,
+        threeCode: null,
+        riverName: null,
+        riverCode: null,
+        coloum1: null,
+        coloum2: null,
+        coloum3: null,
+        coloum4: null,
+        coloum5: null,
+        coloum6: null,
+        coloum7: null,
+        coloum8: null,
+        coloum9: null,
+        coloum10: null,
+        coloum11: null,
+        coloum12: null,
+        coloum13: null,
+        coloum14: null,
+        coloum15: null,
+        coloum16: null,
+        coloum17: null,
+        coloum18: null,
+        coloum19: null,
+        coloum20: null,
+        coloum21: null,
+        coloum22: null,
+        coloum23: null,
+        coloum24: null,
+        coloum25: null,
+        coloum26: null,
+        coloum27: null,
+        coloum28: null,
+        coloum29: null,
+        coloum30: null,
+        coloum31: null,
+        coloum32: null,
+        coloum33: null,
+        coloum34: null,
+        coloum35: null,
+        coloum36: null,
+        coloum37: null,
+        coloum38: null,
+        coloum39: null,
+        coloum40: null,
+        coloum41: null,
+        coloum42: null,
+        coloum43: null,
+        division: null,
+        confirm: null,
+        recordMan: null,
+        recordPhone: null,
+        reviewMan: null,
+        reviewPhone: null,
+        auditMan: null,
+        auditSymbol: null,
+        regionAudit: null,
+        provinceAudit: null,
+        nationAudit: null
+      },
+      list: null,
+      listDate: null,
+      uploadaction:
+        process.env.BASE_API + "/api/res/sluice/import?token=" + getToken(),
+      total: 0,
+      listQuery: {
+        pageNo: 1,
+        pageSize: 10,
+        importance: undefined,
+        search: undefined,
+        type: undefined,
+        sort: "+id"
+      },
+      uploaddata: {
+        bizId: 10001,
+        bizType: "sz"
+      },
+      importanceOptions: [1, 2, 3]
+    };
+  },
+  created() {
+    this.getList();
+  },
+  methods: {
+    getList() {
+      this.listLoading = true;
+      getList(this.listQuery).then(response => {
+        this.listLoading = false;
+        this.list = response.data.list;
+        this.total = response.data.count;
+      });
+    },
+    downloadExcel() {
+      this.v.formhistory = true;
+      this.listLoadingHistory = true;
+      getfiles(this.uploaddata).then(response => {
+        this.listDate = response.data;
+        this.listLoadingHistory = false;
+      });
+    },
+    updateData() {
+      this.v.formupdate = true;
+    },
+    exportExcel(index, row) {
+      this.v.formhistory = false;
+    },
+    beforeUpload(file) {
+      this.listLoading = true;
+      this.v.formupdate = false;
+    },
+    handleFilter() {
+      this.listQuery.pageNo = 1;
+      this.getList();
+    },
+    handleSuccess(respone) {
+      if (respone.success == true) {
+        this.$message({
+          message: "导入数据成功",
+          type: "success"
+        });
+      } else {
+        this.$message({
+          message: respone.msg,
+          type: "error"
+        });
+      }
+      this.listQuery.search = "";
+      this.getList();
+    },
+    handlError() {
+      this.$message({
+        message: "导入数据失败",
+        type: "error"
+      });
+      this.listQuery.search = "";
+      this.getList();
+    },
+    edit(row) {
+      //console.log(JSON.stringify(row));
+      this.visible = true;
+      this.form = row;
+    },
+    save() {
+      //console.log('保存:',JSON.stringify(this.form),this.selectUser);
+      this.visible = false;
+      //
+    },
+    del(row) {
+      var self = this;
+      //console.log(row);
+    },
+    get(row) {
+      alert(row.id);
+      this.v.formhistory = false;
+      getfiles(row.id).then(response => {
 
-		elTableHeadFunction(h, l, fontSize) {
-			let f = 14;
-			if (typeof (fontSize) != "undefined" && fontSize != null) {
-				f = fontSize;
-			}
-			//列头的实际宽度
-			let width = l.column.realWidth;
-			//14：字体大小 32 是el表格的左右 padding 的合
-			let maxFontCount = Math.floor((width - 32) / f) - 1;
-			let chars = l.column.label.split("");
-			var label = "";
-			if (maxFontCount < chars.length) {
-				for (let i = 0; i < maxFontCount; i++) {
-					label += chars[i];
-				}
-				label += "..";
-			} else {
-				label = l.column.label;
-			}
-			console.log(label);
-			return label;
-		},
-		labelHead(h, { column, index }) {
-			let l = column.label.length
-			let f = 16 //每个字大小，其实是每个字的比例值，大概会比字体大小差不多大一点，
-			column.minWidth = f * l //字大小乘个数即长度 ,注意不要加px像素，这里minWidth只是一个比例值，不是真正的长度
-			　　　　　　　　　　　　//然后将列标题放在一个div块中，注意块的宽度一定要100%，否则表格显示不完全
-			return h('div', { class: 'table-head', style: { width: '100%' } }, [column.label])
-
-		}
-	}
-}
+	  });
+    },
+    elTableHeadFunction(h, l, fontSize) {
+      let f = 14;
+      if (typeof fontSize != "undefined" && fontSize != null) {
+        f = fontSize;
+      }
+      //列头的实际宽度
+      let width = l.column.realWidth;
+      //14：字体大小 32 是el表格的左右 padding 的合
+      let maxFontCount = Math.floor((width - 32) / f) - 1;
+      let chars = l.column.label.split("");
+      var label = "";
+      if (maxFontCount < chars.length) {
+        for (let i = 0; i < maxFontCount; i++) {
+          label += chars[i];
+        }
+        label += "..";
+      } else {
+        label = l.column.label;
+      }
+      console.log(label);
+      return label;
+    },
+    labelHead(h, { column, index }) {
+      let l = column.label.length;
+      let f = 16; //每个字大小，其实是每个字的比例值，大概会比字体大小差不多大一点，
+      column.minWidth = f * l; //字大小乘个数即长度 ,注意不要加px像素，这里minWidth只是一个比例值，不是真正的长度 //然后将列标题放在一个div块中，注意块的宽度一定要100%，否则表格显示不完全
+      return h("div", { class: "table-head", style: { width: "100%" } }, [
+        column.label
+      ]);
+    }
+  }
+};
 </script>
-<style lang="scss" scoped>
-.upload-demo {
-  display: inline-block;
+
+<style>
+.leftBox .el-form-item__content {
+  float: left;
 }
 </style>
