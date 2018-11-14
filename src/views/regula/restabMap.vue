@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container resourceMange">
     <el-container>
       <rm-map />
       <!-- 最大化按钮 -->
@@ -157,6 +157,10 @@ export default {
 .leftBox .el-form-item__content {
   float: left;
 }
+/* .resourceMange .el-dialog > .el-dialog__body {
+  height: 53em;
+
+} */
 </style>
 
 

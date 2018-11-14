@@ -10,8 +10,8 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/res/sluice/list',
-	    method: 'get',
+	    url: '/c/common/fileRecord/get',
+	    method: 'post',
 	    params:{id:id}
 	  })
 	}

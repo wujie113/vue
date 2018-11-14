@@ -362,7 +362,7 @@ export default {
       position: relative;
       box-shadow: 0px 0px 8px 0px rgba(36, 44, 51, 0.2);
       .widget-divContent-main {
-        display: inline-block;
+        // display: inline-block;
         height: auto;
         float: left;
         width: 100%;
@@ -404,7 +404,7 @@ export default {
             float: left;
             width: 100%;
             li {
-              display: inline-block;
+              // display: inline-block;
               width: 25%;
               font-size: 12px;
               position: relative;

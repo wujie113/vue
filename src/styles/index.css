@@ -613,7 +613,7 @@ code a:hover {
 }
 
 .el-dialog__wrapper .el-dialog .el-dialog__body {
-  max-height: 600px;
+  max-height: 750px;
   overflow-y: auto;
 }
 
