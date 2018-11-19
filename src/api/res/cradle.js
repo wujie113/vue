@@ -10,7 +10,7 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/res/cradle/list',
+	    url: '/api/res/cradle/recoveryExecl',
 	    method: 'get',
 	    params:{id:id}
 	  })
@@ -28,6 +28,14 @@ import request from '@/utils/request'
 	    url: '/api/res/cradle/del',
 	    method: 'post',
 	    params:{ids:ids}
+	  })
+	}
+
+	export function delBtn(id) {
+	  return request({
+	    url: '/api/res/cradle/deleteExecl',
+	    method: 'post',
+	    params:{id:id}
 	  })
 	}
 

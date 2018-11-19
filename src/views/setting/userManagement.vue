@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container userM">
     <el-container v-loading="loading">
       <el-aside>
         <div class="panel">
@@ -22,44 +22,42 @@
             用户列表
           </div>
           <div class="filter-container" style="">
-            <el-input placeholder="输入姓名、帐号或角色搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="handleFilter" v-model="listQuery.search" />
+            <el-input placeholder="输入姓名、帐号或角色搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="searchBtn" v-model="listQuery.name" />
             状态：
             <el-select placeholder="请选择状态" clearable style="width: 140px" class="filter-item" v-model="listQuery.state">
               <el-option v-for="item in states" :key="item" :label="item" :value="item" />
             </el-select>
-            角色：
+            <!-- 角色：
             <el-select placeholder="请选择角色" clearable style="width: 140px" class="filter-item" v-model="listQuery.role">
               <el-option v-for="item in roles" :key="item" :label="item" :value="item" />
-            </el-select>
+            </el-select> -->
 
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchBtn">查询</el-button>
 
           </div>
         </el-header>
-        <!-- <div style="height:2%;width:100%;background-color:#f5f5f5"></div> -->
         <el-main>
           <div class=" filter-container">
             <el-button class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="addBtn">新增用户</el-button>
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="deleteBtn">删除</el-button>
           </div>
           <div>
-            <el-table ref="multipleTable" border stripe :data="tableData3" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" v-loading="tableLoading">
+            <el-table ref="multipleTable" border stripe :data="tableData3" tooltip-effect="dark" @selection-change="handleSelectionChange" v-loading="tableLoading">
               <el-table-column type="selection" width="55" align="center">
               </el-table-column>
               <el-table-column type="index" width="50" align="center" label="序号">
               </el-table-column>
-              <el-table-column label="账号" width="120" align="center">
-                <template slot-scope="scope">{{ scope.row.date }}</template>
+              <el-table-column prop="loginName" label="账号" width="120" align="center">
               </el-table-column>
-              <el-table-column prop="name" label="联系号码" width="120" align="center">
+              <el-table-column prop="name" label="姓名" width="120" align="center">
               </el-table-column>
-              <el-table-column prop="address" label="所属区域" align="center">
+              <el-table-column prop="mobile" label="联系号码" width="120" align="center">
               </el-table-column>
-              <el-table-column prop="address" label="单位" show-overflow-tooltip align="center">
+              <el-table-column prop="dept.name" label="部门" width="120" show-overflow-tooltip align="center">
               </el-table-column>
-              <el-table-column prop="address" label="状态" align="center">
+              <el-table-column prop="postStateLabel" label="状态" align="center">
               </el-table-column>
-              <el-table-column prop="address" label="操作" align="center" width="150px">
+              <el-table-column label="操作" align="center" width="150px">
                 <template slot-scope="scope">
                   <el-button @click="handleEdit(scope.$index, scope.row)" type="text" title="编辑">
                     <svg-icon icon-class="editColor" />
@@ -67,36 +65,32 @@
                   <el-button type="text" @click="ModifyPassword(scope.$index, scope.row)" title="修改密码">
                     <svg-icon icon-class="password1" />
                   </el-button>
-                  <el-button @click="handleStart(scope.$index, scope.row)" type="text" :title="scope.row.isStart ? '启用' : '已停用'">
-                    <svg-icon :icon-class="scope.row.isStart ? 'remove' : 'remove1'" />
+                  <el-button @click="handleStart(scope.$index, scope.row)" type="text" :title="scope.row.state == '1' ? '启用' : '停用'">
+                    <svg-icon :icon-class="scope.row.state == '1' ? 'remove1' : 'remove'" />
                   </el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="tableList" />
+            <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
           </div>
         </el-main>
 
       </el-container>
     </el-container>
     <!-- 新增用户弹窗 -->
-    <el-dialog :visible.sync="dialogVisible" width="30%" title="添加用户">
+    <el-dialog :visible.sync="dialogVisible" width="30%" title="添加用户" top="5vh">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
-        <el-form-item prop="unit" label="单位">
-          <el-input type="text" v-model="form.unit" disabled="disabled" />
+        <el-form-item label="单位">
+          {{ unit }}
         </el-form-item>
-        <el-form-item prop="department" label="部门" required>
-          <el-select v-model="form.department" placeholder="请选择部门" clearable class="filter-item">
-            <el-option v-for="item in departments" :key="item" :label="item" :value="item" />
-            <!-- <el-option label="区域一" value="shanghai"></el-option> -->
-            <!-- <el-option label="区域二" value="beijing"></el-option> -->
-          </el-select>
+        <el-form-item prop="dept" label="部门" required>
+          <rm-area-select v-model="form.dept" />
         </el-form-item>
-        <el-form-item prop="account" label="账号" required>
-          <el-input v-model="form.account" />
+        <el-form-item prop="loginName" label="账号" required>
+          <el-input v-model="form.loginName" />
         </el-form-item>
-        <el-form-item prop="username" label="姓名" required>
-          <el-input v-model="form.username" />
+        <el-form-item prop="name" label="姓名" required>
+          <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item prop="password" label="密码" required>
           <el-input type="password" v-model="form.password" />
@@ -107,28 +101,25 @@
         <el-form-item prop="sort" label="排序" required>
           <el-input type="number" v-model="form.sort" />
         </el-form-item>
-        <el-form-item prop="mobilePhone" label="手机号码" required>
-          <el-input type="text" v-model="form.mobilePhone" />
+        <el-form-item prop="mobile" label="手机号码" required>
+          <el-input type="text" v-model="form.mobile" />
         </el-form-item>
-        <el-form-item prop="sex" label="性别">
-          <el-select v-model="form.sex" placeholder="请选择性别" clearable class="filter-item">
+        <el-form-item prop="gender" label="性别">
+          <el-select v-model="form.gender" placeholder="请选择性别" clearable class="filter-item">
             <!-- <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" /> -->
-            <el-option label="男" value="male"></el-option>
-            <el-option label="女" value="female"></el-option>
+            <el-option label="男" value="M"></el-option>
+            <el-option label="女" value="F"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="sex" label="状态">
+        <el-form-item prop="state" label="状态" required>
           <el-select v-model="form.state" placeholder="请选择状态" clearable class="filter-item">
             <!-- <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" /> -->
-            <el-option label="正常" value="start"></el-option>
-            <el-option label="停用" value="stop"></el-option>
+            <el-option label="正常" value="0"></el-option>
+            <el-option label="停用" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="position" label="职位">
-          <el-input v-model="form.position" />
-        </el-form-item>
-        <el-form-item prop="telephone" label="固话">
-          <el-input v-model="form.telephone" />
+        <el-form-item prop="post" label="职位">
+          <el-input v-model="form.post" />
         </el-form-item>
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email" />
@@ -140,51 +131,43 @@
       </div>
     </el-dialog>
     <!-- 编辑弹窗 -->
-    <el-dialog :visible.sync="dialogVisible1" width="30%" title="用户详情">
+    <el-dialog :visible.sync="dialogVisible1" width="30%" title="用户详情" top="5vh">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
-        <el-form-item prop="unit" label="单位">
-          {{ form.unit }}
+        <el-form-item label="单位">
+          {{ unit }}
           <!-- <el-input type="text" v-model="form.unit" disabled="disabled" /> -->
         </el-form-item>
-        <el-form-item prop="department" label="部门" required>
-          <el-select v-model="form.department" placeholder="请选择部门" clearable class="filter-item">
-            <el-option v-for="item in departments" :key="item" :label="item" :value="item" />
-          </el-select>
+        <el-form-item prop="dept" label="部门" required>
+          <rm-area-select v-model="form.dept" />
         </el-form-item>
-        <el-form-item prop="account" label="账号" required>
-          <el-input v-model="form.account" />
+        <el-form-item prop="loginName" label="账号" required>
+          <el-input v-model="form.loginName" />
         </el-form-item>
-        <el-form-item prop="username" label="姓名" required>
-          <el-input v-model="form.username" />
-        </el-form-item>
-        <el-form-item prop="password" label="密码" required>
-          <el-input type="password" v-model="form.password" />
+        <el-form-item prop="name" label="姓名" required>
+          <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item prop="sort" label="排序" required>
           <el-input type="number" v-model="form.sort" />
         </el-form-item>
-        <el-form-item prop="mobilePhone" label="手机号码" required>
-          <el-input type="text" v-model="form.mobilePhone" />
+        <el-form-item prop="mobile" label="手机号码" required>
+          <el-input type="text" v-model="form.mobile" />
         </el-form-item>
-        <el-form-item prop="sex" label="性别">
-          <el-select v-model="form.sex" placeholder="请选择性别" clearable class="filter-item">
+        <el-form-item prop="gender" label="性别">
+          <el-select v-model="form.gender" placeholder="请选择性别" clearable class="filter-item">
             <!-- <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" /> -->
-            <el-option label="男" value="male"></el-option>
-            <el-option label="女" value="female"></el-option>
+            <el-option label="男" value="M"></el-option>
+            <el-option label="女" value="F"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="sex" label="状态">
+        <el-form-item prop="state" label="状态">
           <el-select v-model="form.state" placeholder="请选择状态" clearable class="filter-item">
             <!-- <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" /> -->
-            <el-option label="正常" value="start"></el-option>
-            <el-option label="停用" value="stop"></el-option>
+            <el-option label="正常" value="0"></el-option>
+            <el-option label="停用" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="position" label="职位">
-          <el-input v-model="form.position" />
-        </el-form-item>
-        <el-form-item prop="telephone" label="固话">
-          <el-input v-model="form.telephone" />
+        <el-form-item prop="post" label="职位">
+          <el-input v-model="form.post" />
         </el-form-item>
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email" />
@@ -197,10 +180,13 @@
     </el-dialog>
 
     <!-- 修改密码弹窗 -->
-    <el-dialog :visible.sync="dialogVisible2" width="30%" title="修改密码" top="20%">
+    <el-dialog :visible.sync="dialogVisible2" width="30%" title="修改密码" top="5vh">
       <el-form :model="form2" status-icon :rules="rules2" ref="form2" label-width="80px" status-icon>
-        <el-form-item label="新密码" prop="pass">
-          <el-input type="password" v-model="form2.pass" auto-complete="off" placeholder="请输入新的密码"></el-input>
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input type="text" v-model="form2.oldPassword" auto-complete="off" placeholder="请输入旧的密码"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input type="password" v-model="form2.newPassword" auto-complete="off" placeholder="请输入新的密码"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkPass">
           <el-input type="password" v-model="form2.checkPass" auto-complete="off" placeholder="请确认密码"></el-input>
@@ -214,11 +200,16 @@
   </div>
 </template>
 <script>
-import { tree, tableList } from '@/api/setting/userMangement'
+import { tree, tableList, Delete, save, modifyPwd, modifyState } from '@/api/setting/userMangement'
 import Pagination from '@/components/Pagination'
+import RmDict from '@/components/rm/dict'
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
+
 export default {
   name: 'userManagement',
-  components: { Pagination },
+  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   data() {
     // 自定义校验规则
     var validatePass = (rule, value, callback) => {
@@ -231,14 +222,24 @@ export default {
         callback();
       }
       if (value) {
-        if (value.lemgth < 6)
+        if (value.lemgth < 6) {
           callback(new Error('密码小于6个字符'));
+        }
       }
     };
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'));
       } else if (value !== this.form.password) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
+    var validatePass3 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.form2.newPassword) {
         callback(new Error('两次输入密码不一致!'));
       } else {
         callback();
@@ -257,32 +258,33 @@ export default {
         label: "label"
       },
       listQuery: {
-        search: "",
+        name: "",
         state: "",
         role: "",
         pageNo: 1,
         pageSize: 10,
         id: ""
       },
+      unit: "",
+      "company.id": "",
       form: {
-        unit: "广州市",
-        department: null,
-        account: null,
-        username: null,
+        // office: null,
+        dept: null,
+        loginName: null,
+        name: null,
         password: null,
         checkPass: "",
         sort: null,
-        mobilePhone: null,
-        sex: null,
+        mobile: null,
+        gender: null,
         state: null,
-        position: null,
-        telephone: null,
+        post: null,
         email: null
       },
       rules: {
-        department: [{ required: true, message: "请选择部门", trigger: "change" }],
-        account: [{ required: true, message: "请填写描述内容", trigger: "blur" }],
-        username: [
+        dept: [{ required: true, message: "请选择部门", trigger: "change" }],
+        loginName: [{ required: true, message: "请填写描述内容", trigger: "blur" }],
+        name: [
           { required: true, message: "请填写您的姓名", trigger: "blur" },
           { min: 2, max: 4, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ],
@@ -295,40 +297,27 @@ export default {
           // { min: 6, message: "密码长度必须大于6字符", trigger: "blur" }
         ],
         sort: [{ required: true, message: "序号是必填的", trigger: "change" }],
-        mobilePhone: [{ required: true, message: "请填写手机号码", trigger: "change" }]
+        mobile: [{ required: true, message: "请填写手机号码", trigger: "change" }],
+        state: [{ required: true, message: '请选择状态', trigger: "change" }]
       },
       form2: {
-        pass: "",
+        oldPassword: "",
+        newPassword: "",
         checkPass: ""
       },
       rules2: {
-        pass: [
+        newPassword: [
           { validator: validatePass, trigger: "blur" }
         ],
         checkPass: [
-          { validator: validatePass2, trigger: "blur" }
+          { validator: validatePass3, trigger: "blur" }
         ]
       },
-      total: 2,
+      total: 0,
       states: ["正常", "停用"],
       roles: ["巡河长", "张三", "李四", "王五", "赵六"],
-      departments: ["总河长", "管理员", "科长"],
-      tableData3: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: true
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: false
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        isStart: true
-      }],
+      // departments: ["总河长", "管理员", "科长"],
+      tableData3: [],
       multipleSelection: []
     }
   },
@@ -338,12 +327,20 @@ export default {
   methods: {
     loadLeftTree() {
       tree().then((res) => {
-        console.log("左边树", res)
         const data = res.data.list
         this.dataArray = data
+        // 第一次默认
+        this.listQuery.id = data[0].id
+        this.unit = data[0].label
+        this.companyID = data[0].id
+        this.getList()
         this.loading = false
       }).catch((errorRes) => {
         this.loading = false
+        this.$message({
+          type: "error",
+          message: "网络错误!"
+        })
       })
     },
     onlyShowSelectBtn(v) {
@@ -351,19 +348,20 @@ export default {
     },
     handleNodeClick(data) {
       console.log("节点信息", data)
+      //选择的是哪个单位
+      this.unit = data.label
+      this.companyID = data.id
+      console.log('this.form.unit', this.unit)
 
-      const idx = data.id
-      const params = {
-        id: idx
-      }
-      this.getList(params)
+      this.listQuery.id = data.id
+      this.getList()
     },
     // 表单编辑
     handleEdit(index, row) {
-      if (this.$refs.form != undefined) {
-        this.$refs.form.resetFields()
-        // Object.assign(this.form, this.$options.data().form)
-      }
+      // if (this.$refs.form != undefined) {
+      //   this.$refs.form.resetFields()
+      // }
+      Object.assign(this.form, row)
       this.dialogVisible1 = true
       console.log('表单编辑', row)
       // this.form2 = row
@@ -377,51 +375,131 @@ export default {
       }
       this.dialogVisible2 = true
     },
-    // 停用启用
-    handleStart() {
-
+    // 修改密码保存
+    savePass() {
+      modifyPwd(this.form2).then(res => {
+        this.dialogVisible2 = false
+        this.$message({
+          type: "success",
+          message: "成功修改密码!"
+        })
+      }).catch(errorRes => {
+        this.dialogVisible2 = false
+      })
     },
-    getList(idx) {
+    // 停用启用
+    handleStart(index, row) {
+      const params = {
+        id: row.id
+      }
+      if (row.state == '1') {
+        params.state = 0
+      } else if(row.state == '0'){
+        params.state = 1
+      }
+      modifyState(params).then(res => {
+        this.$message({
+          type: "success",
+          message: "修改成功!"
+        })
+        this.getList()
+      }).catch(errorRes => {
+        this.$message({
+          type: "error",
+          message: "网络错误!"
+        })
+      })
+    },
+    getList() {
       this.tableLoading = true
-
-      tableList(idx).then((res) => {
+      tableList(this.listQuery).then((res) => {
         console.log('表单列表', res)
+        this.tableData3 = res.data.list
+        this.total = res.data.count
         this.tableLoading = false
       }).catch(errorRes => {
         this.tableLoading = false
+        this.$message({
+          type: "error",
+          message: "网络错误!"
+        })
       })
     },
-    // 查询,分页使用
-    tableList() {
-
-    },
-    handleFilter() {
-
-    },
     searchBtn() {
-
+      console.log("这是查询啊")
+      this.listQuery.pageNo = 1
+      this.getList()
     },
     addBtn() {
+      console.log('添加的---之前', this.unit)
+
       this.dialogVisible = true
       console.log(this.$refs.form)
 
       if (this.$refs.form != undefined) {
-        this.$refs.form.resetFields()
+        // this.$refs.form.resetFields()
         // Object.assign(this.form, this.$options.data().form)
+        Object.assign(this.form, this.$options.data().form)
       }
+      console.log('添加的---', this.unit)
     },
     deleteBtn() {
+      if (this.multipleSelection.length > 0) {
+        let idArray = []
+        this.multipleSelection.map(item => {
+          idArray.push(item.id)
+        })
+        const idStr = idArray.join()
+        console.log('idStr', idStr)
+        this.$confirm("确认删除?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          Delete(ids).then(res => {
+            this.AreaTree()
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            })
+          }).catch(errorRes => {
+            this.$message({
+              type: "error",
+              message: "网络错误!"
+            })
+          })
+        }).catch(() => {
+          // 用户点击取消按钮
+        })
+      } else {
+        this.$message({
+          type: "warn",
+          message: "请先勾选要删除的用户!"
+        })
+      }
 
     },
     // 新增用户  保存
     save(e) {
       this.dialogVisible = false
-      console.log('保存', this.form)
+      let params = {
+        "company.id": this.companyID,
+        "office.id": this.form.dept.id
+      }
+      let data = Object.assign(params, this.form)
+      if (this.form.id) {
+        data.id = this.form.id
+      }
+      save(data).then(res => {
+        this.getList()
+      }).catch(errorRes => {
+        this.$message({
+          type: "error",
+          message: "网络错误!"
+        })
+      })
     },
-    // 修改密码保存
-    savePass() {
-      this.dialogVisible2 = false
-    },
+
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -501,31 +579,12 @@ export default {
   border-top-right-radius: 3px;
 }
 </style>
-<style lang="scss">
-.el-container {
-  .el-aside {
-    width: 25% !important;
-    margin-right: 1%;
-  }
-  .el-header,
-  .el-main {
-    border: 1px solid transparent;
-    border-color: #ddd;
-    border-radius: 4px;
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    width: 100%;
-  }
-  .el-header {
-    margin-bottom: 1%;
-    .topTitle {
-      text-align: left;
-      border-bottom: 1px solid #ccc;
-      padding: 10px 0;
-    }
-    .filter-container {
-      padding: 25px 0 !important;
-    }
-  }
+<style scoped>
+.userM >>> .el-table--medium td {
+  padding: 3px 0 !important;
+}
+.userM >>> .el-dialog__body {
+  max-height: 500px;
 }
 </style>
+

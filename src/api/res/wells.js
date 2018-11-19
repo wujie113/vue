@@ -10,7 +10,7 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/res/wells/list',
+	    url: '/api/res/wells/recoveryExecl',
 	    method: 'get',
 	    params:{id:id}
 	  })
@@ -28,6 +28,13 @@ import request from '@/utils/request'
 	    url: '/api/res/wells/del',
 	    method: 'post',
 	    params:{ids:ids}
+	  })
+	}
+	export function delBtn(id) {
+	  return request({
+	    url: '/api/res/wells/deleteExecl',
+	    method: 'post',
+	    params:{id:id}
 	  })
 	}
 

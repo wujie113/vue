@@ -4,20 +4,23 @@
         <div id="mapctrl" class="map-ctrl-panel">
             <el-popover popper-class="map-ctrl-tool" width="460" placement="left" visible-arrow="false" trigger="manual" v-model="v.tool">
                 <el-button-group>
-                    <el-button title="还原视图" size="mini" @click="resetView()">
+                    <el-button id="map-btn-resetview" title="还原视图" size="mini" @click="resetView()">
                         <svg-icon icon-class="map-revert" />
                     </el-button>
-                    <el-button title="新增" icon="el-icon-plus" size="mini"></el-button>
-                    <el-button icon="el-icon-edit" size="mini"></el-button>
-                    <el-button icon="el-icon-delete" size="mini"></el-button>
-                    <el-button title="范围搜索" icon="el-icon-search" size="mini"></el-button>
-                    <el-button title="测距" size="mini">
+                    <el-button id="map-btn-resetaction" title="还原操作" size="mini" @click="resetAction">
+                        <svg-icon icon-class="map-pointer" />
+                    </el-button>
+                    <el-button title="新增" icon="el-icon-plus" size="mini" disabled></el-button>
+                    <el-button title="编辑" icon="el-icon-edit" size="mini" disabled></el-button>
+                    <!-- <el-button title="范围搜索" icon="el-icon-search" size="mini" disabled></el-button> -->
+                    <el-button id="map-btn-clean" title="清除绘制操作" icon="el-icon-delete" size="mini" @click="cleanDraw"></el-button>
+                    <el-button id="map-btn-mea" title="测距" size="mini" @click="meaLine">
                         <svg-icon icon-class="map-mea" />
                     </el-button>
-                    <el-button title="标注" icon="el-icon-location-outline" size="mini"></el-button>
-                    <el-button title="帮助" icon="el-icon-question" size="mini"></el-button>
+                    <el-button id="map-btn-mark" title="标注" icon="el-icon-location-outline" size="mini" @click="newMarker()"></el-button>
+                    <el-button id="map-btn-help" title="帮助" icon="el-icon-question" size="mini" @click="help"></el-button>
                 </el-button-group>
-                <el-button title="工具栏" class="map-ctrl-btn" slot="reference" @click="v.tool=!v.tool">
+                <el-button id="map-btn-toolbar" title="工具栏" class="map-ctrl-btn" slot="reference" @click="v.tool=!v.tool">
                     <svg-icon icon-class="map-tool" />
                 </el-button>
             </el-popover>
@@ -36,12 +39,26 @@
                         </div>
                     </el-collapse-item>
                 </el-collapse>
-                <el-button title="地图图层" class="map-ctrl-btn" slot="reference">
+                <el-button id="map-btn-layer" title="地图图层" class="map-ctrl-btn" slot="reference">
                     <svg-icon icon-class="map-layer" />
                 </el-button>
             </el-popover>
 
         </div>
+
+        <!-- 标注编辑框 -->
+        <el-popover placement="right" offset="30" title="标注" width="250" trigger="manual" v-model="marker.show">
+            <p>
+                <el-input v-model="marker.name" placeholder="请输入名称"></el-input>
+            </p>
+            <div style="text-align: right; margin: 0">
+                <el-button type="danger" size="mini" @click="delMarker()">删除</el-button>
+                <el-button size="mini" type="info" @click="marker.show = false">关闭</el-button>
+                <el-button type="primary" size="mini" @click="updateMarker()">确定</el-button>
+            </div>
+            <div id="markpopup" slot="reference"></div>
+        </el-popover>
+
     </div>
 </template> 
 <script> 
@@ -58,7 +75,12 @@
     //import XYZ from 'ol/source/XYZ.js'
     import { cfg as mapCfg } from "@/components/rm/map/config.js"
     import { utils as mapUtils } from "@/components/rm/map/utils.js"
-    import { draw as mapDraw } from "@/components/rm/map/draw.js"
+    import { drawGeom, drawMark, drawMeasure } from "@/components/rm/map/draw.js"
+
+    import * as Driver from 'driver.js' // import driver.js
+    import 'driver.js/dist/driver.min.css' // import driver.js css
+    import steps from './helpSteps'
+
     export default {
         name: "RmMap",
         props: {
@@ -72,17 +94,79 @@
                 map: null,
                 bglayers: [], //底图
                 datalayers: [],//数据图层
-                activeNames: ['datalayer', 'bglayer']
+                activeNames: ['datalayer', 'bglayer'],
+                marker: {
+                    show: false,
+                    name: ''
+                },
+                driver: null
             }
         },
         mounted() {
             this.initMap()
+            this.driver = new Driver({
+                doneBtnText: '完成', // Text on the final button
+                closeBtnText: '关闭', // Text on the close button for this step
+                nextBtnText: '下一个', // Next button text for this step
+                prevBtnText: '上一个'
+            })
         },
         methods: {
             /**绘制责任段 */
-            drawLine(options, callbackFunc) { 
-                console.log(mapDraw)
-                mapDraw.draw(this.map, 'LineString', options, callbackFunc)
+            drawLine(options, callbackFunc) {
+                this.resetAction()
+                drawGeom.draw(this.map, 'LineString', options, callbackFunc)
+            },
+            /**绘制胡泊 */
+            drawArea(options, callbackFunc) {
+                this.resetAction()
+                drawGeom.draw(this.map, 'Polygon', options, callbackFunc)
+            },
+            resetAction() {
+                /**还原操作，比如之前是做测距操作，接着想做标注操作，在每个操作之前，都应该清空之前的设置 */
+                drawMeasure.close()
+                drawGeom.close()
+                drawMark.close()
+            },
+            cleanDraw() {
+                drawMeasure.clean()
+                this.resetAction()
+            },
+            meaLine() {
+                this.resetAction()
+                var cb = function(data) {
+                    console.log('回调，测距', data)
+                }
+                //drawMeasure.meaLine(this, cb)
+                drawMeasure.meaArea(this, cb)
+            },
+            newMarker() {
+                this.resetAction()
+                var cb = function(data) {
+                    console.log('回调，标注', data)
+                }
+                drawMark.markPoint(this, cb)
+            },
+            showMarkPopup(data) {
+                this.marker = data
+            },
+            hideMarkPopup() {
+                // this.$set(this.marker,'show','false')
+                this.marker.show = false
+            },
+            updateMarker() {
+                //设置名称
+                this.marker.f.set('name', this.marker.name)
+                this.marker.show = false
+            },
+            delMarker() {
+                //删除
+                drawMark.delMark(this, this.marker.f)
+                this.marker.show = false
+            },
+            help() {
+                this.driver.defineSteps(steps)
+                this.driver.start()
             },
             resetView() {
                 this.centerView(mapCfg.center, mapCfg.zoom)
@@ -105,6 +189,9 @@
                 })
                 //this.map.getView().fit(geo, {padding: [170, 50, 30, 150], constrainResolution: false});
                 // this.map.getView().centerOn(coord, size, [570, 500])
+            },
+            showProperties(id, type) {
+                console.log('显示对象属性：', id, type)
             },
             switchDatalayer(layer) {
                 layer.visible = !layer.visible
@@ -155,7 +242,7 @@
                     //document.getElementById('info').innerHTML = ''
                     var viewResolution = /** @type {number} */ (self.map.getView().getResolution())
                     self.map.forEachLayerAtPixel(pixel, function(layer) {
-                        //console.log('cb:',layer)
+                        console.log('cb:', layer)
                         //从geoserver获取feature信息URL,'INFO_FORMAT': 'text/html',application/json
                         var url = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapCfg.projection,
                             { 'INFO_FORMAT': 'application/json' })
@@ -167,6 +254,7 @@
                                 if (response.features.length > 0) {
                                     var f = response.features[0]
                                     console.log(f.properties.id, f.properties.name)
+                                    self.showProperties(f.properties.id, f.properties.gtype)
                                 }
                             })
                         }
@@ -203,6 +291,9 @@
                     }
                 })
 
+                //选择组件
+                // var select = new Select()
+                // this.map.addInteraction(select)
 
                 //将map对象传给父页面
                 this.$emit("input", this)
@@ -216,7 +307,7 @@
       height: 100%;
     }
     .map {
-      height: 83vh;
+      height: 91vh;
     }
     .ol-mouse-position {
       top: auto;

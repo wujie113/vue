@@ -1,21 +1,4 @@
 <template>
-  <!-- <el-table :data="lists" v-loading="listLoading" row-key="id" stripe style="width: 100%">
-      <el-table-column prop="lat" label="纬度" />
-      <el-table-column prop="lng" label="经度" />
-      <el-table-column prop="area.id" label="所属区域" />
-      <el-table-column prop="typename" label="问题类型" />
-      <el-table-column prop="address" label="事发地点" />
-      <el-table-column prop="report" label="上报人" />
-      <el-table-column prop="reportPhone" label="上报电话" />
-      <el-table-column prop="reportDate" label="上报时间" />
-      <el-table-column prop="description" label="问题描述" />
-      <el-table-column prop="id" label="操作" width="100">
-        <template slot-scope="scope">
-          <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit" />
-          <el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete" />
-        </template>
-      </el-table-column>
-    </el-table> -->
   <div class="app-container">
     <el-container v-loading="listLoading">
       <el-container>
@@ -148,7 +131,7 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination'
-import { getList, get } from '@/api/work/complaint.js'
+import { getList, get,showstatus,addComment } from '@/api/work/complaint.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
@@ -217,6 +200,10 @@ export default {
       form2: {
         desc: ""
       },
+      params:{
+          id:""
+         // bizId:""
+      },
       lists: null,
       total: 0,
       listQuery: {
@@ -249,28 +236,37 @@ export default {
     },
     // 点击详情,查看详情
     detailBtn(idx) {
+      console.log('idx', idx)
       this.visible = true
+      console.log('idx',idx)
       get(idx).then(response => {
         this.form = response.data;
         this.slide1 = [];
         const imagelist = this.form.imageurl;
-        imagelist.forEach((value, index) => {
-          this.slide1.push(
-            {
-              url: value.url,
-              name: value.name,
-            }
-          )
-        });
+        console.log('imagelist',imagelist)
+        // imagelist.forEach((value, index) => {
+        //   this.slide1.push(
+        //     {
+        //       url: value.url,
+        //       name: value.name,
+        //     }
+        //   )
+        // });
       });
     },
     // 回复弹窗
-    replayBtn(idx) {
+    replayBtn(id) {
       // 打开弹窗
       this.replayDialogVisible = true
       // 内容置空
       Object.assign(this.form2, this.$options.data().form2)
       this.checked = false
+       console.log("id",id)
+      this.params.id = id
+      // this.form2.desc = "111111111111"
+      // showstatus(id).then( response =>{
+          
+      // })
     },
     // 无效投诉
     handleChecked(val) {
@@ -284,8 +280,17 @@ export default {
     // 回复内容提交
     saveReplay() {
       let desc = this.form2.desc
-      console.log('desc', desc)
       this.replayDialogVisible = false
+      // let param = {
+      //   "desc": desc
+      // }
+      console.log("this.params",this.form2.desc)
+      let data = Object.assign(this.form2.desc, this.params)
+      console.log(" data", data)
+
+      // addComment(data).then(response =>{
+
+      // })
     },
     // edit(row) {
     //   //console.log(JSON.stringify(row));
@@ -404,7 +409,7 @@ export default {
             float: left;
             width: 100%;
             li {
-              // display: inline-block;
+              list-style: none;
               width: 25%;
               font-size: 12px;
               position: relative;

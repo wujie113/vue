@@ -10,8 +10,8 @@
     <el-table v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%" border>
       <el-table-column prop="name" label="水源地名称" :show-overflow-tooltip="true" min-width="220" />
       <el-table-column prop="code" label="水源地编码" :show-overflow-tooltip="true" min-width="120" />
-      <el-table-column prop="lat" label="经度" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column prop="lng" label="纬度" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column prop="lat" label="纬度" :show-overflow-tooltip="true" min-width="100" />
       <el-table-column prop="province" label="省" :show-overflow-tooltip="true" min-width="100" />
       <el-table-column prop="region" label="地区" :show-overflow-tooltip="true" min-width="180" />
       <el-table-column prop="county" label="县" :show-overflow-tooltip="true" min-width="180" />
@@ -58,20 +58,21 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
-			<el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe width="90%" border>
+      <el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe width="90%" border>
         <el-table-column type="index" label="序号" width="50" />
         <el-table-column prop="CreateDate" label="上传时间" width="150" />
         <el-table-column prop="name" label="文件名" width="250" />
         <el-table-column prop="id" label="操作" min-width="120">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" title="导出该时间上传资源文件"><a :href="(scope.row.url)">导出</a></el-button>
-            <el-button type="primary" size="mini" title="资源恢复到该时间上传的文件">恢复</el-button>
+            <el-button @click="get(scope.row)" type="primary" size="mini" title="资源恢复到该时间上传的文件">恢复</el-button>
+            <el-button @click="del(scope.row)" type="primary" size="mini" title="删除该时间上传的文件">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
 
-    <el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+    <el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" width="30%">
       <el-form :model="form" abel-width="80px" size="mini" class="leftBox">
         <el-form-item label="文件格式要求为：">
           <span style="color:red">.xls</span>(Excel 97-2018工作簿)
@@ -86,24 +87,24 @@
     </el-dialog>
   </div>
 </template> 
-<script> 
-import Pagination from '@/components/Pagination'
-import { getList, getfiles } from '@/api/res/cradle.js'
-import RmDict from '@/components/rm/dict'
-import RmOrgSelect from "@/components/rm/orgselect"
-import RmUserSelect from "@/components/rm/userselect"
-import RmAreaSelect from "@/components/rm/areaselect"
-import { getToken } from '@/utils/auth'
+<script>
+import Pagination from "@/components/Pagination";
+import { getList, getfiles, get, delBtn } from "@/api/res/cradle.js";
+import RmDict from "@/components/rm/dict";
+import RmOrgSelect from "@/components/rm/orgselect";
+import RmUserSelect from "@/components/rm/userselect";
+import RmAreaSelect from "@/components/rm/areaselect";
+import { getToken } from "@/utils/auth";
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
+        published: "success",
+        draft: "gray",
+        deleted: "danger"
+      };
+      return statusMap[status];
     }
   },
   data() {
@@ -117,7 +118,8 @@ export default {
       listLoading: null,
       listLoadingHistory: null,
       listDate: null,
-      uploadaction: process.env.BASE_API + '/api/res/cradle/import?token=' + getToken(),
+      uploadaction:
+        process.env.BASE_API + "/api/res/cradle/import?token=" + getToken(),
       list: null,
       uploaddata: {
         bizId: 10002,
@@ -130,84 +132,155 @@ export default {
         importance: undefined,
         search: undefined,
         type: undefined,
-        sort: '+id'
+        sort: "+id"
+      },
+      form: {
+        name: null,
+        code: null,
+        lat: null,
+        lng: null,
+        province: null,
+        region: null,
+        county: null,
+        town: null,
+        village: null,
+        regimeCode: null,
+        threeCode: null,
+        type: null,
+        riverName: null,
+        riverCode: null,
+        getNum: null,
+        cloumn1: null,
+        cloumn2: null,
+        cloumn3: null,
+        cloumn4: null,
+        cloumn5: null,
+        cloumn6: null,
+        cloumn7: null,
+        cloumn8: null,
+        cloumn9: null,
+        cloumn10: null,
+        cloumn11: null,
+        cloumn12: null,
+        cloumn13: null,
+        cloumn14: null,
+        cloumn15: null,
+        cloumn16: null,
+        cloumn17: null,
+        cloumn18: null,
+        cloumn19: null,
+        deptName: null,
+        deptCode: null,
+        industry: null,
+        recordMan: null,
+        recordPhone: null,
+        reviewMan: null,
+        reviewPhone: null,
+        auditMan: null,
+        auditSymbol: null,
+        regionAudit: null,
+        provinceAudit: null,
+        nationAudit: null
       },
       importanceOptions: [1, 2, 3]
-    }
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     getList() {
-      this.listLoading = true
+      this.listLoading = true;
       getList(this.listQuery).then(response => {
-        this.listLoading = false
-        this.list = response.data.list
-        this.total = response.data.count
-      })
+        this.listLoading = false;
+        this.list = response.data.list;
+        this.total = response.data.count;
+      });
     },
     downloadExcel() {
-      this.v.formhistory = true
-      this.listLoadingHistory = true
+      this.v.formhistory = true;
+      this.listLoadingHistory = true;
       getfiles(this.uploaddata).then(response => {
         this.listDate = response.data;
-        this.listLoadingHistory = false
-      })
+        this.listLoadingHistory = false;
+      });
     },
     updateData() {
-      this.v.formupdate = true
+      this.v.formupdate = true;
     },
     handleFilter() {
-      this.listQuery.pageNo = 1
-      this.getList()
+      this.listQuery.pageNo = 1;
+      this.getList();
+    },
+    del(row) {
+      this.listLoadingHistory = true;
+      delBtn(row.id).then(response => {
+        this.listLoadingHistory = false;
+        this.$message({
+          message: '删除数据成功',
+          type: 'success'
+        });
+        this.downloadExcel();
+      });
     },
     edit(row) {
       //console.log(JSON.stringify(row));
-      this.visible = true
-      this.form = row
+      this.visible = true;
+      this.form = row;
     },
     save() {
       //console.log('保存:',JSON.stringify(this.form),this.selectUser);
-      this.visible = false
+      this.visible = false;
       //
     },
     del(row) {
-      var self = this
-      //console.log(row); 
+      var self = this;
+      //console.log(row);
     },
     beforeUpload(file) {
-      this.listLoading = true
-      this.v.formupdate = false
+      this.listLoading = true;
+      this.v.formupdate = false;
     },
     handleFilter() {
-      this.listQuery.pageNo = 1
+      this.listQuery.pageNo = 1;
       this.getList();
-
     },
     handleSuccess(respone) {
       if (respone.success == true) {
         this.$message({
-          message: '导入数据成功',
-          type: 'success'
+          message: "导入数据成功",
+          type: "success"
         });
       } else {
         this.$message({
           message: respone.msg,
-          type: 'error'
+          type: "error"
         });
       }
-      this.listQuery.search = ""
+      this.listQuery.search = "";
       this.getList();
     },
     handlError() {
       this.$message({
-        message: '导入数据失败',
-        type: 'error'
+        message: "导入数据失败",
+        type: "error"
       });
-      this.listQuery.search = ""
+      this.listQuery.search = "";
       this.getList();
     },
+    get(row) {
+      this.listLoading = true;
+      this.v.formhistory = false;
+      this.listQuery.search = "";
+      get(row.id).then(response => {
+        this.$message({
+          message: '删除数据成功',
+          type: 'success'
+        });
+        this.listLoading = false;
+        this.getList();
+      });
+    }
   }
-}
+};
 </script>

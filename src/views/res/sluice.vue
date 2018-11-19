@@ -10,8 +10,8 @@
 		<el-table v-loading="listLoading" :data="list" border fit highlight-current-row row-key="id" stripe style="width: 100%">
 			<el-table-column prop="name" label="名称" :show-overflow-tooltip="true" min-width="110" />
 			<el-table-column prop="code" label="编码" :show-overflow-tooltip="true" min-width="160" />
-			<el-table-column prop="lat" label="经度" :show-overflow-tooltip="true" min-width="160" />
-			<el-table-column prop="lng" label="纬度" :show-overflow-tooltip="true" min-width="160" />
+			<el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" min-width="160" />
+			<el-table-column prop="lat" label="纬度" :show-overflow-tooltip="true" min-width="160" />
 			<el-table-column prop="province" label="省" :show-overflow-tooltip="true" min-width="110" />
 			<el-table-column prop="region" label="地区" :show-overflow-tooltip="true" min-width="110" />
 			<el-table-column prop="county" label="县" :show-overflow-tooltip="true" min-width="110" />
@@ -83,15 +83,16 @@
 				<el-table-column type="index" label="序号" width="50" />
 				<el-table-column prop="CreateDate" label="上传时间" width="150" />
 				<el-table-column prop="name" label="文件名" width="250" />
-				<el-table-column prop="id" label="操作" min-width="120">
+				<el-table-column prop="id" label="操作" min-width="150">
 					<template slot-scope="scope">
 						<el-button type="primary" size="mini" title="导出该时间上传资源文件"><a :href="(scope.row.url)">导出</a></el-button>
-						<el-button @click="getBtn(scope.row)" size="mini" title="资源恢复到该时间上传的文件">恢复</el-button>
+						<el-button @click="get(scope.row)" type="primary" size="mini" title="资源恢复到该时间上传的文件">恢复</el-button>
+						<el-button @click="del(scope.row)" type="primary" size="mini" title="删除该时间上传的文件">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-dialog>
-		<el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+		<el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" width="30%">
 			<el-form :model="form" abel-width="80px" size="mini" class="leftBox">
 				<el-form-item label="文件格式要求为：">
 					<span style="color:red">.xls</span>(Excel 97-2018工作簿)
@@ -101,14 +102,14 @@
 				</el-form-item>
 			</el-form>
 			<el-upload :action="uploadaction" :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
-				<el-button type="primary" size="mini">去上传</el-button>
+				<el-button type="primary">去上传</el-button>
 			</el-upload>
 		</el-dialog>
 	</div>
 </template> 
 <script>
 import Pagination from "@/components/Pagination";
-import { getList, getfiles, get } from "@/api/res/sluice.js";
+import { getList, getfiles, get, delBtn } from "@/api/res/sluice.js";
 import RmDict from "@/components/rm/dict";
 import RmOrgSelect from "@/components/rm/orgselect";
 import RmUserSelect from "@/components/rm/userselect";
@@ -246,13 +247,29 @@ export default {
 				this.listLoadingHistory = false;
 			});
 		},
-		getBtn(row) {
-			this.v.formhistory = false
+		get(row) {
+			this.listLoading = true;
+			this.v.formhistory = false;
+			this.listQuery.search = ""
 			get(row.id).then(response => {
-				console.log('res', respone)
-			}).catch((errorRes)=>{
-				
-			})
+				this.$message({
+					message: '恢复数据成功',
+					type: 'success'
+				});
+				this.listLoading = false;
+				this.getList();
+			});
+		},
+		del(row) {
+			this.listLoadingHistory = true;
+			delBtn(row.id).then(response => {
+				this.listLoadingHistory = false;
+				this.$message({
+					message: '删除数据成功',
+					type: 'success'
+				});
+				this.downloadExcel();
+			});
 		},
 		updateData() {
 			this.v.formupdate = true;
@@ -300,41 +317,6 @@ export default {
 			//console.log('保存:',JSON.stringify(this.form),this.selectUser);
 			this.visible = false;
 			//
-		},
-		del(row) {
-			var self = this;
-			//console.log(row);
-		},
-
-		elTableHeadFunction(h, l, fontSize) {
-			let f = 14;
-			if (typeof fontSize != "undefined" && fontSize != null) {
-				f = fontSize;
-			}
-			//列头的实际宽度
-			let width = l.column.realWidth;
-			//14：字体大小 32 是el表格的左右 padding 的合
-			let maxFontCount = Math.floor((width - 32) / f) - 1;
-			let chars = l.column.label.split("");
-			var label = "";
-			if (maxFontCount < chars.length) {
-				for (let i = 0; i < maxFontCount; i++) {
-					label += chars[i];
-				}
-				label += "..";
-			} else {
-				label = l.column.label;
-			}
-			console.log(label);
-			return label;
-		},
-		labelHead(h, { column, index }) {
-			let l = column.label.length;
-			let f = 16; //每个字大小，其实是每个字的比例值，大概会比字体大小差不多大一点，
-			column.minWidth = f * l; //字大小乘个数即长度 ,注意不要加px像素，这里minWidth只是一个比例值，不是真正的长度 //然后将列标题放在一个div块中，注意块的宽度一定要100%，否则表格显示不完全
-			return h("div", { class: "table-head", style: { width: "100%" } }, [
-				column.label
-			]);
 		}
 	}
 };

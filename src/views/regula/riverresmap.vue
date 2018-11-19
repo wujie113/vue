@@ -1,31 +1,34 @@
 <template>
-  <div class="app-container">
-    <el-container v-loading="loading">
-      <rm-map />
+  <div class="">
+    <el-button type="button"  @click="clicktest">测试</el-button>
+     <el-container v-loading="loading">
+       <rm-map v-model="map"></rm-map>
       <div class="el-mindiv" v-show="!dialogVisible" @click="dialogVisible=!dialogVisible">
         <div class="layui-layer-title">河流管理</div>
+         
         <span class="layui-layer-setwin">
           <!-- <svg-icon icon-class="huanyuan" /> -->
           <i class="el-icon-ali-diejia"></i>
         </span>
       </div>
     </el-container>
+  
     <!--弹出窗口-->
-    <el-dialog :visible.sync="dialogVisible" width="80%" title="河流管理" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" top="5vh">
+    <el-dialog :visible.sync="dialogVisible" width="80%" title="河流管理" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" top="3vh">
       <el-tabs v-model="activeName" type="border-card">
-        <el-tab-pane name="1">
+        <el-tab-pane name="HL">
           <span slot="label"><i class="el-icon-date"></i> 河流</span>
           <keep-alive>
-            <river />
+            <river   @clickrow="clickrow"  ref="river"/>
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane name="2">
+        <el-tab-pane name="HP">
           <span slot="label"><i class="el-icon-date"></i> 山塘、湖库</span>
           <keep-alive>
             <lake />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane name="3">
+        <el-tab-pane name="ZRD">
           <span slot="label"><i class="el-icon-date"></i> 责任段</span>
           <keep-alive>
             <dutypart />
@@ -48,12 +51,14 @@ export default {
   components: { Pagination, RmMap, river, lake, dutypart },
   data() {
     return {
-      activeName: "1",
+      activeName: "HL",
       loading: true,
       tableLoading: false,
       checked: false,
       dataArray: [],
+      map:null,
       hpdataarray: [],
+      river:null,
       dialogVisible: true,
       defaultProps: {
         children: "children",
@@ -91,6 +96,28 @@ export default {
     },
     handleNodeClick() {
       // console.log("tab:::",tab);
+    },
+    clickrow(data){
+      console.log("子页面传递过来的参数值:::",data);
+    },
+    clicktest(){ 
+        this.$refs.river.testclick()
+    },
+    centerView() {
+        this.map.centerView([113.88, 27.67],16)
+    },
+    drawRiverLine(id,name) {
+               // var id = '001'
+               var self = this
+                var callback = function(type,data) {
+                    console.log('回调：',type,data)
+                    if (type === 'change') {
+                    self.lineLength = data.remarks
+                    self.wkt = data.wkt
+                    }
+                }
+                
+                this.map.drawLine({ id: id,name: name },callback)
     }
   }
 }

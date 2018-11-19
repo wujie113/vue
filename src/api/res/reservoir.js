@@ -10,7 +10,7 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/res/reservoir/list',
+	    url: '/api/res/reservoir/recoveryExecl',
 	    method: 'get',
 	    params:{id:id}
 	  })
@@ -28,6 +28,14 @@ import request from '@/utils/request'
 	    url: '/api/res/reservoir/del',
 	    method: 'post',
 	    params:{ids:ids}
+	  })
+	}
+
+	export function delBtn(id) {
+	  return request({
+	    url: '/api/res/reservoir/deleteExecl',
+	    method: 'post',
+	    params:{id:id}
 	  })
 	}
 

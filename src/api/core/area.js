@@ -13,7 +13,7 @@ export function tree(pid) {
 //区域人员
 export function getAreausers(areaid) {
   return request({
-    url: '/api/common/user/gethzbuserbyareaid',
+    url: '/api/sys/user/gethzbuserbyareaid',
     method: 'get',
     params: {
       areaid: areaid

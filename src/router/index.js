@@ -30,6 +30,9 @@ import nestedRouter from './modules/nested'
     noCache: true                if true ,the page will no be cached(default is false)
   }
 **/
+// constantRouterMap: 代表那些不需要动态判断权限的路由，如登录页、404、等通用页面。
+// asyncRouterMap： 代表那些需求动态判断权限并通过 addRouters 动态添加的页面。
+// 不需要动态判断权限的路由
 export const constantRouterMap = [
   {
     path: '/redirect',
@@ -87,28 +90,28 @@ export const constantRouterMap = [
         path: 'river2',
         name: 'river2',
         component: () => import('@/views/res/river'),
-        meta: { title: '河流管理', noCache: false}
+        meta: { title: '河流管理', noCache: true}
       }, {
         path: 'drainage',
         name: 'drainage',
         component: () => import('@/views/res/drainage'),
-        meta: { title: '水系管理', noCache: false }
+        meta: { title: '水系管理', noCache: true }
       } , {
         path: 'lakeb',
         name: 'lakeb',
         component: () => import('@/views/res/lakebase'),
-        meta: { title: '湖泊区域', noCache: false }
+        meta: { title: '湖泊区域', noCache: true }
       }
       , {
         path: 'lake',
         name: 'lake',
         component: () => import('@/views/res/lake'),
-        meta: { title: '山塘(湖泊)', noCache: false }
+        meta: { title: '山塘(湖泊)', noCache: true }
       } , {
         path: 'duty',
         name: 'duty',
         component: () => import('@/views/res/dutyPart'),
-        meta: { title: '责任段', noCache: false }
+        meta: { title: '责任段', noCache: true }
       } 
     ]
   },
@@ -138,26 +141,70 @@ export const constantRouterMap = [
         path: 'rivergula',
         name: 'rivergula',
         component: () => import('@/views/regula/rivergula'),
-        meta: { title: '河流监管' }
+        meta: { title: '河流监管' , noCache: true}
       },
       {
         path: 'rivermap',
         name: 'rivermap',
         component: () => import('@/views/regula/riverresmap'),
-        meta: { title: '河流管理' }
+        meta: { title: '河流管理', noCache: true }
       },
       {
         path: 'restabmap',
         name: 'restabmap',
         component: () => import('@/views/regula/restabMap'),
-        meta: { title: '资源管理' }
+        meta: { title: '资源管理', noCache: true }
       }
+    ]
+  },
+  {
+    path: '/setting',
+    component: Layout,
+    redirect: '/setting/setting',
+    name: 'setting',
+    meta: { title: '系统设置', icon: 'setting' },
+    children: [
+      {
+        path: 'areaManagement',
+        name: 'areaManagement',
+        component: () => import('@/views/setting/areaManagement'),
+        meta: { title: '区域管理', noCache: false }
+      }, {
+        path: 'logManagement',
+        name: 'logManagement',
+        component: () => import('@/views/setting/logManagement'),
+        meta: { title: '日志管理' }
+      },
+      {
+        path: 'userManagement',
+        name: 'userManagement',
+        component: () => import('@/views/setting/userManagement'),
+        meta: { title: '用户管理', noCache: false }
+      }, {
+        path: 'addressBook',
+        name: 'addressBook',
+        component: () => import('@/views/setting/addressBook'),
+        meta: { title: '通讯录' }
+      },
+      {
+        path: 'unitRole',
+        name: 'unitRole',
+        component: () => import('@/views/setting/unitRole'),
+        meta: { title: '单位角色', noCache: false }
+      },
+      // {
+      //   path: 'basketball',
+      //   name: 'basketball',
+      //   component: () => import('@/views/demos/basketball'),
+      //   meta: { title: 'NBA' }
+      // }
     ]
   },
   {
     path: '/form',
     name: 'Form1',
     component: Layout,
+    hidden: false,
     meta: {
       title: 'Form',
       icon: 'toushu'
@@ -205,6 +252,7 @@ export const constantRouterMap = [
   {
     path: '/guide',
     component: Layout,
+    hidden: true,
     redirect: '/guide/index',
     children: [
       {
@@ -222,11 +270,12 @@ export default new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
-
+// 需求动态判断权限并通过 addRouters 动态添加的页面
 export const asyncRouterMap = [
   {
     path: '/permission',
     component: Layout,
+    hidden: true,
     redirect: '/permission/index',
     alwaysShow: true, // will always show the root menu
     meta: {
@@ -270,14 +319,15 @@ export const asyncRouterMap = [
   },
 
   /** When your routing table is too long, you can split it into small modules**/
-  componentsRouter,
+  // componentsRouter,
   chartsRouter,
   nestedRouter,
-  tableRouter,
+  // tableRouter,
 
   {
     path: '/example',
     component: Layout,
+    hidden: true,
     redirect: '/example/list',
     name: 'Example',
     meta: {
@@ -336,6 +386,7 @@ export const asyncRouterMap = [
   {
     path: '/error',
     component: Layout,
+    hidden: true,
     redirect: 'noredirect',
     name: 'ErrorPages',
     meta: {
@@ -361,6 +412,7 @@ export const asyncRouterMap = [
   {
     path: '/error-log',
     component: Layout,
+    hidden: true,
     redirect: 'noredirect',
     children: [
       {
@@ -406,6 +458,7 @@ export const asyncRouterMap = [
   {
     path: '/zip',
     component: Layout,
+    hidden: true,
     redirect: '/zip/download',
     alwaysShow: true,
     meta: { title: 'zip', icon: 'zip' },
@@ -422,6 +475,7 @@ export const asyncRouterMap = [
   {
     path: '/theme',
     component: Layout,
+    hidden: true,
     redirect: 'noredirect',
     children: [
       {
@@ -436,6 +490,7 @@ export const asyncRouterMap = [
   {
     path: '/clipboard',
     component: Layout,
+    hidden: true,
     redirect: 'noredirect',
     children: [
       {
@@ -450,6 +505,7 @@ export const asyncRouterMap = [
   {
     path: '/i18n',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -459,53 +515,10 @@ export const asyncRouterMap = [
       }
     ]
   },
-
-  {
-    path: '/setting',
-    component: Layout,
-    redirect: '/setting/setting',
-    name: 'setting',
-    meta: { title: '系统设置', icon: 'setting' },
-    children: [
-      {
-        path: 'areaManagement',
-        name: 'areaManagement',
-        component: () => import('@/views/setting/areaManagement'),
-        meta: { title: '区域管理', noCache: false }
-      }, {
-        path: 'logManagement',
-        name: 'logManagement',
-        component: () => import('@/views/setting/logManagement'),
-        meta: { title: '日志管理' }
-      },
-      {
-        path: 'userManagement',
-        name: 'userManagement',
-        component: () => import('@/views/setting/userManagement'),
-        meta: { title: '用户管理', noCache: false }
-      }, {
-        path: 'addressBook',
-        name: 'addressBook',
-        component: () => import('@/views/setting/addressBook'),
-        meta: { title: '通讯录' }
-      },
-      {
-        path: 'unitRole',
-        name: 'unitRole',
-        component: () => import('@/views/setting/unitRole'),
-        meta: { title: '单位角色', noCache: false }
-      },
-      {
-        path: 'basketball',
-        name: 'basketball',
-        component: () => import('@/views/demos/basketball'),
-        meta: { title: 'NBA' }
-      }
-    ]
-  },
   {
     path: 'external-link',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'https://github.com/PanJiaChen/vue-element-admin',

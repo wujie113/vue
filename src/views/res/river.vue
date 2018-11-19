@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="filter-container">
+    <div class="filter-container river">
       <el-input placeholder="输入河流湖泊名称" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.type" placeholder="请选择类型" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" />
@@ -8,7 +8,7 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button type="primary" icon="el-icon-plus" @click="addRiver">新增</el-button>
     </div>
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row row-key="id" stripe size="mini">
+    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row row-key="id" stripe size="mini" @current-change="handleCurrentChange" >
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="river.name" label="所属水系" />
       <el-table-column prop="typename" label="河流类型" />
@@ -19,7 +19,7 @@
       <el-table-column prop="id" label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit" title="编辑" />
-          <el-button @click="personEdit( scope.row)" type="text" title="人员管理">
+          <el-button @click="personEdit(scope.row)" type="text" title="人员管理">
             <svg-icon icon-class="user_blue" />
           </el-button>
           <el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete" title="删除" />
@@ -27,10 +27,11 @@
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
-    <el-dialog :visible.sync="areauser.visible" title="关联管理人员" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
-      <el-table v-loading="areauser.userloading" :data="areauser.userlist" border fit highlight-current-row row-key="id" stripe style="width: 100%">
-        <el-table-column prop="index" label="序号" />
-        <el-table-column prop="name" label="姓名" />
+    <el-dialog :before-close="closedialog" :visible.sync="areauser.visible" title="关联管理人员" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+      <el-button type="primary" icon="el-icon-plus" @click="adduser" v-show="areauser.tbshow">新增用户</el-button>
+      <el-table v-loading="areauser.userloadinged" :data="areauser.userlisted" v-show="areauser.tbshow" border fit highlight-current-row row-key="id" stripe style="width: 100%">
+        <el-table-column type="index" label="序号" width="100px" />
+        <el-table-column prop="userName" label="姓名" />
         <el-table-column prop="post" label="职属" />
         <el-table-column prop="id" label="操作" width="100">
           <template slot-scope="scope">
@@ -38,7 +39,35 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-button type="primary" v-show="!areauser.tbshow" icon="el-icon-plus" @click="saveusers">确认</el-button>
+      <el-button type="primary" v-show="!areauser.tbshow" icon="el-icon-plus" @click="closeuser">关闭</el-button>
+      <el-table v-loading="areauser.userloading" @selection-change="handleSelectionChange" v-show="!areauser.tbshow" :data="areauser.userlist" border fit highlight-current-row row-key="id" stripe style="width: 100%">
+        <el-table-column type="selection" width="55" />
+        <el-table-column type="index" label="序号" width="100px" />
+        <el-table-column prop="name" label="姓名" />
+        <el-table-column prop="postName" label="职属" />
+      </el-table>
     </el-dialog>
+    <!--     
+     <el-dialog :visible.sync="areauser.visible"  width="60%" height="600px" title="关联管理人员"> 
+              <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="adduser">添加新用户</el-button>
+               <el-table  v-loading="areauser.userloading" :data="areauser.userlist"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%"> 
+                <el-table-column prop="name" label="姓名"/> 
+                <el-table-column prop="post" label="职属"/>  
+                <el-table-column prop="id" label="操作" width="100"   >
+                <template slot-scope="scope"> 
+                    <el-button @click="deluser(scope.row)" type="text" size="mini" icon="el-icon-delete" title="删除" />
+                </template>
+              </el-table-column>    
+              </el-table> 
+              <el-dialog title="人员管理">
+                    <el-table  v-loading="areauser.userloading" :data="areauser.userlist"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%">
+                      <el-table-column type="selection"  width="55"/> 
+                      <el-table-column prop="name" label="姓名"/> 
+                      <el-table-column prop="post" label="职属"/>      
+                    </el-table> 
+              </el-dialog>
+        </el-dialog> -->
 
     <el-dialog :visible.sync="visible" :title="dialogTitle" top="1vh" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
       <el-form ref="form" :model="form" label-width="80px">
@@ -82,15 +111,15 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination'
-import { getList, save, del, getxslist, getfiles, delfiles } from '@/api/res/river.js'
-import { getAreausers } from '@/api/core/area.js'
+import { getList, save, del, getxslist, getfiles, delfiles } from '@/api/res/river.js' 
+import { deluser, getmanagerlist, saveusers, gethzbuserbyareaid } from '@/api/res/management.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
 import { getToken } from '@/utils/auth'
 export default {
-  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
+  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect  }, 
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -104,17 +133,26 @@ export default {
   data() {
     return {
       visible: false,
-      dialogVisibleImg: false,
-      dialogImageUrl: "",
       listLoading: null,
-      dialogTitle: "",
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
-      fileList: [],
+      fileList: [], 
       areauser: {
-        userloading: false,
+        checkuserids:null,
+        userlisted: null,
+        userloadinged: false,
         userlist: null,
         visible: false,
+        form: {
+          bizid: null,
+          type: 'HL',
+          userids: null
+        },
+        tbshow: true,
+        checkeduser: null,
       },
+      dialogVisibleImg: false,
+      dialogImageUrl: null,
+      dialogTitle: null,
       form: {
         id: null,
         type: null,
@@ -138,6 +176,7 @@ export default {
       },
       list: null,
       total: 0,
+      riverrow: null,
       listQuery: {
         pageNo: 1,
         pageSize: 10,
@@ -184,6 +223,7 @@ export default {
       this.visible = true
       this.dialogTitle = '编辑'
       Object.assign(this.form, row)
+      console.log('form', this.form)
       getfiles({ bizId: this.form.id, bizType: "R" }).then(response => {
         this.fileList = response.data;
       })
@@ -228,20 +268,94 @@ export default {
       }).catch(error => {
         this.listLoading = false
       })
-    }
-    ,
+    },
+    //用户部分
     personEdit(row) {
+      this.riverrow = row
+      this.areauser.listLoadinged = true
       this.areauser.visible = true;
-      this.areauser.listLoading = true;
-      getAreausers(row.area.id).then(response => {
-        this.areauser.userlist = response.data;
+      this.findmanagerlist(row.id);
+    },
+    findmanagerlist(id) {
+      getmanagerlist({ type: "HL", bizid: id }).then(response => {
+        this.areauser.userlisted = response.data.list;
+        this.areauser.userloadinged = false
+      })
+    },
+    adduser() {
+      this.areauser.tbshow = false;
+      gethzbuserbyareaid({ areaid: this.riverrow.area.id, bizid: this.riverrow.id }).then(response => {
+        this.areauser.userlist = response.data.list;
         this.areauser.listLoading = false
       })
+    },
+    deluser(row) {
+      console.log("row:::", row);
+      deluser(row.id).then(response => {
+        this.$message({
+          message: "删除用户成功!!",
+          type: "success"
+        });
+        this.areauser.userloadinged = true
+        this.findmanagerlist(this.riverrow.id);
+      })
+    },
+    saveusers() {
+      if (this.areauser.checkuserids == null || this.areauser.checkuserids  == '') {
+        this.closeuser();
+        return;
+      }
+    saveusers({ bizid: this.riverrow.id, userids: this.areauser.checkuserids , type: 'HL' }).then(response => {
+        console.log("response:::", response);
+        if (response.success == true) {
+          this.$message({
+            message: "新增用户成功",
+            type: "success"
+          });
+          this.closeuser();
+        } else {
+          this.$message({
+            message: "新增用户失败",
+            type: "error"
+          });
+        }
 
+      }).catch(error => {
+        this.listLoading = false
+      })
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      val.forEach((a, b) => {
+        if (b == 0) {
+          this.areauser.checkuserids = a.id;
+        } else {
+          this.areauser.checkuserids  += "," + a.id;
+        }
+      });
+    },
+    closeuser() {
+      this.areauser.tbshow = true;
+      this.areauser.userlist = [];
+      this.findmanagerlist(this.riverrow.id);
+      this.areauser.checkuserids  = null;
+    },
+    closedialog() {
+      this.areauser.tbshow = true;
+      this.areauser.userlist = [];
+      this.areauser.visible = false;
+      this.areauser.checkuserids  = null;
+      this.riverrow = null;
+    },
+    //结束用户部分
+    //地图界面交互操作
+    handleCurrentChange(row) { 
+        this.$emit('clickrow',row);
+    },
+    testclick(data){
+      console.log("子界面data:::",data);
     }
   }
 }
 </script>
-
-
-
+ 

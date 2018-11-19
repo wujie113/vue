@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container resourceMange">
+  <div class="resourceMange">
     <el-container>
       <rm-map />
       <!-- 最大化按钮 -->
@@ -14,9 +14,9 @@
 
     <el-container>
       <!--弹出窗口-->
-      <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="beforeClose()" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" title="资源管理1" top="5vh">
+      <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="beforeClose()" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" title="资源管理1" top="2vh">
         <span slot="title" class="dialog-title-rm">
-          <span>资源管理1</span>
+          <span>资源管理</span>
           <span @click="digLogMiniBtn">
             <i class="el-icon-minus"></i>
           </span>
@@ -74,7 +74,27 @@
           </el-tab-pane>
         </el-tabs>
       </el-dialog>
+
     </el-container>
+    <!-- <div class="wrap">
+      111
+      <div class="aaa">
+        <div class="box">
+          <div class="fatherBox">
+            222
+            <div class="aaa"></div>
+              333
+              <div class="box">
+                <div class="fatherBox">
+                  444
+                  <div class="aaa">555</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -154,12 +174,11 @@ export default {
 }
 </style>
 <style>
-.leftBox .el-form-item__content {
+/* .leftBox .el-form-item__content {
   float: left;
 }
-/* .resourceMange .el-dialog > .el-dialog__body {
+.resourceMange .el-container > .el-dialog__wrapper .el-dialog .el-dialog__body {
   height: 53em;
-
 } */
 </style>
 

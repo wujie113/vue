@@ -3,6 +3,8 @@
         <el-button icon="el-icon-location" size="mini" @click="centerView()">定位</el-button>
         <el-button icon="el-icon-location" size="mini" @click="drawRiverLine('001','001责任段')">001责任段</el-button>
         <el-button icon="el-icon-location" size="mini" @click="drawRiverLine('002','002责任段')">002责任段</el-button>
+        <el-button icon="el-icon-location" size="mini" @click="drawArea('003','003湖(多边形)')">003湖(多边形)</el-button>
+         <span>{{lineLength}},{{wkt}}</span>
         <rm-map v-model="map"></rm-map>
     </div>
 </template> 
@@ -14,11 +16,13 @@
         data() {
             return {
                 v: { ctrl: false, tool: false },
-                map: null
+                map: null,
+                lineLength: 0,
+                wkt: ''
             }
         },
         mounted() {
-            console.log('================',this.map)
+           // console.log('================',this.map)
         },
         methods: {
             centerView() {
@@ -26,11 +30,29 @@
             },
             drawRiverLine(id,name) {
                // var id = '001'
+               var self = this
                 var callback = function(type,data) {
                     console.log('回调：',type,data)
+                    if (type === 'change') {
+                    self.lineLength = data.remarks
+                    self.wkt = data.wkt
+                    }
                 }
                 
                 this.map.drawLine({ id: id,name: name },callback)
+            },
+            drawArea(id,name) {
+               // var id = '001'
+               var self = this
+                var callback = function(type,data) {
+                    console.log('回调：',type,data)
+                    if (type === 'change') {
+                    self.lineLength = data.remarks
+                    self.wkt = data.wkt
+                    }
+                }
+                
+                this.map.drawArea({ id: id,name: name },callback)
             }
         }
     }

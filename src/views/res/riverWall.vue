@@ -81,16 +81,17 @@
         <el-table-column type="index" label="序号" width="50" />
         <el-table-column prop="CreateDate" label="上传时间" width="150" />
         <el-table-column prop="name" label="文件名" width="250" />
-        <el-table-column prop="id" label="操作" min-width="120">
+        <el-table-column prop="id" label="操作" min-width="150">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" title="导出该时间上传资源文件"><a :href="(scope.row.url)">导出</a></el-button>
-            <el-button type="primary" size="mini" title="资源恢复到该时间上传的文件">恢复</el-button>
+            <el-button @click="get(scope.row)" type="primary" size="mini" title="资源恢复到该时间上传的文件">恢复</el-button>
+            <el-button @click="del(scope.row)" type="primary" size="mini" title="删除该时间上传的文件">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
 
-    <el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+    <el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" width="30%">
       <el-form :model="form" abel-width="80px" size="mini" class="leftBox">
         <el-form-item label="文件格式要求为：">
           <span style="color:red">.xls</span>(Excel 97-2018工作簿)
@@ -105,24 +106,31 @@
     </el-dialog>
   </div>
 </template> 
-<script> 
-import Pagination from '@/components/Pagination'
-import { getList, get, save, del, getfiles } from '@/api/res/riverWall.js'
-import RmDict from '@/components/rm/dict'
-import RmOrgSelect from "@/components/rm/orgselect"
-import RmUserSelect from "@/components/rm/userselect"
-import RmAreaSelect from "@/components/rm/areaselect"
-import { getToken } from '@/utils/auth'
+<script>
+import Pagination from "@/components/Pagination";
+import {
+  getList,
+  get,
+  save,
+  del,
+  getfiles,
+  delBtn
+} from "@/api/res/riverWall.js";
+import RmDict from "@/components/rm/dict";
+import RmOrgSelect from "@/components/rm/orgselect";
+import RmUserSelect from "@/components/rm/userselect";
+import RmAreaSelect from "@/components/rm/areaselect";
+import { getToken } from "@/utils/auth";
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
+        published: "success",
+        draft: "gray",
+        deleted: "danger"
+      };
+      return statusMap[status];
     }
   },
   data() {
@@ -133,7 +141,8 @@ export default {
         loading: false,
         formupdate: false
       },
-      uploadaction: process.env.BASE_API + '/api/res/riverWall/import?token=' + getToken(),
+      uploadaction:
+        process.env.BASE_API + "/api/res/riverWall/import?token=" + getToken(),
       list: null,
       query: {
         total: 0,
@@ -207,70 +216,69 @@ export default {
         auditSymbol: null,
         regionAudit: null,
         provinceAudit: null,
-        nationAudit: null,
-      },
-
-    }
+        nationAudit: null
+      }
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     getList() {
       this.listLoading = true;
       console.log("this.query::::", this.query);
       getList(this.query).then(response => {
-        this.listLoading = false
-        this.list = response.data.list
-        this.query.total = response.data.count
-      })
+        this.listLoading = false;
+        this.list = response.data.list;
+        this.query.total = response.data.count;
+      });
     },
     beforeUpload(file) {
-      this.listLoading = true
-      this.v.formupdate = false
+      this.listLoading = true;
+      this.v.formupdate = false;
     },
     downloadExcel() {
-      this.v.formhistory = true
-      this.listLoadingHistory = true
+      this.v.formhistory = true;
+      this.listLoadingHistory = true;
       getfiles(this.uploaddata).then(response => {
         this.listDate = response.data;
-        this.listLoadingHistory = false
-      })
+        this.listLoadingHistory = false;
+      });
     },
 
     updateData() {
-      this.v.formupdate = true
+      this.v.formupdate = true;
     },
     handleSuccess(respone) {
       if (respone.success == true) {
         this.$message({
-          message: '导入数据成功',
-          type: 'success'
+          message: "导入数据成功",
+          type: "success"
         });
       } else {
         this.$message({
           message: respone.msg,
-          type: 'error'
+          type: "error"
         });
       }
-      this.query.search = ""
+      this.query.search = "";
       this.getList();
     },
     handlError() {
       this.$message({
-        message: '导入数据失败',
-        type: 'error'
+        message: "导入数据失败",
+        type: "error"
       });
-      this.query.search = ""
+      this.query.search = "";
       this.getList();
     },
     handleFilter() {
-      this.query.pageNo = 1
-      this.getList()
+      this.query.pageNo = 1;
+      this.getList();
     },
     create() {
-      this.v.form = true
-      this.form = {}
+      this.v.form = true;
+      this.form = {};
     },
     edit(row) {
       //console.log(JSON.stringify(row));
@@ -278,41 +286,65 @@ export default {
       this.form = row;
     },
     save() {
-      //console.log('保存:',JSON.stringify(this.form),this.selectUser);         
+      //console.log('保存:',JSON.stringify(this.form),this.selectUser);
       save(this.form).then(response => {
-        this.v.form = false
+        this.v.form = false;
         if (response.success) {
-          this.$message(response.msg)
+          this.$message(response.msg);
           //添加到列表中
-          this.list.unshift(this.form)
+          this.list.unshift(this.form);
         } else {
           this.$message({
             message: response.msg,
             type: "warning"
-          })
+          });
         }
-      })
+      });
+    },
+    del(row) {
+      this.listLoadingHistory = true;
+      delBtn(row.id).then(response => {
+        this.listLoadingHistory = false;
+        this.$message({
+          message: '删除数据成功',
+          type: 'success'
+        });
+        this.downloadExcel();
+      });
+    },
+    get(row) {
+      this.listLoading = true;
+      this.v.formhistory = false;
+      this.query.search = "";
+      get(row.id).then(response => {
+        this.$message({
+          message: '恢复数据成功',
+          type: 'success'
+        });
+        this.listLoading = false;
+        this.getList();
+      });
     },
     del(row) {
       //var self = this
-      //console.log(row) 
+      //console.log(row)
       del(row.id).then(response => {
-        this.v.form = false
+        this.v.form = false;
         if (response.success) {
-          this.$message(response.msg)
+          this.$message(response.msg);
           //删除列表数据
-          const index = this.list.indexOf(row) //找到要删除数据在list中的位置 
-          this.list.splice(index, 1) //通过splice 删除数据
+          const index = this.list.indexOf(row); //找到要删除数据在list中的位置
+          this.list.splice(index, 1); //通过splice 删除数据
         } else {
           this.$message({
             message: response.msg,
             type: "warning"
-          })
+          });
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style>

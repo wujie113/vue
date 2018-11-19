@@ -11,9 +11,9 @@ import WMTSTileGrid from 'ol/tilegrid/WMTS.js'
 import WMTSCapabilities from 'ol/format/WMTSCapabilities.js'
 import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS.js'
 import { bbox as bboxStrategy } from 'ol/loadingstrategy.js'
-import { searchResultStyleFunc, searchSelectStyleFunc, drawingStyleFunc } from "@/components/rm/map/style.js"
-import { vectorStyleFunc } from './style'
-
+import { vectorStyleFunc, searchResultStyleFunc, searchSelectStyleFunc, drawingStyleFunc, markerStyleFunc,measureStyleFunc } from "@/components/rm/map/style.js"
+import { getArea, getLength } from 'ol/sphere.js'
+import WKT from 'ol/format/WKT.js'
 
 var __wmtsCapabilities = null
 
@@ -103,7 +103,7 @@ export const utils = {
                 format: new GeoJSON(),
                 url: function(extent) {
                     return mapCfg.wfsServerUrl + '?service=WFS&' +
-                        'version=1.1.0&request=GetFeature&typename=' + item.code + '&' +
+                        'version=1.1.0&request=GetFeature&typeName=' + item.code + '&' +
                         'outputFormat=application/json&srsname=' + mapCfg.projection + '&' +
                         'bbox=' + extent.join(',') + ',' + mapCfg.projection
                 },
@@ -248,8 +248,82 @@ export const utils = {
         _selectionDrawLayer.set('name', '绘制选择框的图层')
         _selectionDrawLayer.set('editable', false)
 
+        // 用于个人标注图层 
+        var _markerLayer = new VectorLayer({
+            zIndex: 101,
+            source: new VectorSource({ format: new GeoJSON() }),
+            style: markerStyleFunc//'createSelectionStyleFunction'
+        })
+        _markerLayer.set('code', 'markerLayer')
+        _markerLayer.set('ltype', 'base')
+        _markerLayer.set('name', '个人标注图层')
+        _markerLayer.set('editable', true)
+
+        // 用于个人标注图层 
+        var _meaLayer = new VectorLayer({
+            zIndex: 101,
+            source: new VectorSource({ format: new GeoJSON() }),
+            style: measureStyleFunc//'createSelectionStyleFunction'
+        })
+        _meaLayer.set('code', 'meaLayer')
+        _meaLayer.set('ltype', 'base')
+        _meaLayer.set('name', '量测图层')
+        _meaLayer.set('editable', true)
+
         map.addLayer(_searchLayer)
         map.addLayer(_drawLayer)
         map.addLayer(_selectionDrawLayer)
+        map.addLayer(_markerLayer)
+        map.addLayer(_meaLayer)
+    },
+    getLayerByCode: function(map, code) {
+        var layer = null
+        map.getLayers().forEach(function(l, i, arr) {
+            var layerCode = l.get('code')
+            if (layerCode === code) {
+                layer = l
+            }
+        })
+        return layer
+    },
+    /**
+     * Format length output.
+     * @param {module:ol/geom/LineString~LineString} line The line.
+     * @return {string} The formatted length.
+     */
+    formatLength: function(line) {
+        var length = getLength(line, { projection: mapCfg.projection })
+        var output
+        if (length > 100) {
+            output = (Math.round(length / 1000 * 100) / 100) +
+                ' ' + 'km'
+        } else {
+            output = (Math.round(length * 100) / 100) +
+                ' ' + 'm'
+        }
+        return output
+    },
+    /**
+       * Format area output.
+       * @param {module:ol/geom/Polygon~Polygon} polygon The polygon.
+       * @return {string} Formatted area.
+       */
+    formatArea: function(polygon) {
+        var area = getArea(polygon, { projection: mapCfg.projection })
+        var output
+        if (area > 10000) {
+            output = (Math.round(area / 1000000 * 100) / 100) +
+                ' ' + 'km²'
+        } else {
+            output = (Math.round(area * 100) / 100) +
+                ' ' + 'm²'
+        }
+        return output
+    },
+    toWKT: function(geom) {
+        if (!this.wkt) {
+            this.wkt = new WKT()
+        }
+        return this.wkt.writeGeometry(geom)
     }
 }
