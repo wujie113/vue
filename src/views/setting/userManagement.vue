@@ -181,7 +181,7 @@
 
     <!-- 修改密码弹窗 -->
     <el-dialog :visible.sync="dialogVisible2" width="30%" title="修改密码" top="5vh">
-      <el-form :model="form2" status-icon :rules="rules2" ref="form2" label-width="80px" status-icon>
+      <el-form :model="form2" :rules="rules2" ref="form2" label-width="80px" status-icon>
         <el-form-item label="旧密码" prop="oldPassword">
           <el-input type="text" v-model="form2.oldPassword" auto-complete="off" placeholder="请输入旧的密码"></el-input>
         </el-form-item>

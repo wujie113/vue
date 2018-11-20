@@ -20,14 +20,14 @@ import './permission' // permission control
 import './mock' // simulation data
 
 import * as filters from './filters' // global filters
-import vuePicturePreview from 'vue-picture-preview'
-import VuePreview from "vue-preview";
+// import vuePicturePreview from 'vue-picture-preview'
+// import VuePreview from "vue-preview";
 import 'element-ui/lib/theme-chalk/display.css'
 import './icons/iconfont.css' //使用第三方图标
 import 'babel-polyfill'
 // defalut install
-Vue.use(VuePreview);
-Vue.use(vuePicturePreview);
+// Vue.use(VuePreview);
+// Vue.use(vuePicturePreview);
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)

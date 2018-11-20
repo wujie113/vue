@@ -18,8 +18,8 @@
         <el-table-column prop="region" label="地区"/>
         <el-table-column prop="county" label="县"/>
         <el-table-column prop="town" label="乡（镇）"/>
-        <el-table-column prop="checkId" label="巡河id"/>
-        <el-table-column prop="reverD" label="河流id"/>
+        <el-table-column prop="checkId" label="巡河"/>
+        <el-table-column prop="reverD" label="河流"/>
         <el-table-column prop="title" label="标题"/>
         <el-table-column prop="content" label="内容"/>
         <el-table-column prop="type" label="类型"/>
@@ -41,6 +41,9 @@
   
   <el-dialog :visible.sync="visible" title="编辑">
   	<el-form :model="form">
+			<el-form-item label="标题">
+				<el-input v-model="form.title"/>
+			</el-form-item>
 			<el-form-item label="专员">
 				<el-input v-model="form.user"/>
 			</el-form-item>
@@ -56,31 +59,19 @@
 			<el-form-item label="乡（镇）">
 				<el-input v-model="form.town"/>
 			</el-form-item>
-			<el-form-item label="巡河id">
+			<el-form-item label="巡河">
 				<el-input v-model="form.checkId"/>
-			</el-form-item>
-			<el-form-item label="河流id">
-				<el-input v-model="form.reverD"/>
-			</el-form-item>
-			<el-form-item label="标题">
-				<el-input v-model="form.title"/>
-			</el-form-item>
-			<el-form-item label="内容">
-				<el-input v-model="form.content" type="textarea"></el-input>
 			</el-form-item>
 			<el-form-item label="类型">
 				<el-input v-model="form.type"/>
 			</el-form-item>
-			<el-form-item label="经度">
-				<el-input v-model="form.lng"/>
+			<el-form-item label="河流">
+				<el-input v-model="form.reverD"/>
 			</el-form-item>
-			<el-form-item label="纬度">
-				<el-input v-model="form.lat"/>
+			<el-form-item label="内容">
+				<el-input v-model="form.content" type="textarea"></el-input>
 			</el-form-item>
-			<el-form-item label="上报时间">
-				 <el-date-picker v-model="form.reportTime" type="date" placeholder="Pick a date" style="width: 100%;"/>
-				<!-- <span class="help-inline"><font color="red">*</font> </span>-->
-			</el-form-item>
+ 
 			<el-form-item label="审核人">
 				<el-input v-model="form.auditPerson"/>
 			</el-form-item>
@@ -101,7 +92,7 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination' 
-import { getList } from '@/api/work/report.js'
+import { getList,save ,del} from '@/api/work/report.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
@@ -158,7 +149,7 @@ export default {
   methods: {
     getList() {  
         this.listLoading = true 
-        console.log("this.listQuery::::",this.listQuery)
+       // console.log("this.listQuery::::",this.listQuery)
         getList(this.listQuery).then(response => { 
           this.listLoading = false 
            this.list = response.data.list
@@ -175,14 +166,26 @@ export default {
 		this.form = row
 	},
 	save() {
-		//console.log('保存:',JSON.stringify(this.form),this.selectUser);
-		this.visible = false
-		//
-	},
+	//	console.log('保存:',JSON.stringify(this.form),this.selectUser);
+      this.visible = false
+      this.listLoading = true
+      save(this.form).then(response => {        
+          // 上传到服务器
+         // this.$refs.upload.submit();
+        	this.getList();
+      }).catch(error => {
+        this.listLoading = false
+      })
+  	},
 	del(row) {
-		//var self = this
-		//console.log(row); 
-	}  
+      var self = this
+      console.log(row.id)
+      del(row.id).then(response => {
+        this.getList()
+      }).catch(error => {
+        this.listLoading = false
+      })
+   	}  
   }
 }
 </script>

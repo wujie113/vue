@@ -7,7 +7,7 @@
       <el-button icon="el-icon-refresh" type="primary" @click="updateData">更新水源地数据</el-button>
 
     </div>
-    <el-table v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%" border>
+    <el-table v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%">
       <el-table-column prop="name" label="水源地名称" :show-overflow-tooltip="true" min-width="220" />
       <el-table-column prop="code" label="水源地编码" :show-overflow-tooltip="true" min-width="120" />
       <el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" min-width="100" />

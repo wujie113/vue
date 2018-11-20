@@ -128,10 +128,10 @@ export const constantRouterMap = [
         meta: { title: '投诉管理', icon: 'complaint' }
       },
       {
-        path: 'complaint',
-        name: 'complaint',
-        component: () => import('@/views/work/complaint'),
-        meta: { title: '任务上报', icon: 'complaint' }
+        path: 'report',
+        name: 'report',
+        component: () => import('@/views/work/report'),
+        meta: { title: '任务上报', icon: 'report' }
       }
     ]
   },
