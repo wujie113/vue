@@ -15,7 +15,7 @@ const steps = [
       position: 'left'
     }
   }, {
-    element: '#map-btn-resetaction',
+    element: '#map-btn-browse',
     popover: {
       title: '选择操作',
       description: '选择操作，将退出地图的其其它编辑环境，回到地图浏览模式。',

@@ -274,7 +274,7 @@ export default {
       this.listQuery.search = "";
       get(row.id).then(response => {
         this.$message({
-          message: '删除数据成功',
+          message: '恢复数据成功',
           type: 'success'
         });
         this.listLoading = false;

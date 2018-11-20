@@ -74,7 +74,7 @@ export const constantRouterMap = [
         path: 'home',
         component: () => import('@/views/home/index'),
         name: 'Home',
-        meta: { title: '首页', icon: 'home', noCache: true }
+        meta: { title: '首页', icon: 'home', noCache: false }
       }
     ]
   },
@@ -90,7 +90,7 @@ export const constantRouterMap = [
         path: 'river2',
         name: 'river2',
         component: () => import('@/views/res/river'),
-        meta: { title: '河流管理', noCache: true}
+        meta: { title: '河流管理', noCache: true }
       }, {
         path: 'drainage',
         name: 'drainage',
@@ -101,8 +101,7 @@ export const constantRouterMap = [
         name: 'lakeb',
         component: () => import('@/views/res/lakebase'),
         meta: { title: '湖泊区域', noCache: true }
-      }
-      , {
+      } ,{
         path: 'lake',
         name: 'lake',
         component: () => import('@/views/res/lake'),
@@ -127,6 +126,12 @@ export const constantRouterMap = [
         name: 'complaint',
         component: () => import('@/views/work/complaint'),
         meta: { title: '投诉管理', icon: 'complaint' }
+      },
+      {
+        path: 'complaint',
+        name: 'complaint',
+        component: () => import('@/views/work/complaint'),
+        meta: { title: '任务上报', icon: 'complaint' }
       }
     ]
   },
@@ -141,7 +146,7 @@ export const constantRouterMap = [
         path: 'rivergula',
         name: 'rivergula',
         component: () => import('@/views/regula/rivergula'),
-        meta: { title: '河流监管' , noCache: true}
+        meta: { title: '河流监管' , noCache: true }
       },
       {
         path: 'rivermap',

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="filter-container">
+    <div class="filter-container" >
       <el-input placeholder="输入责任段名称" v-model="listQuery.name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button type="primary" icon="el-icon-plus" @click="addRiver">新增</el-button>
@@ -12,8 +12,9 @@
       <el-table-column prop="code" label="河流编码" />
       <el-table-column prop="sort" label="排序" :show-overflow-tooltip="true" />
       <el-table-column prop="description" label="描述" :show-overflow-tooltip="true" />
-      <el-table-column prop="id" label="操作" width="100">
+      <el-table-column prop="id" label="操作" width="135">
         <template slot-scope="scope">
+          <el-button title="设置打卡点" type="text"  icon="el-icon-location-outline" @click="spot"></el-button>
           <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit" />
            <el-button @click="personEdit(scope.row)" type="text" title="人员管理">
             <svg-icon icon-class="user_blue" />
@@ -71,6 +72,21 @@
       </div>
     </el-dialog>
 
+     <el-dialog  title="设置打卡点"  :visible.sync="visiblespot"  :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+       <div style="width:100%">
+         <label class="upload-demo">请在地图上设置打卡点</label>
+         <el-table style="width:100%" ref="resetList">
+           <el-table-column label="名称"></el-table-column>
+           <el-table-column label="坐标"></el-table-column>
+           <el-table-column label="操作">删除</el-table-column>
+         </el-table>
+       </div>
+       <div>
+         <el-button type="primary" @click="reset('resetList')">还原</el-button>
+         <el-button type="primary">提交</el-button>
+       </div>
+    </el-dialog>
+
   </div>
 </template> 
 <script> 
@@ -101,6 +117,7 @@ export default {
       listLoading: null,
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
       fileList: [],  
+      visiblespot:false,
       areauser: {
         checkuserids:null,
         userlisted: null,
@@ -254,6 +271,10 @@ export default {
         this.areauser.userloadinged = true
         this.findmanagerlist(this.riverrow.id);
       })
+    },
+    //打卡点
+    spot(){
+      this.visiblespot=true
     },
     saveusers() {
       if (this.areauser.checkuserids == null || this.areauser.checkuserids  == '') {

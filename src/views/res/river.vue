@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="filter-container river">
-      <el-input placeholder="输入河流湖泊名称" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input placeholder="输入河流湖泊名称" v-model="listQuery.name" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.type" placeholder="请选择类型" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>

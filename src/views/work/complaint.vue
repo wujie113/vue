@@ -19,7 +19,7 @@
                 <div class="widget-divContent-main">
                   <div class="widget-divContent-main-title">
                     <span>
-                      {{ list.typename }}（<span class="unProcessed">未处理</span>）
+                      {{ list.typename }}（<span class="unProcessed">{{list.status == '0' ? '未处理' : '已处理'}}</span>）
                     </span>
                     <span>
                       {{ list.reportDate }}
@@ -129,53 +129,59 @@
     </el-container>
   </div>
 </template> 
-<script> 
-import Pagination from '@/components/Pagination'
-import { getList, get,showstatus,addComment } from '@/api/work/complaint.js'
-import RmDict from '@/components/rm/dict'
-import RmOrgSelect from "@/components/rm/orgselect"
-import RmUserSelect from "@/components/rm/userselect"
-import RmAreaSelect from "@/components/rm/areaselect"
+<script>
+import Pagination from "@/components/Pagination";
+import { getList, get, showstatus, addComment } from "@/api/work/complaint.js";
+import RmDict from "@/components/rm/dict";
+import RmOrgSelect from "@/components/rm/orgselect";
+import RmUserSelect from "@/components/rm/userselect";
+import RmAreaSelect from "@/components/rm/areaselect";
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
+        published: "success",
+        draft: "gray",
+        deleted: "danger"
+      };
+      return statusMap[status];
     }
   },
   data() {
     return {
       imgs: [
         {
-          url: 'http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png',
-          title: 'pic1',
-          name: '1111'
+          url:
+            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
+          title: "pic1",
+          name: "1111"
         },
         {
-          url: 'http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png',
-          title: 'pic2',
-          name: '22222'
+          url:
+            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
+          title: "pic2",
+          name: "22222"
         }
       ],
       imgs2: [
         {
-          src: 'http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png',
-          msrc: 'http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png',
-          alt: 'picture1',
-          title: 'Image Caption 1',
+          src:
+            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
+          msrc:
+            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
+          alt: "picture1",
+          title: "Image Caption 1",
           w: 100,
           h: 150
         },
         {
-          src: 'http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png',
-          msrc: 'http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png',
-          alt: 'picture1',
-          title: 'Image Caption 1',
+          src:
+            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
+          msrc:
+            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
+          alt: "picture1",
+          title: "Image Caption 1",
           w: 100,
           h: 150
         }
@@ -200,9 +206,9 @@ export default {
       form2: {
         desc: ""
       },
-      params:{
-          id:""
-         // bizId:""
+      params: {
+        idA: ""
+        // bizId:""
       },
       lists: null,
       total: 0,
@@ -213,37 +219,38 @@ export default {
         search: undefined,
         description: null,
         type: undefined,
-        sort: '+id'
+        sort: "+id"
       },
-      importanceOptions: [1, 2, 3],
-    }
+      importanceOptions: [1, 2, 3]
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     getList() {
       this.listLoading = true;
       getList(this.listQuery).then(response => {
-        this.listLoading = false
-        this.lists = response.data.list
-        this.total = response.data.count
-      })
+        this.listLoading = false;
+        this.lists = response.data.list;
+        this.total = response.data.count;
+      });
     },
     handleFilter() {
-      this.listQuery.pageNo = 1
-      this.getList()
+      this.listQuery.pageNo = 1;
+      this.getList();
     },
     // 点击详情,查看详情
     detailBtn(idx) {
-      console.log('idx', idx)
-      this.visible = true
-      console.log('idx',idx)
+      console.log("idx", idx);
+      this.visible = true;
+      console.log("idx", idx);
       get(idx).then(response => {
         this.form = response.data;
-        this.slide1 = [];
         const imagelist = this.form.imageurl;
-        console.log('imagelist',imagelist)
+        this.slide1 = imagelist;
+
+        console.log("imagelist", imagelist);
         // imagelist.forEach((value, index) => {
         //   this.slide1.push(
         //     {
@@ -257,40 +264,44 @@ export default {
     // 回复弹窗
     replayBtn(id) {
       // 打开弹窗
-      this.replayDialogVisible = true
+      this.replayDialogVisible = true;
       // 内容置空
       Object.assign(this.form2, this.$options.data().form2)
-      this.checked = false
-       console.log("id",id)
-      this.params.id = id
-      // this.form2.desc = "111111111111"
-      // showstatus(id).then( response =>{
-          
-      // })
+      this.checked = false;
+      console.log("id", id);
+      this.params.idA = id;
+      showstatus(id).then(response => {
+        if (response.data.comment1) {
+          this.form2.desc = response.data.comment1.comment
+        } else {
+          this.form2.desc = ""
+        }
+
+      });
     },
     // 无效投诉
     handleChecked(val) {
-      console.log('val', val)
+      console.log("val", val);
       if (val) {
-        this.form2.desc = '已收到投诉信息！谢谢您的反馈。'
+        this.form2.desc = "已收到投诉信息！谢谢您的反馈。";
       } else {
-        this.form2.desc = ''
+        this.form2.desc = "";
       }
     },
     // 回复内容提交
     saveReplay() {
-      let desc = this.form2.desc
-      this.replayDialogVisible = false
-      // let param = {
-      //   "desc": desc
-      // }
-      console.log("this.params",this.form2.desc)
-      let data = Object.assign(this.form2.desc, this.params)
-      console.log(" data", data)
+      let desc = this.form2.desc;
 
-      // addComment(data).then(response =>{
-
-      // })
+      this.replayDialogVisible = false;
+      let data = Object.assign(this.form2, this.params);
+      console.log(" data", data);
+      addComment(data).then(response => {
+        this.getList();
+        this.$message({
+          message: "回复成功",
+          type: "success"
+        });
+      });
     },
     // edit(row) {
     //   //console.log(JSON.stringify(row));
@@ -320,13 +331,13 @@ export default {
     },
     del(row) {
       var self = this;
-      //console.log(row); 
+      //console.log(row);
     },
     handleClose() {
-      console.log(".......")
+      console.log(".......");
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .el-dialog__body {

@@ -7,7 +7,7 @@
                     <el-button id="map-btn-resetview" title="还原视图" size="mini" @click="resetView()">
                         <svg-icon icon-class="map-revert" />
                     </el-button>
-                    <el-button id="map-btn-resetaction" title="还原操作" size="mini" @click="resetAction">
+                    <el-button id="map-btn-browse" title="浏览模式" size="mini" @click="resetAction">
                         <svg-icon icon-class="map-pointer" />
                     </el-button>
                     <el-button title="新增" icon="el-icon-plus" size="mini" disabled></el-button>
