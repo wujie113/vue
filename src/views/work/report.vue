@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container"> 
-       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+       <el-input placeholder="输入标题" v-model="listQuery.title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
       </el-select> 
@@ -22,7 +22,7 @@
         <el-table-column prop="reverD" label="河流"/>
         <el-table-column prop="title" label="标题"/>
         <el-table-column prop="content" label="内容"/>
-        <el-table-column prop="type" label="类型"/>
+        <el-table-column prop="typeLabel" label="类型"/>
         <el-table-column prop="lng" label="经度"/>
         <el-table-column prop="lat" label="纬度"/>
         <el-table-column prop="reportTime" label="上报时间"/>
@@ -63,7 +63,7 @@
 				<el-input v-model="form.checkId"/>
 			</el-form-item>
 			<el-form-item label="类型">
-				<el-input v-model="form.type"/>
+			  <rm-dict class="filter-item" title="请选择类型" placeholder="请选择类型" type="reportType" v-model="form.type" />
 			</el-form-item>
 			<el-form-item label="河流">
 				<el-input v-model="form.reverD"/>
@@ -145,6 +145,7 @@ export default {
     },
   created() {
     this.getList()
+  
   },
   methods: {
     getList() {  
@@ -155,7 +156,7 @@ export default {
            this.list = response.data.list
            this.total = response.data.count
         })
-    },
+    }, 
      handleFilter() {
       this.listQuery.pageNo = 1
       this.getList()

@@ -14,7 +14,7 @@
       <el-table-column prop="description" label="描述" :show-overflow-tooltip="true" />
       <el-table-column prop="id" label="操作" width="135">
         <template slot-scope="scope">
-          <el-button title="设置打卡点" type="text"  icon="el-icon-location-outline" @click="spot"></el-button>
+          <el-button title="设置打卡点" type="text"  icon="el-icon-location-outline" @click="spot(scope.row)"></el-button>
           <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit" />
            <el-button @click="personEdit(scope.row)" type="text" title="人员管理">
             <svg-icon icon-class="user_blue" />
@@ -75,40 +75,63 @@
      <el-dialog  title="设置打卡点"  :visible.sync="visiblespot"  :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
        <div style="width:100%">
          <label class="upload-demo">请在地图上设置打卡点</label>
-         <el-table style="width:100%" ref="resetList">
-           <el-table-column label="名称"></el-table-column>
-           <el-table-column label="坐标"></el-table-column>
-           <el-table-column label="操作">删除</el-table-column>
+         <el-table style="width:100%"    :data="dutyClockList">
+           <el-table-column label="名称" prop='name'></el-table-column>
+           <el-table-column label="坐标" :formatter="formatterthis"> </el-table-column>
+           <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button @click="delspot(scope.index, scope.row)">删除</el-button>
+                </template></el-table-column>
          </el-table>
        </div>
        <div>
-         <el-button type="primary" @click="reset('resetList')">还原</el-button>
-         <el-button type="primary">提交</el-button>
+         <el-button type="primary" @click="rest">还原</el-button>
+         <el-button type="primary" @click="commit">提交</el-button>
        </div>
     </el-dialog>
 
   </div>
 </template> 
-<script> 
-import Pagination from '@/components/Pagination'
-import { getList, save, del, getxslist, getfiles, delfiles } from '@/api/res/river.js' 
-import { deluser, getmanagerlist, saveusers, gethzbuserbyareaid } from '@/api/res/management.js'
-import RmDict from '@/components/rm/dict'
-import RmOrgSelect from "@/components/rm/orgselect"
-import RmUserSelect from "@/components/rm/userselect"
-import RmAreaSelect from "@/components/rm/areaselect"
-import RmRiverSelect from "@/components/rm/riverselect"
-import { getToken } from '@/utils/auth'
+<script>
+import Pagination from "@/components/Pagination";
+import {
+  getList,
+  save,
+  del,
+  getxslist,
+  getfiles,
+  delfiles
+} from "@/api/res/river.js";
+import { delBtn,addspot,getspot } from "@/api/res/dutyPart.js";
+import {
+  deluser,
+  getmanagerlist,
+  saveusers,
+  gethzbuserbyareaid
+} from "@/api/res/management.js";
+import RmDict from "@/components/rm/dict";
+import RmOrgSelect from "@/components/rm/orgselect";
+import RmUserSelect from "@/components/rm/userselect";
+import RmAreaSelect from "@/components/rm/areaselect";
+import RmRiverSelect from "@/components/rm/riverselect";
+import { getToken } from "@/utils/auth";
 export default {
-  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect, RmRiverSelect },
+  components: {
+    Pagination,
+    RmDict,
+    RmOrgSelect,
+    RmUserSelect,
+    RmAreaSelect,
+    RmRiverSelect
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
+        published: "success",
+        draft: "gray",
+        deleted: "danger"
+      };
+      return statusMap[status];
     }
   },
   data() {
@@ -116,21 +139,22 @@ export default {
       visible: false,
       listLoading: null,
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
-      fileList: [],  
-      visiblespot:false,
+      fileList: [],
+      visiblespot: false,
+      dutyClockList:null,
       areauser: {
-        checkuserids:null,
+        checkuserids: null,
         userlisted: null,
         userloadinged: false,
         userlist: null,
         visible: false,
         form: {
           bizid: null,
-          type: 'ZRD',
+          type: "ZRD",
           userids: null
         },
         tbshow: true,
-        checkeduser: null,
+        checkeduser: null
       },
       form: {
         id: null,
@@ -152,6 +176,7 @@ export default {
         bizId: null,
         bizType: "ZRD"
       },
+      params:  null,
       list: null,
       total: 0,
       listQuery: {
@@ -160,61 +185,71 @@ export default {
         importance: undefined,
         search: undefined,
         type: "ZRD",
-        sort: '+id'
+        sort: "+id"
       },
       sxOptions: null
-    }
+    };
   },
   created() {
-    this.getList()
-    this.getxslist()
+    this.getList();
+    this.getxslist();
+   
   },
+
   methods: {
     getList() {
-      this.listLoading = true
-      console.log("this.listQuery::::", this.listQuery)
+      this.listLoading = true;
+      console.log("this.listQuery::::", this.listQuery);
       getList(this.listQuery).then(response => {
-        this.listLoading = false
-        this.list = response.data.list
-        this.total = response.data.count
-      })
+        this.listLoading = false;
+        this.list = response.data.list;
+        this.total = response.data.count;
+      });
+    },
+    formatterthis(row){
+      return row.lng+","+ row.lat
     },
     handleFilter() {
-      this.listQuery.pageNo = 1
-      this.getList()
+      this.listQuery.pageNo = 1;
+      this.getList();
     },
     getxslist() {
       getxslist(this.listQuery).then(response => {
-        this.sxOptions = response.data.list
-      })
+        this.sxOptions = response.data.list;
+      });
     },
     addRiver() {
-      this.visible = true
+      this.visible = true;
       // this.form={};
       if (this.$refs.form != undefined) {
-        Object.assign(this.form, this.$options.data().form)
+        Object.assign(this.form, this.$options.data().form);
       }
     },
     edit(row) {
-      this.visible = true
-      Object.assign(this.form, row)
+      this.visible = true;
+      Object.assign(this.form, row);
       getfiles({ bizId: this.form.id, bizType: "R" }).then(response => {
         this.fileList = response.data;
-      })
+      });
     },
     save() {
-      this.visible = false
-      this.listLoading = true
-      save(this.form).then(response => {
-        this.uploaddata.bizId = response.data.id;
-        if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
-          this.$refs.upload.submit();
-        } else {
-          this.getList();
-        }
-      }).catch(error => {
-        this.listLoading = false
-      })
+      this.visible = false;
+      this.listLoading = true;
+      save(this.form)
+        .then(response => {
+          this.uploaddata.bizId = response.data.id;
+          if (
+            this.$refs.upload.uploadFiles != undefined &&
+            this.$refs.upload.uploadFiles.length > 0
+          ) {
+            this.$refs.upload.submit();
+          } else {
+            this.getList();
+          }
+        })
+        .catch(error => {
+          this.listLoading = false;
+        });
     },
     handleSuccess() {
       this.fileList = [];
@@ -223,7 +258,7 @@ export default {
     removefile(file) {
       delfiles({ ids: file.id }).then(response => {
         console.log("图片删除成功!!!!!");
-      })
+      });
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
@@ -233,33 +268,38 @@ export default {
       this.dialogVisible = true;
     },
     del(row) {
-      var self = this
-      console.log(row.id)
-      del(row.id).then(response => {
-        this.getList()
-      }).catch(error => {
-        this.listLoading = false
-      })
+      var self = this;
+      console.log(row.id);
+      del(row.id)
+        .then(response => {
+          this.getList();
+        })
+        .catch(error => {
+          this.listLoading = false;
+        });
     },
-     //用户部分
+    //用户部分
     personEdit(row) {
-      this.riverrow = row
-      this.areauser.listLoadinged = true
+      this.riverrow = row;
+      this.areauser.listLoadinged = true;
       this.areauser.visible = true;
       this.findmanagerlist(row.id);
     },
     findmanagerlist(id) {
       getmanagerlist({ type: "ZRD", bizid: id }).then(response => {
         this.areauser.userlisted = response.data.list;
-        this.areauser.userloadinged = false
-      })
+        this.areauser.userloadinged = false;
+      });
     },
     adduser() {
       this.areauser.tbshow = false;
-      gethzbuserbyareaid({ areaid: this.riverrow.area.id, bizid: this.riverrow.id }).then(response => {
+      gethzbuserbyareaid({
+        areaid: this.riverrow.area.id,
+        bizid: this.riverrow.id
+      }).then(response => {
         this.areauser.userlist = response.data.list;
-        this.areauser.listLoading = false
-      })
+        this.areauser.listLoading = false;
+      });
     },
     deluser(row) {
       console.log("row:::", row);
@@ -268,37 +308,80 @@ export default {
           message: "删除用户成功!!",
           type: "success"
         });
-        this.areauser.userloadinged = true
+        this.areauser.userloadinged = true;
         this.findmanagerlist(this.riverrow.id);
+      });
+    },
+    //责任段id
+    spot(row) {
+      this.visiblespot = true;
+      this.params = row;
+      getspot(row.id).then( response =>{
+            this.dutyClockList=response.data.list
       })
     },
-    //打卡点
-    spot(){
-      this.visiblespot=true
+    //提交打卡点
+    commit() {
+      //  数组转成json字符串
+      //  var jsonstr = JSON.stringify(this.dutyClockList)
+       var json= {
+            idA:this.params.id,
+            latlng: JSON.stringify(this.dutyClockList)
+      }
+      addspot(json).then(response => {
+         this.visiblespot = false;
+        this.$message({
+          message: "添加打卡点成功!!",
+          type: "success"
+        });
+      });
+    },
+    //删除打卡点
+    delspot(index, row){
+      var arry =this.dutyClockList
+       arry.splice(index, 1);
+       delBtn(row.id).then(response =>{
+          this.$message({
+          message: "删除打卡点成功!!",
+          type: "success"
+        });
+       })
+    },
+    //还原
+    rest(){
+      this.dutyClockList = null;
     },
     saveusers() {
-      if (this.areauser.checkuserids == null || this.areauser.checkuserids  == '') {
+      if (
+        this.areauser.checkuserids == null ||
+        this.areauser.checkuserids == ""
+      ) {
         this.closeuser();
         return;
       }
-    saveusers({ bizid: this.riverrow.id, userids: this.areauser.checkuserids , type: 'ZRD' }).then(response => {
-        console.log("response:::", response);
-        if (response.success == true) {
-          this.$message({
-            message: "新增用户成功",
-            type: "success"
-          });
-          this.closeuser();
-        } else {
-          this.$message({
-            message: "新增用户失败",
-            type: "error"
-          });
-        }
-
-      }).catch(error => {
-        this.listLoading = false
+      saveusers({
+        bizid: this.riverrow.id,
+        userids: this.areauser.checkuserids,
+        type: "ZRD"
       })
+        .then(response => {
+          console.log("response:::", response);
+          if (response.success == true) {
+            this.$message({
+              message: "新增用户成功",
+              type: "success"
+            });
+            this.closeuser();
+          } else {
+            this.$message({
+              message: "新增用户失败",
+              type: "error"
+            });
+          }
+        })
+        .catch(error => {
+          this.listLoading = false;
+        });
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -306,7 +389,7 @@ export default {
         if (b == 0) {
           this.areauser.checkuserids = a.id;
         } else {
-          this.areauser.checkuserids  += "," + a.id;
+          this.areauser.checkuserids += "," + a.id;
         }
       });
     },
@@ -314,16 +397,16 @@ export default {
       this.areauser.tbshow = true;
       this.areauser.userlist = [];
       this.findmanagerlist(this.riverrow.id);
-      this.areauser.checkuserids  = null;
+      this.areauser.checkuserids = null;
     },
     closedialog() {
       this.areauser.tbshow = true;
       this.areauser.userlist = [];
       this.areauser.visible = false;
-      this.areauser.checkuserids  = null;
+      this.areauser.checkuserids = null;
       this.riverrow = null;
     }
     //结束用户部分
   }
-}
+};
 </script>

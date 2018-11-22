@@ -17,7 +17,7 @@
         <el-table-column prop="lat" label="纬度"/>
         <el-table-column prop="type" label="工单类型"/>
         <el-table-column prop="source" label="数据来源"/>
-        <el-table-column prop="area.id" label="所属区划"/>
+        <!-- <el-table-column prop="area.id" label="所属区划"/> -->
         <el-table-column prop="dept" label="接单单位"/>
         <el-table-column prop="unit" label="相关部门"/>
         <el-table-column prop="handleTime" label="办结时间"/>
@@ -41,21 +41,16 @@
   
   <el-dialog :visible.sync="visible" title="编辑">
   	<el-form :model="form">
-			<el-form-item label="经度">
-				<el-input v-model="form.lng"/>
-			</el-form-item>
-			<el-form-item label="纬度">
-				<el-input v-model="form.lat"/>
-			</el-form-item>
+		 
 			<el-form-item label="工单类型">
 				<el-input v-model="form.type"/>
 			</el-form-item>
 			<el-form-item label="数据来源">
 				<el-input v-model="form.source"/>
 			</el-form-item>
-			<el-form-item label="所属区划">
+		<!--	<el-form-item label="所属区划">
 				 <rm-area-select v-model="form.area.id"  />
-			</el-form-item>
+			</el-form-item>-->
 			<el-form-item label="接单单位">
 				<el-input v-model="form.dept"/>
 			</el-form-item>
@@ -103,7 +98,7 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination' 
-import { getList } from '@/api/work/proTask.js'
+import { getList ,save,del} from '@/api/work/proTask.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
@@ -177,14 +172,26 @@ export default {
 		this.form = row
 	},
 	save() {
-		//console.log('保存:',JSON.stringify(this.form),this.selectUser);
-		this.visible = false
-		//
-	},
+	//	console.log('保存:',JSON.stringify(this.form),this.selectUser);
+      this.visible = false
+      this.listLoading = true
+      save(this.form).then(response => {        
+          // 上传到服务器
+         // this.$refs.upload.submit();
+        	this.getList();
+      }).catch(error => {
+        this.listLoading = false
+      })
+  },
 	del(row) {
-		var self = this
-		//console.log(row); 
-	}  
+      var self = this
+      console.log(row.id)
+      del(row.id).then(response => {
+        this.getList()
+      }).catch(error => {
+        this.listLoading = false
+      })
+   		}  
   }
 }
 </script>

@@ -131,7 +131,13 @@ export const constantRouterMap = [
         path: 'report',
         name: 'report',
         component: () => import('@/views/work/report'),
-        meta: { title: '任务上报', icon: 'report' }
+        meta: { title: '巡河上报', icon: 'complaint' }
+      },
+      {
+        path: 'proTask',
+        name: 'proTask',
+        component: () => import('@/views/work/proTask'),
+        meta: { title: '任务工单', icon: 'complaint' }
       }
     ]
   },
@@ -238,6 +244,13 @@ export const constantRouterMap = [
         name: '代码自动生成',
         component: () => import('@/views/test/list'),
         meta: { title: '代码自动生成示例2' }
+      }
+      ,
+      {
+        path: 'layer',
+        name: 'dialog',
+        component: () => import('@/views/form/layer'),
+        meta: { title: 'dialog' }
       }
     ]
   },

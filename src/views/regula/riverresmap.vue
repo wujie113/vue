@@ -2,6 +2,7 @@
   <div class="">
     <el-button type="button"  @click="clicktest">测试</el-button>
      <el-container v-loading="loading">
+        <el-button icon="el-icon-location" size="mini" @click="centerView()">定位</el-button>
        <rm-map v-model="map"></rm-map>
       <div class="el-mindiv" v-show="!dialogVisible" @click="dialogVisible=!dialogVisible">
         <div class="layui-layer-title">河流管理</div>
@@ -98,26 +99,27 @@ export default {
       // console.log("tab:::",tab);
     },
     clickrow(data){
-      console.log("子页面传递过来的参数值:::",data);
+       this.centerView(data)
     },
     clicktest(){ 
         this.$refs.river.testclick()
     },
-    centerView() {
-        this.map.centerView([113.88, 27.67],16)
+    centerView(data) {
+        console.log(data);
+        this.map.centerView([data.lng, data.lat],16)
     },
     drawRiverLine(id,name) {
                // var id = '001'
-               var self = this
-                var callback = function(type,data) {
-                    console.log('回调：',type,data)
-                    if (type === 'change') {
-                    self.lineLength = data.remarks
-                    self.wkt = data.wkt
-                    }
-                }
-                
-                this.map.drawLine({ id: id,name: name },callback)
+      var self = this
+      var callback = function(type,data) {
+          console.log('回调：',type,data)
+          if (type === 'change') {
+          self.lineLength = data.remarks
+          self.wkt = data.wkt
+          }
+      }
+      
+      this.map.drawLine({ id: id,name: name },callback)
     }
   }
 }

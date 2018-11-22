@@ -6,13 +6,13 @@ import request from '@/utils/request'
 	    method: 'get',
 	    params
 	  })
-	}
+	} 
 	
 	export function get(id) {
 	  return request({
 	    url: '/api/work/report/list',
 	    method: 'get',
-	    params:{id:id}
+	    params:{ id : id }
 	  })
 	}
 	export function save(data) {
@@ -27,6 +27,6 @@ import request from '@/utils/request'
 	  return request({
 	    url: '/api/work/report/del',
 	    method: 'post',
-	    params:{ids:ids}
+	    params:{ ids : ids }
 	  })
 	}

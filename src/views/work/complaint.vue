@@ -291,10 +291,8 @@ export default {
     // 回复内容提交
     saveReplay() {
       let desc = this.form2.desc;
-
       this.replayDialogVisible = false;
       let data = Object.assign(this.form2, this.params);
-      console.log(" data", data);
       addComment(data).then(response => {
         this.getList();
         this.$message({

@@ -30,3 +30,31 @@ import request from '@/utils/request'
 	    params:{ids:ids}
 	  })
 	}
+
+
+	export function addspot(params){
+		return request({
+	    url: '/api/work/dutyClock/addspot',
+	    method: 'post',
+	    data:params
+	  })
+	}
+
+	export function getspot(id) {
+	  return request({
+	    url: '/api/work/dutyClock/getspot',
+	    method: 'get',
+	    params:{id:id}
+	  })
+	}
+
+	export function delBtn(id) {
+	  return request({
+	    url: '/api/work/dutyClock/delspot',
+	    method: 'post',
+	    params:{id:id}
+	  })
+	}
+	
+
+	
