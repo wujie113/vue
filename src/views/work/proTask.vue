@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container"> 
-       <el-input placeholder="输入标题" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.importance" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
+       <el-input placeholder="输入问题描述" v-model="listQuery.description" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-select v-model="listQuery.type" placeholder="请选择列别" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item"/>
       </el-select> 
        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
@@ -13,22 +13,16 @@
 			>新增</el-button>
     </div>
       <el-table :data="list" row-key="id"  stripe style="width: 100%">
-                <el-table-column prop="lng" label="经度"/>
-        <el-table-column prop="lat" label="纬度"/>
-        <el-table-column prop="type" label="工单类型"/>
-        <el-table-column prop="source" label="数据来源"/>
-        <!-- <el-table-column prop="area.id" label="所属区划"/> -->
-        <el-table-column prop="dept" label="接单单位"/>
-        <el-table-column prop="unit" label="相关部门"/>
-        <el-table-column prop="handleTime" label="办结时间"/>
+  
+        <el-table-column type="index" label="序号"/>
+        <el-table-column prop="type" label="问题类型"/>
         <el-table-column prop="description" label="问题描述"/>
-        <el-table-column prop="taskcontent" label="任务描述"/>
+        <el-table-column prop="launchName" label="发起人"/>
         <el-table-column prop="launchTime" label="发起时间"/>
-        <el-table-column prop="receivePesrson" label="接单人"/>
-        <el-table-column prop="receiveTime" label="接收时间"/>
-        <el-table-column prop="dealDept" label="处理单位"/>
         <el-table-column prop="dealStatus" label="处理状态"/>
-        <el-table-column prop="dealDate" label="处理时间"/>
+        <el-table-column prop="dealDept" label="处理单位"/>
+        <el-table-column prop="receivePesrson" label="接单人"/>
+        <el-table-column prop="receiveTime" label="接单时间"/> 
 		<el-table-column prop="id" label="操作" width="100"   >
         	<template slot-scope="scope">
             	<el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
@@ -41,10 +35,13 @@
   
   <el-dialog :visible.sync="visible" title="编辑">
   	<el-form :model="form">
-		 
-			<el-form-item label="工单类型">
-				<el-input v-model="form.type"/>
-			</el-form-item>
+ 
+        <el-form-item prop="type" label="工单类型">
+          <el-select v-model="form.type" placeholder="请选择类型" clearable class="filter-item">
+            <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+
 			<el-form-item label="数据来源">
 				<el-input v-model="form.source"/>
 			</el-form-item>
@@ -146,7 +143,7 @@ export default {
         type: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3]
+      importanceOptions: ['投诉问题', '上报问题']
     }
     },
   created() {

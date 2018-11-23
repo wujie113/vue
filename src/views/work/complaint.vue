@@ -12,6 +12,7 @@
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
           </div>
         </el-header>
+
         <el-main>
           <div class="widget-divBox">
             <div class="widget-div" v-for="(list, index) in lists" :key="index">
@@ -29,7 +30,10 @@
                   <div class="widget-divContent-main-imgs clearfix">
                     <ul class="widget-divContent-main-imgsGroup clearfix">
                       <li class="" v-for="(img, index) in list.imageurl" :key="index">
-                        <img v-preview="img.url" :src="img.url" :alt="img.title" :key="index" preview-title-enable="true" preview-nav-enable="true">
+                        <viewer :images="list.imageurl">
+                          <img :src="img.url" :key="index">
+                        </viewer>
+                        <!-- <img v-preview="img.url" :src="img.url" :alt="img.title" :key="index" preview-title-enable="true" preview-nav-enable="true"> -->
                       </li>
                     </ul>
                   </div>
@@ -102,9 +106,9 @@
                 {{form.description}}
               </el-form-item>
             </el-form>
-            <!-- <vue-preview :slides="slide1" @close="handleClose"></vue-preview> -->
-            <img v-for="(img, index) in slide1" v-preview="img.url" :src="img.url" :alt="img.name" :key="index" preview-title-enable="true" preview-nav-enable="true">
-
+            <viewer :images="slide1">
+              <img :src="img.url" :key="index" v-for="(img, index) in slide1">
+            </viewer>
             <div slot="footer" class="dialog-footer">
               <el-button @click="visible = false">关 闭</el-button>
             </div>
@@ -242,7 +246,6 @@ export default {
     },
     // 点击详情,查看详情
     detailBtn(idx) {
-      console.log("idx", idx);
       this.visible = true;
       console.log("idx", idx);
       get(idx).then(response => {
@@ -413,7 +416,7 @@ export default {
           -webkit-box-orient: vertical;
         }
         .widget-divContent-main-imgs {
-          min-height: 100px;
+          min-height: 10em;
           .widget-divContent-main-imgsGroup {
             float: left;
             width: 100%;

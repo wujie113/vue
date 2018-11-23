@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-22 18:14:17
+ * @Last Modified time: 2018-11-23 11:03:22
  */
 <template>
   <div class="app-container homeIndex">
@@ -159,12 +159,11 @@
             各乡镇人民政府： 为进一步贯彻落实全面实行河长制工作部署，不断巩固我县水生态环境，结合实际，决定在全县范围内组织开展“清河行动”。 “清河行动”按照“河畅、水清、岸绿、景美”的标准和“全覆盖、无盲区”的要求，开展集中整治行动，营造全社会共同关心、爱护、保护河库的良好局面。具体标准为全县所有河流、水库、塘坝水体及滩地达到四无标准： 1.无生活垃圾造成的“白色污染”，确保河岸整洁； 2.无工业企业排污造成的“黑色污染”，确保水质清洁； 3.无工程施工过程中淤泥、黄土造成的“黄色污染”，确保河湖水质清澈； 4.无影响行洪的障碍物，确保河道安全度汛。 请各乡镇级“总河长”或“副总河长”亲自督办，务必引起高度重视，并通过“芦溪县河长办”微信工作群向县河长办报备。
           </p>
           <div class="clearfix">
-            <!-- <img v-for="(img, index) in imgs" v-preview="img.url" :src="img.url" :alt="img.name" :key="index" preview-title-enable="true" preview-nav-enable="true"> -->
-            <img :src="img.url" @click="imageViewerBtn" v-for="(img, index) in imgs">
-            <!-- <viewer :images="imgs">
-            </viewer> -->
-            <!-- <div class="images" v-viewer="{movable: false}">
-              <img v-for="src in imgs" :src="src.url" :key="src.url">
+            <viewer :images="images1">
+              <img v-for="src in images1" :src="src.url" :key="src.name">
+            </viewer>
+            <!-- <div class="images" v-viewer="{movable: true}">
+              <img v-for="src in imgs" :src="src.url" :key="src.name">
             </div> -->
           </div>
           <div class="subUser">
@@ -250,7 +249,7 @@ export default {
         label: '龙须面'
       }],
       value: '',
-      imgs: [
+      images1: [
         {
           url:
             "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
@@ -267,19 +266,19 @@ export default {
           url:
             "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
           title: "pic2",
-          name: "22222"
+          name: "222"
         },
         {
           url:
             "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
           title: "pic2",
-          name: "22222"
+          name: "2"
         },
         {
           url:
             "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
           title: "pic2",
-          name: "22222"
+          name: "222122"
         }
       ],
     }
@@ -746,11 +745,10 @@ export default {
 }
 </style>
 <style>
-.homeIndex .topTitle .tableBox {
+.homeIndex .tableBox {
   padding: 10px 15px;
 }
 .homeIndex
-  .topTitle
   .tableBox
   .el-table__body
   .el-table__row:first-child
@@ -763,7 +761,6 @@ export default {
   color: #fff;
 }
 .homeIndex
-  .topTitle
   .tableBox
   .el-table__body
   .el-table__row:nth-of-type(2)
@@ -776,10 +773,9 @@ export default {
   color: #fff;
 }
 .homeIndex
-  .topTitle
   .tableBox
   .el-table__body
-  .el-table__row:nth-of-type(2)
+  .el-table__row:nth-of-type(3)
   .el-table_1_column_1
   .cell
   div {
@@ -788,18 +784,11 @@ export default {
   background-repeat: no-repeat;
   color: #fff;
 }
-.homeIndex
-  .topTitle
-  .tableBox
-  .el-table__body
-  .el-table__row
-  .el-table_1_column_1
-  .cell {
+.homeIndex .tableBox .el-table__body .el-table__row .el-table_1_column_1 .cell {
   position: relative;
   z-index: 3;
 }
 .homeIndex
-  .topTitle
   .tableBox
   .el-table__body
   .el-table__row
@@ -818,7 +807,7 @@ export default {
   transform: translate(-50%, -50%);
   z-index: -1;
 }
-.homeIndex .topTitle .tableBox .el-tabs {
+.homeIndex .tableBox .el-tabs {
   height: 100%;
 }
 </style>

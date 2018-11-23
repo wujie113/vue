@@ -23,17 +23,16 @@ import * as filters from './filters' // global filters
 import 'element-ui/lib/theme-chalk/display.css'
 import './icons/iconfont.css' //使用第三方图标
 import 'babel-polyfill'
-// import 'viewerjs/dist/viewer.css'
+// 图片预览
+import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
-Vue.use(Viewer)
+Vue.use(Viewer, {
+  defaultOptions: {
+    zIndex: 9999
+  }
+})
 // defalut install
-// import vuePicturePreview from 'rm-img-pre-lxk'
-// Vue.use(vuePicturePreview)
-// import preview from 'vue-photo-preview'
-// import 'vue-photo-preview/dist/skin.css'
-// Vue.use(preview)
-import ImageViewer from '@/components/ImageViewer'
-Vue.use(ImageViewer)
+
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)

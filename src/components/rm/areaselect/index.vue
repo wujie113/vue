@@ -63,7 +63,9 @@
         this.$emit("input", value)
       },
       handleSelect(node, instanceId) {
-        //console.log("node:", node);
+        console.log("node:", node)
+        console.log("instanceId:", instanceId)
+
         //支持v-model方式
         //  console.log("input :", JSON.stringify(this.value));
         if (this.multiple) {
