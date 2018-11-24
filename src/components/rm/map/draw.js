@@ -20,7 +20,7 @@ export const drawGeom = {
      * @param {对象属性} options
      * @param { 绘画回调函数} callbackFunc  
      */
-    draw: function(map, geotype, options, callbackFunc) {
+    draw: function(map, geotype,layerCode, options, callbackFunc) {
         var isInit = true
         if (this.map) {
             isInit = false
@@ -32,7 +32,7 @@ export const drawGeom = {
         this.callbackFunc = callbackFunc
 
         /**绘制责任段，默认在责任段图层中绘制 */
-        var layerCode = "zerenduan"
+        //var layerCode = "zerenduan"
         this.geotype = geotype
         this.fid = layerCode + '.' + this.featureId
 
@@ -40,6 +40,8 @@ export const drawGeom = {
         //如果没有找到图层，则在绘画图层上
         if (!this.layer) {
             this.layer = this.getLayerByCode('drawlayer')
+        } else {
+            this.layer.setVisible(true)
         }
 
         //先清理下记录

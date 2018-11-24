@@ -41,7 +41,7 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination'
-import { getList, save, get, del } from '@/api/res/lake.js'
+import { lakegetList, lakesave, lakeget, lakedel } from '@/api/res/lake.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
@@ -95,7 +95,7 @@ export default {
     getList() {
       this.listLoading = true;
       console.log("this.listQuery::::", this.listQuery);
-      getList(this.listQuery).then(response => {
+      lakegetList(this.listQuery).then(response => {
         this.listLoading = false
         this.list = response.data.list
         this.total = response.data.count
@@ -120,7 +120,7 @@ export default {
       //console.log('保存:',JSON.stringify(this.form),this.selectUser);
       this.visible = false
       this.listLoading = true
-      save(this.form).then(response => {
+      lakesave(this.form).then(response => {
         this.getList();
       }).catch(error => {
         this.listLoading = false
@@ -131,7 +131,7 @@ export default {
       var self = this;
       var self = this
       console.log(row)
-      del(row.id).then(response => {
+      lakedel(row.id).then(response => {
         this.getList()
       }).catch(error => {
         this.listLoading = false

@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-23 11:03:22
+ * @Last Modified time: 2018-11-23 18:27:38
  */
 <template>
   <div class="app-container homeIndex">
@@ -82,7 +82,8 @@
               </div>
             </div>
             <div class="canvasBox">
-              <div id="myChart" :style="{width: '100%', height: '290px'}" ref="myChart"></div>
+              <!-- <div id="myChart" :style="{width: '100%', height: '290px'}" ref="myChart"></div> -->
+              <echarts-pie></echarts-pie>
             </div>
           </div>
         </el-col>
@@ -108,10 +109,12 @@
             <div class="tableBox">
               <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="本月投诉次数统计" name="first">
-                  <div id="myChart1" :style="{width: '100%', height: '23em'}" ref="myChart1"></div>
+                  <!-- <div id="myChart1" :style="{width: '100%', height: '23em'}" ref="myChart1"></div> -->
+                  <leftEchartsBar></leftEchartsBar>
                 </el-tab-pane>
                 <el-tab-pane label="本月工单统计" name="second">
-                  <div id="myChart2" :style="{width: '100%', height: '23em'}" ref="myChart2"></div>
+                  <!-- <div id="myChart2" :style="{width: '100%', height: '23em'}" ref="myChart2"></div> -->
+                  <rightEchartsBar></rightEchartsBar>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -180,6 +183,10 @@
 import { mapGetters } from 'vuex'
 import echarts from 'echarts'
 import resize from '@/components/Charts/mixins/resize'
+import { getList } from '@/api/home/home'
+import EchartsPie from './components/echartsPie'
+import leftEchartsBar from './components/leftEchartsBar'
+import rightEchartsBar from './components/rightEchartsBar'
 export default {
   name: 'Home',
   data() {
@@ -283,20 +290,34 @@ export default {
       ],
     }
   },
+  components: {
+    EchartsPie,
+    leftEchartsBar,
+    rightEchartsBar
+  },
   computed: {
     ...mapGetters([
       'name',
       'roles'
     ])
   },
+  created () {
+    this.getListData()
+  },
   mounted() {
-    this.drawLine()
-    this.drawBar()
+    // this.drawPie()
+    // this.drawBar()
     this.init() //让echarts窗口自适应
   },
   methods: {
-    imageViewerBtn(e) {
-      console.log(e)
+    getListData(){
+      getList({}).then((res) => {
+        console.log('请求成功')
+
+        console.log('home-index.vue', res)
+      }).catch(erroRes => {
+        console.log('网络错误')
+      })
     },
     init() {
       const self = this;//因为箭头函数会改变this指向，指向windows。所以先把this保存
@@ -312,7 +333,7 @@ export default {
         }
       }, 20)
     },
-    drawLine() {
+    drawPie() {
       // 基于准备好的dom，初始化echarts实例
       // let myChart = echarts.init(document.getElementById('myChart'))
       this.chart = echarts.init(this.$refs.myChart)

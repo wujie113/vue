@@ -164,6 +164,36 @@ export const markerStyleFunc = function(feature, resolution) {
         })
     })
 }
+/**打卡点标注 */
+export const dakadianStyleFunc = function(feature, resolution) {
+    return new Style({
+        stroke: new Stroke({
+            color: 'green',
+            width: 2
+        }),
+        fill: new Fill({
+            color: 'rgba(255,0,0,0.2)'
+        }), 
+        image: new Icon({
+            anchor: [0.5, 32],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels', 
+            size: [32,32],
+            src: '/static/map/icon/dakadian.png'
+          }),
+        text: new Text({
+            text: feature.get('name'),
+            offsetY: 12,
+            fill: new Fill({
+                color: '#000'
+            }),
+            stroke: new Stroke({
+                color: '#fff',
+                width: 1
+            })
+        })
+    })
+}
 export const markerSelectedStyleFunc = function(feature, resolution) {
     var style = markerStyleFunc(feature,resolution)
      //点样式 

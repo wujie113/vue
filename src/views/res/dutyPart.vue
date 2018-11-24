@@ -51,10 +51,10 @@
           <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="所属河流">
-          <rm-river-select v-model="form.river" />
+          <rm-river-select v-model="form.river" :defaultExpand="Infinity" />
         </el-form-item>
         <el-form-item prop="area" label="责任主体">
-          <rm-area-select v-model="form.area" />
+          <rm-area-select v-model="form.area" :defaultExpand="Infinity"/>
         </el-form-item>
         <el-form-item prop="sort" label="排序">
           <el-input v-model="form.sort" />
@@ -193,13 +193,11 @@ export default {
   created() {
     this.getList();
     this.getxslist();
-   
   },
-
   methods: {
     getList() {
       this.listLoading = true;
-      console.log("this.listQuery::::", this.listQuery);
+     // console.log("this.listQuery::::", this.listQuery);
       getList(this.listQuery).then(response => {
         this.listLoading = false;
         this.list = response.data.list;
@@ -230,6 +228,7 @@ export default {
       Object.assign(this.form, row);
       getfiles({ bizId: this.form.id, bizType: "R" }).then(response => {
         this.fileList = response.data;
+        console.log("this.fileList",this.fileList)
       });
     },
     save() {

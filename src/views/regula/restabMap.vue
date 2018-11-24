@@ -14,7 +14,9 @@
 
     <el-container>
       <!--弹出窗口-->
-      <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="beforeClose()" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" title="资源管理1" top="2vh">
+      <!-- <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="beforeClose()" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" title="资源管理" top="2vh"> -->
+        <Layer title="资源管理" v-model="dialogVisible"   :dialog="false" class="layer-1" width="5000" :animation="2" :maskLayer="false" :shade= "false"
+        height="600" confirm="确定1" cancel="取消1" > 
         <span slot="title" class="dialog-title-rm">
           <span>资源管理</span>
           <span @click="digLogMiniBtn">
@@ -73,8 +75,8 @@
             </keep-alive>
           </el-tab-pane>
         </el-tabs>
-      </el-dialog>
-
+      <!-- </el-dialog> -->
+ </Layer> 
     </el-container>
     <!-- <div class="wrap">
       111

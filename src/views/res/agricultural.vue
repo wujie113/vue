@@ -70,8 +70,8 @@
     </el-table>
     <pagination v-show="query.total>0" :total="query.total" :page.sync="query.pageNo" :limit.sync="query.pageSize" @pagination="getList" />
 
-    <el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
-      <el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe width="90%" border>
+    <el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" width="60%"  :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+      <el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe  border>
         <el-table-column type="index" label="序号" width="50" />
         <el-table-column prop="CreateDate" label="上传时间" width="150" />
         <el-table-column prop="name" label="文件名" width="250" />
@@ -310,19 +310,27 @@ export default {
     del(row) {
       //var self = this
       //console.log(row)
-      del(row.id).then(response => {
-        this.v.form = false;
-        if (response.success) {
-          this.$message(response.msg);
-          //删除列表数据
-          const index = this.list.indexOf(row); //找到要删除数据在list中的位置
-          this.list.splice(index, 1); //通过splice 删除数据
-        } else {
-          this.$message({
-            message: response.msg,
-            type: "warning"
-          });
-        }
+      // del(row.id).then(response => {
+      //   this.v.form = false;
+      //   if (response.success) {
+      //     this.$message(response.msg);
+      //     //删除列表数据
+      //     const index = this.list.indexOf(row); //找到要删除数据在list中的位置
+      //     this.list.splice(index, 1); //通过splice 删除数据
+      //   } else {
+      //     this.$message({
+      //       message: response.msg,
+      //       type: "warning"
+      //     });
+      //   }
+      // });
+      delBtn(row.id).then(response => {
+        this.listLoadingHistory = false;
+        this.$message({
+          message: '删除数据成功',
+          type: 'success'
+        });
+        this.downloadExcel();
       });
     }
   }

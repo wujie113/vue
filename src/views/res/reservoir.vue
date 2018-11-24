@@ -94,7 +94,7 @@
 		</el-table>
 		<pagination v-show="query.total>0" :total="query.total" :page.sync="query.pageNo" :limit.sync="query.pageSize" @pagination="getList" />
 
-		<el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
+		<el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" width="65%" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
 			<el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe border>
 				<el-table-column type="index" label="序号" width="50" />
 				<el-table-column prop="CreateDate" label="上传时间" width="150" />

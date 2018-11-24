@@ -12,6 +12,7 @@
     placeholder="选择河流..."
     @input="handleInput"
     :normalizer="normalizer"
+    :defaultExpandLevel="defaultExpand"
   />
 </template> 
 <script>
@@ -41,13 +42,18 @@
         required: false,
         type: Boolean,
         default: false
+      },
+      defaultExpand: {
+        required: false,
+        type: Number,
+        default: 0
       }
     },
     data() {
       return {
         areas: null,
         normalizer(node) {
-          //console.log('normalizer:',node)
+          // console.log('normalizer:',node)
           node.label = node.label || node.name
           return node
         }
@@ -59,7 +65,7 @@
     },
     methods: {
       handleInput(value, instanceId) {
-        console.log(JSON.stringify(value))
+        console.log('value', JSON.stringify(value))
         this.$emit("input", value)
       },
       handleSelect(node, instanceId) {
@@ -74,6 +80,7 @@
         }
         //this.$emit('update:org',node)
       },
+
       loadAreas({ action, parentNode, callback }) { 
         console.log(action, parentNode, this.org)
         var self = this

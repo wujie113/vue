@@ -34,8 +34,8 @@
                 var callback = function(type,data) {
                     console.log('回调：',type,data)
                     if (type === 'change') {
-                    self.lineLength = data.remarks
-                    self.wkt = data.wkt
+                        self.lineLength = data.remarks
+                        self.wkt = data.wkt
                     }
                 }
                 

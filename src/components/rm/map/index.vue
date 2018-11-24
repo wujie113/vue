@@ -115,12 +115,17 @@
             /**绘制责任段 */
             drawLine(options, callbackFunc) {
                 this.resetAction()
-                drawGeom.draw(this.map, 'LineString', options, callbackFunc)
+                drawGeom.draw(this.map, 'LineString','zerenduan', options, callbackFunc)
             },
             /**绘制胡泊 */
             drawArea(options, callbackFunc) {
                 this.resetAction()
-                drawGeom.draw(this.map, 'Polygon', options, callbackFunc)
+                drawGeom.draw(this.map, 'Polygon','hupo', options, callbackFunc)
+            },
+             /**打卡点 */
+            drawPoint(options, callbackFunc) {
+                this.resetAction()
+                drawGeom.draw(this.map, 'Point','dakadian', options, callbackFunc)
             },
             resetAction() {
                 /**还原操作，比如之前是做测距操作，接着想做标注操作，在每个操作之前，都应该清空之前的设置 */

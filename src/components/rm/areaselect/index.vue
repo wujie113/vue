@@ -59,7 +59,7 @@
     },
     methods: {
       handleInput(value, instanceId) {
-        console.log(JSON.stringify(value))
+        console.log('value', JSON.stringify(value))
         this.$emit("input", value)
       },
       handleSelect(node, instanceId) {

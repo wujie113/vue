@@ -12,8 +12,7 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
   config => {
-    if (store.getters.token) {
-      console.log(config)
+    if (store.getters.token) { 
       if (config.params === undefined) {
         config.params = { 'token': getToken() }
       } else {
@@ -25,8 +24,7 @@ service.interceptors.request.use(
     // }
     // config.headers['mobileLogin'] = true;
     //  config.url= config.url+"?token="+getToken();
-    if (config.method === 'post') {
-      console.log("config::::",config)
+    if (config.method === 'post') { 
       config.data = qs.stringify(config.data, { allowDots: true })
     }
     return config

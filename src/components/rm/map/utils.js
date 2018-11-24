@@ -109,7 +109,7 @@ export const utils = {
                 },
                 strategy: bboxStrategy
             }),
-            style: vectorStyleFunc
+            style: item.style || vectorStyleFunc
         })
     },
     createWMTSTileLayer: function(item, callback) {

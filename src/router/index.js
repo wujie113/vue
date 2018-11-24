@@ -101,11 +101,6 @@ export const constantRouterMap = [
         name: 'lakeb',
         component: () => import('@/views/res/lakebase'),
         meta: { title: '湖泊区域', noCache: true }
-      } ,{
-        path: 'lake',
-        name: 'lake',
-        component: () => import('@/views/res/lake'),
-        meta: { title: '山塘(湖泊)', noCache: true }
       } , {
         path: 'duty',
         name: 'duty',

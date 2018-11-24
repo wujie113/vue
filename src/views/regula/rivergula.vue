@@ -10,8 +10,8 @@
                   <span class="custom-tree-node" slot-scope="{ node, data }">
                     <span>{{ node.label }}</span>
                     <span>
-                      <el-button type="text" class="el-icon-tickets" size="mini" @click="detailClick(data)">
-                      </el-button>
+                      <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick(data)"/> 
+                      <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick2(data)"/> 
                     </span>
                   </span>
                 </el-tree>
@@ -35,9 +35,10 @@
         <!--插入地图-->
         <rm-map />
       </el-container>
-    </el-container>
-    <el-dialog :visible.sync="detailvisible" :title="dialogtitle">
-      <el-tabs v-model="activeNamedetail" type="border-card" @tab-click="detailhandleClick">
+    </el-container> 
+     <Layer :title="dialogtitle" v-model="showLayer2"   :dialog="false" class="layer-1" width="800" :animation="2" :maskLayer="false" :shade= "false"
+        height="600" confirm="确定" cancel="取消"> 
+       <el-tabs v-model="activeNamedetail" type="border-card" @tab-click="detailhandleClick">
         <el-tab-pane name="1">
           <span slot="label"><i class="el-icon-date"></i> 基本信息</span>
           <el-form :model="form" abel-width="80px" size="mini">
@@ -84,7 +85,10 @@
             <el-table-column prop="mobile" label="电话" />
           </el-table>
         </el-tab-pane> 
-      </el-tabs> 
+      </el-tabs>  
+    </Layer>  
+    <el-dialog :visible.sync="detailvisible" :title="dialogtitle">
+      
       <!-- <vue-preview :slides="slide1" @close="handleClose"></vue-preview> -->
       <div slot="footer" class="dialog-footer">
         <el-button @click="detailvisible = false">关 闭</el-button>
@@ -100,6 +104,7 @@ import RmMap from "@/components/rm/map"
 import { getfiles, delfiles, uploadFile } from '@/api/core/file.js'
 import { getToken } from '@/utils/auth'
 import { getAreausers } from '@/api/core/area'
+import Layer from '@/components/layer'
 export default {
   name: "rivergula",
   components: { Pagination, RmMap },
@@ -114,6 +119,7 @@ export default {
       activeNamedetail: "1",
       dialogtitle: "",
       detailvisible: false,
+      showLayer2:false,
       defaultProps: {
         children: "children",
         label: "label"
@@ -199,7 +205,8 @@ export default {
       get(idx).then(response => {
         this.activeNamedetail = "1";
         this.form = response.data;
-        this.detailvisible = true;
+        //this.detailvisible = true;
+        this.showLayer2=true;
       });
       this.getfilesLists();
     },
@@ -214,6 +221,11 @@ export default {
       this.dialogtitle = node.label + "详情";
       this.getriver(node.id)
     },
+    detailClick2(node) {
+      console.log("node::::", node); 
+      this.dialogtitle = node.label + "详情";
+      this.getriver(node.id)
+    }, 
     see(row) {
       window.open(row.url);
     },
@@ -250,7 +262,7 @@ export default {
     },
     findmanagerlist(id) {
       this.areauser.userloadinged = true;
-      getmanagerlist({ type: this.activeName, riverid: id }).then(response => {
+      getmanagerlist({ type: this.activeName, bizid: id }).then(response => {
         this.areauser.userlisted = response.data.list;
         this.areauser.userloadinged = false
       })

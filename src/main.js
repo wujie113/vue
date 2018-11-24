@@ -38,8 +38,8 @@ Vue.use(Element, {
   i18n: (key, value) => i18n.t(key, value)
 })
 import plugin from './components/plugins'
-for(let i in plugin){ 
-  Vue.use(plugin[i].default);
+for (const i in plugin) {
+  Vue.use(plugin[i].default)
 }
 // register global utility filters.
 Object.keys(filters).forEach(key => {

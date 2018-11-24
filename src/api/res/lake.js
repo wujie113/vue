@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-	export function getList(params) {
+	export function lakegetList(params) {
 	  return request({
 	    url: '/api/res/lake/list',
 	    method: 'get',
@@ -14,14 +14,14 @@ import request from '@/utils/request'
 	    params:{type:type}
 	  })
 	}
-	export function get(id) {
+	export function lakeget(id) {
 	  return request({
 	    url: '/api/res/lake/list',
 	    method: 'get',
 	    params:{id:id}
 	  })
 	}
-	export function save(data) {
+	export function lakesave(data) {
 		console.log("data::",data)
 	  return request({
 	    url: '/api/res/lake/save',
@@ -30,7 +30,7 @@ import request from '@/utils/request'
 	  })
 	}
 	
-	export function del(ids) {
+	export function lakedel(ids) {
 	  return request({
 	    url: '/api/res/lake/del',
 	    method: 'post',
