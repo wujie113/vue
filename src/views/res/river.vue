@@ -45,7 +45,7 @@
         <el-table-column type="selection" width="55" />
         <el-table-column type="index" label="序号" width="100px" />
         <el-table-column prop="name" label="姓名" />
-        <el-table-column prop="postName" label="职属" />
+        <el-table-column prop="postLabel" label="职属" />
       </el-table>
     </el-dialog>
     <!--     

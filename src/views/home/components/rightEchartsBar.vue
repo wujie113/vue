@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="myChart" :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
+    <div :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
   </div>
 </template>
 <script>
@@ -14,6 +14,7 @@ export default {
   },
   mounted() {
     this.initChart()
+    this.init()
   },
   props: {
     className: {
@@ -31,9 +32,27 @@ export default {
     height: {
       type: String,
       default: '23em'
+    },
+    right_chartData: {
+      type: Array,
+      required: true,
+      default: []
     }
   },
+  watch: {
+
+  },
   methods: {
+    init() {
+      const self = this;//因为箭头函数会改变this指向，指向windows。所以先把this保存
+      setTimeout(() => {
+        window.onresize = function () {
+          self.chart = echarts.init(self.$refs.myChart)
+          self.chart.resize()
+          console.log('柱形图222')
+        }
+      }, 20)
+    },
     initChart() {
       this.chart = echarts.init(this.$refs.myChart);
       // 把配置和数据放这里

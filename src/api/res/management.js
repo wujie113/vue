@@ -33,6 +33,14 @@ export function	getmanagerlist(params){
 				params
 			})
 		}
+
+		export function	findOfficeUserstree(params){   
+			return request({
+				url: 'api/res/management/user/trees',
+				method: 'get',
+				params
+			})
+		}
 		
 
 

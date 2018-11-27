@@ -180,6 +180,7 @@ export default {
         this.listLoading = false
       })
   },
+   
 	del(row) {
       var self = this
       console.log(row.id)

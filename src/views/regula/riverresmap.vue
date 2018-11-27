@@ -12,7 +12,7 @@
       </div>
     </el-container> 
      <Layer title="河流管理" v-model="dialogVisible"   :dialog="false" class="layer-1" width="1000" :animation="2" :maskLayer="false" :shade= "false"
-        height="600" confirm="确定1" cancel="取消1" > 
+        height="600" confirm="确定" cancel="取消" > 
             <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
               <el-tab-pane name="HL">
                  <span slot="label"><i class="el-icon-date"></i> 河流</span>  
@@ -200,7 +200,7 @@
                     <el-input v-model="lake.form.description" :rows="4" type="textarea" />
                   </el-form-item>
                    <el-form-item prop="description" label="绘图">
-                  <el-button type="button"  @click="drawlakeLine()">请点击按钮后绘图</el-button>
+                  <el-button type="button"  @click="drawlakeAarea()">请点击按钮后绘图</el-button>
                 </el-form-item>
                 </el-form>   
      </Layer>
@@ -223,7 +223,7 @@
             <el-table-column type="selection" width="55" />
             <el-table-column type="index" label="序号" width="100px" />
             <el-table-column prop="name" label="姓名" />
-            <el-table-column prop="postName" label="职属" />     
+            <el-table-column prop="postLabel" label="职属" />     
       </el-table> 
     </Layer> 
     <!--打卡点-->
@@ -356,7 +356,8 @@ export default {
               description: null,
               pid: null,
               wkt:null,
-              acreage:null
+              acreage:null, 
+              isNew:true
             },
             list: null,
             total: 0,
@@ -485,16 +486,16 @@ export default {
  
    /***********************************************end 河流责任段画线部分**************************************************** */
    /***********************************************star 湖泊画多边形部分**************************************************** */
-    drawlakeLine() {
+    drawlakeAarea() {
             // var id = '001'
             var self = this
             var id=this.lake.form.id;
             var name =this.lake.form.name; 
             if(this.lake.form.acreage==null){
-                this.lake.form.isnew=false;
+                this.lake.form.isNew=false;
             }  
             this.dialogVisible=false;
-            this.map.drawLine({ id: id,name: name },this.lakecallback)
+            this.map.drawArea({ id: id,name: name },this.lakecallback)
         },
     lakecallback(type,data){   
                 // console.log('回调：',type,data)
@@ -699,7 +700,7 @@ export default {
       Object.assign(this.lake.form, row)
     },
     lakesave() {
-      //console.log('保存:',JSON.stringify(this.form),this.selectUser);
+      console.log('保存:',JSON.stringify(this.form));
       this.lake.visible = false
       this.lake.listLoading = true
       lakesave(this.lake.form).then(response => {
@@ -763,6 +764,7 @@ export default {
       this.duty.listLoading = true;
       save(this.duty.form).then(response => { 
           this.duty.uploaddata.bizId = response.data.id; 
+          this.dialogVisible=true;
           if (this.$refs.upload.uploadFiles != undefined &&this.$refs.upload.uploadFiles.length > 0) { 
             this.$refs.upload.submit();
           } else {  

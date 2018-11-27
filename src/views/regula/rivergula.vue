@@ -7,11 +7,10 @@
             <el-tabs v-model="activeName" @tab-click="handleClick">
               <el-tab-pane label="河流" name="HL">
                 <el-tree :data="dataArray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current>
-                  <span class="custom-tree-node" slot-scope="{ node, data }">
+                  <span class="custom-tree-node" slot-scope="{ node, data }">                    
                     <span>{{ node.label }}</span>
                     <span>
-                      <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick(data)"/> 
-                      <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick2(data)"/> 
+                      <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick(data)"/>  
                     </span>
                   </span>
                 </el-tree>
@@ -21,8 +20,7 @@
                      <span class="custom-tree-node" slot-scope="{ node, data }">
                         <span>{{ node.label }}</span>
                         <span>
-                          <el-button type="text" class="el-icon-tickets" size="mini" @click="detailClick(data)">
-                          </el-button>
+                          <el-button type="text" class="el-icon-tickets" size="mini" @click="detailClick(data)"></el-button>
                         </span>
                       </span> 
                 </el-tree>
@@ -33,7 +31,7 @@
       </el-aside>
       <el-container>
         <!--插入地图-->
-        <rm-map />
+        <rm-map   v-model="map"/>
       </el-container>
     </el-container> 
      <Layer :title="dialogtitle" v-model="showLayer2"   :dialog="false" class="layer-1" width="800" :animation="2" :maskLayer="false" :shade= "false"
@@ -57,8 +55,22 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane name="2">
-          <span slot="label"><i class="el-icon-date"></i> 周边资源</span>
-
+            <span slot="label"><i class="el-icon-date"></i> 周边资源</span> 
+            <keep-alive>
+                <div>
+                      <div class="filter-container duty" >  
+                          <el-select v-model="geo.listQuery.distance" clearable placeholder="查询半径"  style="width: 90px" class="filter-item">
+                          <el-option v-for="item in geo.options" :key="item.key" :label="item.label" :value="item.key" />
+                          </el-select>
+                           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="geohandleFilter">查询</el-button> 
+                        </div>
+                        <el-table v-loading="geo.geoListLoading" :data="geo.geometryList" border fit highlight-current-row row-key="id" stripe style="width: 100%">
+                          <el-table-column type="index" label="序号" width="80" />
+                          <el-table-column prop="name" label="资源类型名称" />
+                          <el-table-column prop="num" label="数量" width="100"/>  
+                        </el-table>
+                </div> 
+            </keep-alive>  
         </el-tab-pane>
         <el-tab-pane name="3">
           <span slot="label"><i class="el-icon-date"></i> 一河一档、一河一策</span>
@@ -104,12 +116,16 @@ import RmMap from "@/components/rm/map"
 import { getfiles, delfiles, uploadFile } from '@/api/core/file.js'
 import { getToken } from '@/utils/auth'
 import { getAreausers } from '@/api/core/area'
+import { getgeometryList } from '@/api/res/geometry'
 import Layer from '@/components/layer'
+
+
 export default {
   name: "rivergula",
   components: { Pagination, RmMap },
   data() {
     return {
+      map:null,
       activeName: "HL",
       loading: true,
       tableLoading: false,
@@ -136,6 +152,16 @@ export default {
         },
         tbshow: true,
         checkeduser: null,
+      },
+      geo:{
+         geometryList:null,
+         geoListLoading:false,
+         listQuery:{
+           distance:'200',
+           lat:1,
+           lng:2
+         },
+         options: [{ label: '200米', key: '200' }, { label: '500米', key: '500' }, { label: '1千米', key: '1000' }, { label: '2千米', key: '2000' }, { label: '5千米', key: '5000' }],
       },
       fileList: null,
       fileup: {
@@ -174,6 +200,13 @@ export default {
     this.loadHpTree();
   },
   methods: {
+    /***map相关方法 */
+    centerView(data) {
+        // console.log(data);
+        if(data.lng==undefined ||data.lng==undefined)return;
+        this.map.centerView([data.lng, data.lat],16)
+    },
+    /***map相关方法 end */
     loadLeftTree() {
       tree().then((res) => {
         console.log("左边树", res)
@@ -194,6 +227,9 @@ export default {
         this.loading = false
       })
     },
+    showline(data){
+      console.log(data);
+    },
     getfilesLists() {
       getfiles(this.fileup.uploaddata).then(response => {
         this.fileList = response.data;
@@ -213,9 +249,10 @@ export default {
     handleClick(tab) {
       console.log(tab);
     },
-    handleNodeClick() {
-      // console.log("tab:::",tab);
+    handleNodeClick(data) {
+       this.centerView(data);
     },
+    
     detailClick(node) {
       console.log("node::::", node); 
       this.dialogtitle = node.label + "详情";
@@ -257,9 +294,17 @@ export default {
     beforeUpload() {
       this.fileup.fileListLoading = true
     },
-    getuserlist() {
-
-    },
+    geohandleFilter(){
+        console.log(this.geo.listQuery);
+        this.geo.listQuery.lat=this.form.lat;
+        this.geo.listQuery.lng=this.form.lng;
+         this.geo.geoListLoading=true;
+         console.log("33::",this.geo.listQuery)
+        getgeometryList(this.geo.listQuery).then(response => {
+        this.geo.geometryList=response.data.list;
+        this.geo.geoListLoading=false;
+      })
+    }, 
     findmanagerlist(id) {
       this.areauser.userloadinged = true;
       getmanagerlist({ type: this.activeName, bizid: id }).then(response => {
@@ -269,6 +314,9 @@ export default {
     },
     detailhandleClick(tab) {
       if (this.activeNamedetail == '4') {
+        this.findmanagerlist(this.form.id);
+      }
+      if (this.activeNamedetail == '2') {
         this.findmanagerlist(this.form.id);
       }
     }

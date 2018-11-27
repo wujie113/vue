@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="myChart" :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
+    <div :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
   </div>
 </template>
 <script>
@@ -14,6 +14,14 @@ export default {
   },
   mounted() {
     this.initChart()
+    this.init()
+    // console.log('this._chartData', this._chartData)
+  },
+  watch: {
+    _chartData(v) {
+      console.log('v', v)
+      this.initChart()
+    }
   },
   props: {
     className: {
@@ -22,7 +30,7 @@ export default {
     },
     id: {
       type: String,
-      default: 'yourID'
+      default: 'pieID'
     },
     width: {
       type: String,
@@ -31,10 +39,25 @@ export default {
     height: {
       type: String,
       default: '290px'
+    },
+    _chartData: {
+      type: Array,
+      required: true,
+      default: []
     }
   },
   methods: {
-    initChart() {
+    init() {
+      const self = this
+      setTimeout(() => {
+        window.onresize = function () {
+          self.chart = echarts.init(self.$refs.myChart)
+          self.chart.resize()
+          console.log('饼状图')
+        }
+      }, 20)
+    },
+    initChart(v) {
       this.chart = echarts.init(this.$refs.myChart);
       // 把配置和数据放这里
       this.chart.setOption({
@@ -45,7 +68,7 @@ export default {
         legend: {
           orient: 'horizontal',
           y: 'bottom',
-          data: ['待处理工单', '待处理投诉']
+          // data: ['待处理工单', '待处理投诉']
         },
         series: [
           {
@@ -71,10 +94,7 @@ export default {
                 show: false
               }
             },
-            data: [
-              { value: 335, name: '待处理工单' },
-              { value: 310, name: '待处理投诉' }
-            ]
+            data: this._chartData
           }
         ]
       })

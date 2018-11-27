@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-23 18:27:38
+ * @Last Modified time: 2018-11-26 11:00:12
  */
 <template>
   <div class="app-container homeIndex">
@@ -39,8 +39,9 @@
           <div class="grid-content bg-purple-light">
             <div class="topTitle">
               <div class="left">
-                <img src="../../../static/img/riverCount.svg" alt="入库河流统计">
-                <span>入库河流统计</span>
+                <img src="../../../static/img/riverCount.svg" :alt="riverMap.msg">
+                <!-- <span>入库河流统计</span> -->
+                <span>{{ riverMap.msg }}</span>
               </div>
               <div class="right">
                 <el-select v-model="value" placeholder="请选择" size="mini">
@@ -52,13 +53,74 @@
             </div>
             <div class="flexBox">
               <ul class="clearfix">
-                <li v-for="(list, index) in [1,2,3,4,5,6]">
+                <!-- 江河总数 -->
+                <li>
                   <div class="home-page-bottom-Survey-list">
                     <div class="home-page-bottom-Survey-main">
                       <div class="home-page-bottom-Survey-img home-page-bottom-Survey-river"></div>
                       <div class="home-page-bottom-Survey-main-body">
-                        <div class="home-page-bottom-Survey-number">10{{ index }}</div>
-                        <div class="home-page-bottom-Survey-title">江河流数</div>
+                        <div class="home-page-bottom-Survey-number">{{ riverWrap.data }}</div>
+                        <div class="home-page-bottom-Survey-title">{{ riverWrap.msg }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- 责任段总数 -->
+                <li>
+                  <div class="home-page-bottom-Survey-list">
+                    <div class="home-page-bottom-Survey-main">
+                      <div class="home-page-bottom-Survey-img home-page-bottom-Survey-duty"></div>
+                      <div class="home-page-bottom-Survey-main-body">
+                        <div class="home-page-bottom-Survey-number">{{ dutyWrap.data }}</div>
+                        <div class="home-page-bottom-Survey-title">{{ dutyWrap.msg }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- 湖库 -->
+                <li>
+                  <div class="home-page-bottom-Survey-list">
+                    <div class="home-page-bottom-Survey-main">
+                      <div class="home-page-bottom-Survey-img home-page-bottom-Survey-hPlake"></div>
+                      <div class="home-page-bottom-Survey-main-body">
+                        <div class="home-page-bottom-Survey-number">{{ hPlakeWrap.data }}</div>
+                        <div class="home-page-bottom-Survey-title">{{ hPlakeWrap.msg }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- 山塘 -->
+                <li>
+                  <div class="home-page-bottom-Survey-list">
+                    <div class="home-page-bottom-Survey-main">
+                      <div class="home-page-bottom-Survey-img home-page-bottom-Survey-lake"></div>
+                      <div class="home-page-bottom-Survey-main-body">
+                        <div class="home-page-bottom-Survey-number">{{ lakeWrap.data }}</div>
+                        <div class="home-page-bottom-Survey-title">{{ lakeWrap.msg }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- 沟渠 -->
+                <li>
+                  <div class="home-page-bottom-Survey-list">
+                    <div class="home-page-bottom-Survey-main">
+                      <div class="home-page-bottom-Survey-img home-page-bottom-Survey-ditch"></div>
+                      <div class="home-page-bottom-Survey-main-body">
+                        <div class="home-page-bottom-Survey-number">{{ ditchWrap.data }}</div>
+                        <div class="home-page-bottom-Survey-title">{{ ditchWrap.msg }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <!-- 其他 -->
+                <li>
+                  <div class="home-page-bottom-Survey-list">
+                    <div class="home-page-bottom-Survey-main">
+                      <div class="home-page-bottom-Survey-img home-page-bottom-Survey-other"></div>
+                      <div class="home-page-bottom-Survey-main-body">
+                        <div class="home-page-bottom-Survey-number">{{ otherWrap.data }}</div>
+                        <div class="home-page-bottom-Survey-title">{{ otherWrap.msg }}</div>
                       </div>
                     </div>
                   </div>
@@ -83,7 +145,7 @@
             </div>
             <div class="canvasBox">
               <!-- <div id="myChart" :style="{width: '100%', height: '290px'}" ref="myChart"></div> -->
-              <echarts-pie></echarts-pie>
+              <echarts-pie :_chartData="chartData"></echarts-pie>
             </div>
           </div>
         </el-col>
@@ -110,11 +172,11 @@
               <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="本月投诉次数统计" name="first">
                   <!-- <div id="myChart1" :style="{width: '100%', height: '23em'}" ref="myChart1"></div> -->
-                  <leftEchartsBar></leftEchartsBar>
+                  <leftEchartsBar v-if="activeName === 'first'" :left_chartData="leftData"></leftEchartsBar>
                 </el-tab-pane>
                 <el-tab-pane label="本月工单统计" name="second">
                   <!-- <div id="myChart2" :style="{width: '100%', height: '23em'}" ref="myChart2"></div> -->
-                  <rightEchartsBar></rightEchartsBar>
+                  <rightEchartsBar v-if="activeName === 'second'" :right_chartData="rightData"></rightEchartsBar>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -135,14 +197,14 @@
             </div>
             <div class="NewsBox">
               <ul>
-                <li class="home-page-top-notice-list" v-for="(list, index) in [1, 2, 3, 4, 5]" @click="newsDetailBtn">
+                <li class="home-page-top-notice-list" v-for="(list, index) in msgMap" @click="newsDetailBtn(index)">
                   <span class="home-page-top-notice-list-top">
-                    <span>关于智慧河长系统人员使用情况</span>
+                    <span>{{ list.title }}</span>
                     <i class="circle"></i>
                   </span>
                   <span class="home-page-top-notice-list-bottom">
                     <i class="el-icon-time"></i>
-                    2018-03-12 19:47:32
+                    {{ list.createDate }}
                   </span>
                 </li>
               </ul>
@@ -156,22 +218,19 @@
       <div class="NotificationDetailContent clearfix">
         <div class="subContent clearfix">
           <h1 class="ContentHeader">
-            关于深入开展“清河行动”的通知
+            {{ msgDeatail.title }}
           </h1>
           <p class="DetailMore">
-            各乡镇人民政府： 为进一步贯彻落实全面实行河长制工作部署，不断巩固我县水生态环境，结合实际，决定在全县范围内组织开展“清河行动”。 “清河行动”按照“河畅、水清、岸绿、景美”的标准和“全覆盖、无盲区”的要求，开展集中整治行动，营造全社会共同关心、爱护、保护河库的良好局面。具体标准为全县所有河流、水库、塘坝水体及滩地达到四无标准： 1.无生活垃圾造成的“白色污染”，确保河岸整洁； 2.无工业企业排污造成的“黑色污染”，确保水质清洁； 3.无工程施工过程中淤泥、黄土造成的“黄色污染”，确保河湖水质清澈； 4.无影响行洪的障碍物，确保河道安全度汛。 请各乡镇级“总河长”或“副总河长”亲自督办，务必引起高度重视，并通过“芦溪县河长办”微信工作群向县河长办报备。
+            {{ msgDeatail.content }}
           </p>
           <div class="clearfix">
             <viewer :images="images1">
               <img v-for="src in images1" :src="src.url" :key="src.name">
             </viewer>
-            <!-- <div class="images" v-viewer="{movable: true}">
-              <img v-for="src in imgs" :src="src.url" :key="src.name">
-            </div> -->
           </div>
           <div class="subUser">
-            <span class="DetailTime">2018-03-20 09:33:28</span>
-            <span class="DetailUser">芦溪县管理员</span>
+            <span class="DetailTime">{{ msgDeatail.createDate }}</span>
+            <span class="DetailUser">{{ msgDeatail.updateByName }}</span>
           </div>
         </div>
       </div>
@@ -191,100 +250,48 @@ export default {
   name: 'Home',
   data() {
     return {
+      chartData: [],
+      leftData: [],
+      rightData: [],
       activeName: 'first',
       dialogVisible: false,
-      tableData3: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        address: '11'
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        address: '11'
-      }],
+      msgMap: [],
+      riverMap: [],
+      riverWrap: {},
+      dutyWrap: {},
+      hPlakeWrap: {},
+      lakeWrap: {},
+      ditchWrap: {},
+      otherWrap: {},
+      msgDeatail: {},
+      tableData3: [],
       options: [{
         value: '选项1',
         label: '黄金糕'
       }, {
         value: '选项2',
         label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
       }],
-      value: '',
+      value: '选项2',
       images1: [
         {
-          url:
-            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          title: "pic1",
+          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
           name: "1111"
         },
         {
-          url:
-            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          title: "pic2",
+          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
           name: "22222"
         },
         {
-          url:
-            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          title: "pic2",
+          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
           name: "222"
         },
         {
-          url:
-            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          title: "pic2",
+          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
           name: "2"
         },
         {
-          url:
-            "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          title: "pic2",
+          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
           name: "222122"
         }
       ],
@@ -301,35 +308,67 @@ export default {
       'roles'
     ])
   },
-  created () {
+  created() {
     this.getListData()
   },
   mounted() {
     // this.drawPie()
     // this.drawBar()
-    this.init() //让echarts窗口自适应
+    //让echarts窗口自适应
+    // this.init()
   },
   methods: {
-    getListData(){
+    getListData() {
+      const loading = this.$loading({
+        lock: true,
+        text: '加载中',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.6)'
+      })
       getList({}).then((res) => {
-        console.log('请求成功')
+        // 只取前五个
+        this.msgMap = res.data.msgMap.msgList.slice(0, 5)
+        this.riverMap = res.data.riverMap
+        // 河流
+        this.riverWrap = res.data.riverMap.riverWrap
+        // 责任段
+        this.dutyWrap = res.data.riverMap.dutyWrap
+        // 湖库
+        this.hPlakeWrap = res.data.riverMap.hPlakeWrap
+        // 山塘
+        this.lakeWrap = res.data.riverMap.lakeWrap
+        // 沟渠
+        this.ditchWrap = res.data.riverMap.ditchWrap
+        // 其他
+        this.otherWrap = res.data.riverMap.otherWrap
+        // 工单饼状图
+        let reportMap = res.data.reportMap
+        let reportMapArray = []
+        reportMapArray.push(reportMap.complaintWrap)
+        reportMapArray.push(reportMap.reportWrap)
+        reportMapArray.map(item => {
+          let obj = {}
+          obj.name = item.msg
+          obj.value = item.data
+          this.chartData.push(obj)
+        })
+        loading.close()
 
-        console.log('home-index.vue', res)
       }).catch(erroRes => {
-        console.log('网络错误')
+        console.log('11网络错误')
       })
     },
     init() {
-      const self = this;//因为箭头函数会改变this指向，指向windows。所以先把this保存
+      const self = this;
       setTimeout(() => {
         window.onresize = function () {
-          self.chart = echarts.init(self.$refs.myChart)
-          self.chart1 = echarts.init(self.$refs.myChart1)
-          self.chart2 = echarts.init(self.$refs.myChart2)
-
+          self.chart = echarts.init(document.getElementById('pieID'))
+          // self.chart1 = echarts.init(self.$refs.myChart1)
+          // self.chart2 = echarts.init(self.$refs.myChart2)
+          console.log("饼状图")
           self.chart.resize()
-          self.chart1.resize()
-          self.chart2.resize()
+          // self.chart1.resize()
+          // self.chart2.resize()
         }
       }, 20)
     },
@@ -379,7 +418,6 @@ export default {
           }
         ]
       });
-      // window.onresize = myChart.resize;
     },
     drawBar() {
       // 基于准备好的dom，初始化echarts实例
@@ -426,7 +464,6 @@ export default {
           }
         ]
       })
-      // window.onresize = myChart1.resize;
     },
     drawBar2() {
       // 基于准备好的dom，初始化echarts实例
@@ -468,18 +505,19 @@ export default {
           type: 'bar'
         }]
       })
-      // window.onresize = myChart2.resize;
     },
-    newsDetailBtn() {
+    // 点击通知列表,出现弹窗
+    newsDetailBtn(index) {
       this.dialogVisible = true
+      this.msgDeatail = this.msgMap[index]
     },
     handleClick(tab, event) {
-      console.log(tab, event);
-      if (tab.paneName == 'second') {
-        setTimeout(() => {
-          this.drawBar2()
-        }, 100);
-      }
+      // console.log(tab, event)
+      // if (tab.paneName == 'second') {
+      //   setTimeout(() => {
+      //     this.drawBar2()
+      //   }, 100);
+      // }
     }
   },
 
@@ -684,10 +722,25 @@ export default {
             .home-page-bottom-Survey-river {
               background-image: url(../../../static/img/jh.png);
             }
+            .home-page-bottom-Survey-duty {
+              background-image: url(../../../static/img/zrd.png);
+            }
+            .home-page-bottom-Survey-hPlake {
+              background-image: url(../../../static/img/hp.png);
+            }
+            .home-page-bottom-Survey-lake {
+              background-image: url(../../../static/img/st.png);
+            }
+            .home-page-bottom-Survey-ditch {
+              background-image: url(../../../static/img/gq.png);
+            }
+            .home-page-bottom-Survey-other {
+              background-image: url(../../../static/img/qt.png);
+            }
             .home-page-bottom-Survey-img::before {
               content: "";
               display: inline-block;
-              padding-bottom: 95%;
+              padding-bottom: 90%;
               width: 0.1px;
             }
           }

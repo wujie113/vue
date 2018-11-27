@@ -25,7 +25,7 @@ export function save(params) {
   return request({
     url: "/api/sys/user/save",
     method: "post",
-    data: params    
+    data: params
   });
 }
 
@@ -42,5 +42,13 @@ export function modifyState(params) {
     url: "/api/sys/user/state",
     method: "post",
     data: params
+  });
+}
+
+export function getPostState(params) {
+  return request({
+    url: "/api/sys/office/dutybyofficeid",
+    method: "get",
+    params
   });
 }

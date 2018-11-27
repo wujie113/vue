@@ -44,7 +44,7 @@
         <el-table-column type="selection" width="55" />
         <el-table-column type="index" label="序号" width="100px" />
         <el-table-column prop="name" label="姓名" />
-        <el-table-column prop="postName" label="职属" />
+        <el-table-column prop="postLabel" label="职属" />
       </el-table>
     </el-dialog>
     <el-dialog :visible.sync="visible" title="编辑" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" top="1vh">

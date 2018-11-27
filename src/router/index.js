@@ -160,7 +160,14 @@ export const constantRouterMap = [
         name: 'restabmap',
         component: () => import('@/views/regula/restabMap'),
         meta: { title: '资源管理', noCache: true }
-      }
+      },
+      {
+        path: 'usermanger',
+        name: 'usermanger',
+        component: () => import('@/views/regula/usermanger'),
+        meta: { title: '专员管理', noCache: true }
+      },
+      
     ]
   },
   {

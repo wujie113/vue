@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :xs="10" :sm="10" :md="10" :lg="10" :xl="10">
+      <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6">
         <div class="panel">
           <div class="panelHeading">
             <div>
@@ -24,7 +24,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :xs="14" :sm="14" :md="14" :lg="14" :xl="14">
+      <el-col :xs="18" :sm="18" :md="18" :lg="18" :xl="18">
         <div class="panel">
           <div class="panelHeading">
             <div>

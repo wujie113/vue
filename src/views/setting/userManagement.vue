@@ -78,13 +78,17 @@
       </el-container>
     </el-container>
     <!-- 新增用户弹窗 -->
-    <el-dialog :visible.sync="dialogVisible" width="30%" title="添加用户" top="5vh">
+    <el-dialog :visible.sync="dialogVisible" width="40%" title="添加用户" top="5vh">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
         <el-form-item label="单位">
           {{ unit }}
         </el-form-item>
-        <el-form-item prop="dept" label="部门" required>
-          <rm-area-select v-model="form.dept" />
+        <el-form-item prop="post" label="岗位" required>
+          <!-- <rm-area-select v-model="form.dept" /> -->
+          <el-select v-model="form.post" placeholder="请选择">
+            <el-option v-for="item in postArray" :key="item.id" :label="item.name" :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item prop="loginName" label="账号" required>
           <el-input v-model="form.loginName" />
@@ -118,9 +122,9 @@
             <el-option label="停用" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="post" label="职位">
+        <!-- <el-form-item prop="post" label="职位">
           <el-input v-model="form.post" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email" />
         </el-form-item>
@@ -131,14 +135,18 @@
       </div>
     </el-dialog>
     <!-- 编辑弹窗 -->
-    <el-dialog :visible.sync="dialogVisible1" width="30%" title="用户详情" top="5vh">
+    <el-dialog :visible.sync="dialogVisible1" width="40%" title="用户详情" top="5vh">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
         <el-form-item label="单位">
           {{ unit }}
           <!-- <el-input type="text" v-model="form.unit" disabled="disabled" /> -->
         </el-form-item>
-        <el-form-item prop="dept" label="部门" required>
-          <rm-area-select v-model="form.dept" />
+        <el-form-item prop="post" label="岗位" required>
+          <!-- <rm-area-select v-model="form.dept" /> -->
+          <el-select v-model="form.post" placeholder="请选择">
+            <el-option v-for="item in postArray" :key="item.id" :label="item.name" :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item prop="loginName" label="账号" required>
           <el-input v-model="form.loginName" />
@@ -166,9 +174,9 @@
             <el-option label="停用" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="post" label="职位">
+        <!-- <el-form-item prop="post" label="职位">
           <el-input v-model="form.post" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email" />
         </el-form-item>
@@ -180,7 +188,7 @@
     </el-dialog>
 
     <!-- 修改密码弹窗 -->
-    <el-dialog :visible.sync="dialogVisible2" width="30%" title="修改密码" top="5vh">
+    <el-dialog :visible.sync="dialogVisible2" width="40%" title="修改密码" top="5vh">
       <el-form :model="form2" :rules="rules2" ref="form2" label-width="80px" status-icon>
         <el-form-item label="旧密码" prop="oldPassword">
           <el-input type="text" v-model="form2.oldPassword" auto-complete="off" placeholder="请输入旧的密码"></el-input>
@@ -200,7 +208,7 @@
   </div>
 </template>
 <script>
-import { tree, tableList, Delete, save, modifyPwd, modifyState } from '@/api/setting/userMangement'
+import { tree, tableList, Delete, save, modifyPwd, modifyState, getPostState } from '@/api/setting/userMangement'
 import Pagination from '@/components/Pagination'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
@@ -246,6 +254,7 @@ export default {
       }
     };
     return {
+      postArray: [],
       loading: true,
       tableLoading: false,
       checked: false,
@@ -279,10 +288,11 @@ export default {
         gender: null,
         state: null,
         post: null,
-        email: null
+        email: null,
+        id:null
       },
       rules: {
-        dept: [{ required: true, message: "请选择部门", trigger: "change" }],
+        post: [{ required: true, message: "请选择岗位", trigger: "change" }],
         loginName: [{ required: true, message: "请填写描述内容", trigger: "blur" }],
         name: [
           { required: true, message: "请填写您的姓名", trigger: "blur" },
@@ -330,9 +340,11 @@ export default {
         const data = res.data.list
         this.dataArray = data
         // 第一次默认
-        this.listQuery.id = data[0].id
+        this.listQuery['office.id'] = data[0].id
         this.unit = data[0].label
-        this.companyID = data[0].id
+        this.deptObj = {
+          id: data[0].id
+        }
         this.getList()
         this.loading = false
       }).catch((errorRes) => {
@@ -350,10 +362,13 @@ export default {
       console.log("节点信息", data)
       //选择的是哪个单位
       this.unit = data.label
-      this.companyID = data.id
       console.log('this.form.unit', this.unit)
 
-      this.listQuery.id = data.id
+      this.listQuery['office.id'] = data.id
+      const deptObj = {
+        id : data.id
+      }
+      this.deptObj = deptObj
       this.getList()
     },
     // 表单编辑
@@ -361,7 +376,17 @@ export default {
       // if (this.$refs.form != undefined) {
       //   this.$refs.form.resetFields()
       // }
-      Object.assign(this.form, row)
+      // Object.assign(this.form, row)
+      // 查询岗位----对应的是弹窗里面的部门
+      getPostState({ id: this.listQuery['office.id'] }).then(res => {
+        this.postArray = res.data.list
+      }).catch(errorRes => {
+        this.$message({
+          type: "error",
+          message: "网络错误!"
+        })
+      })
+      this.form = row
       this.dialogVisible1 = true
       console.log('表单编辑', row)
       // this.form2 = row
@@ -394,7 +419,7 @@ export default {
       }
       if (row.state == '1') {
         params.state = 0
-      } else if(row.state == '0'){
+      } else if (row.state == '0') {
         params.state = 1
       }
       modifyState(params).then(res => {
@@ -431,16 +456,23 @@ export default {
       this.getList()
     },
     addBtn() {
+      getPostState({ id: this.listQuery['office.id'] }).then(res => {
+        this.postArray = res.data.list
+      }).catch(errorRes => {
+        this.$message({
+          type: "error",
+          message: "网络错误!"
+        })
+      })
       console.log('添加的---之前', this.unit)
 
       this.dialogVisible = true
-      console.log(this.$refs.form)
-
       if (this.$refs.form != undefined) {
         // this.$refs.form.resetFields()
         // Object.assign(this.form, this.$options.data().form)
         Object.assign(this.form, this.$options.data().form)
       }
+      this.form.dept = this.deptObj
       console.log('添加的---', this.unit)
     },
     deleteBtn() {
@@ -482,21 +514,55 @@ export default {
     // 新增用户  保存
     save(e) {
       this.dialogVisible = false
+      console.log(this.form)
       let params = {
-        "company.id": this.companyID,
+        "company.id": 'system',
         "office.id": this.form.dept.id
       }
-      let data = Object.assign(params, this.form)
-      if (this.form.id) {
-        data.id = this.form.id
+      // let data = Object.assign(params, this.form)
+      // 登录账号
+      if (this.form.loginName) {
+        params.loginName = this.form.loginName
       }
-      save(data).then(res => {
+      // 用户姓名
+      if (this.form.name) {
+        params.name = this.form.name
+      }
+      if (this.form.email) {
+        params.email = this.form.email
+      }
+      // 性别
+      if (this.form.gender) {
+        params.gender = this.form.gender
+      }
+      if (this.form.id) {
+        params.id = this.form.id
+      }
+      // 手机号
+      if (this.form.mobile) {
+        params.mobile = this.form.mobile
+      }
+      // 岗位
+      if (this.form.post) {
+        params.post = this.form.post
+      }
+      // 状态
+      if (this.form.state) {
+        params.state = this.form.state
+      }
+      console.log('编辑新增的params', params)
+      save(params).then(res => {
         this.getList()
+        this.dialogVisible1 = false
+
       }).catch(errorRes => {
+
         this.$message({
           type: "error",
           message: "网络错误!"
         })
+        this.dialogVisible1 = false
+
       })
     },
 

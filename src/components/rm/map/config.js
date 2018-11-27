@@ -113,7 +113,7 @@ export const cfg = {
         { id: 'bengzhan', name: '泵站', code: "zhhz:bengzhan", layer: {}, zindex: 20, visible: false },
         { id: 'zerenduan', name: '责任段', code: "zhhz:zerenduan", icon: 'heliu', type: 'wfs', layer: {}, zindex: 22, visible: true },
         { id: 'hupo', name: '湖泊山塘', code: "zhhz:hupo",   type: 'wfs', layer: {}, zindex: 4, visible: true },
-        { id: 'dakadian', name: '打卡点', code: "zhhz:dakadian",  type: 'wfs', layer: {}, style:,zindex: 23, visible: false }
+        { id: 'dakadian', name: '打卡点', code: "zhhz:dakadian",  type: 'wfs', layer: {}, style: dakadianStyleFunc,zindex: 23, visible: false }
     ]
 }
 
