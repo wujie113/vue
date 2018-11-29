@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 export function tree(params) {
   return request({
-    url: "api/sys/office/trees",
+    url: "api/res/management/areaofficetrees",
     method: "get",
     params
   });
@@ -52,3 +52,5 @@ export function getPostState(params) {
     params
   });
 }
+
+

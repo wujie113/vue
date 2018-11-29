@@ -29,6 +29,7 @@
     }
     .scrollbar-wrapper {
       overflow-x: hidden!important;
+      // overflow: hidden;
       .el-scrollbar__view {
         height: 94vh;
       }
@@ -48,6 +49,7 @@
       border: none;
       height: 100%;
       width: 100% !important;
+      // overflow: auto;
     }
     .is-active > .el-submenu__title{
       color: #f4f4f5!important;

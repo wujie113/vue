@@ -185,14 +185,13 @@
 </template> 
 <script>
 import Pagination from "@/components/Pagination";
-import { getList, save, del,get } from "@/api/work/report.js";
-import { tree} from '@/api/setting/userMangement'
+import { getList, save, del,get } from "@/api/work/report.js"; 
 import RmDict from "@/components/rm/dict";
 import RmOrgSelect from "@/components/rm/orgselect";
 import RmUserSelect from "@/components/rm/userselect";
 import RmAreaSelect from "@/components/rm/areaselect";
-import { getToken } from '@/utils/auth'
-  
+import { getToken } from '@/utils/auth' 
+import { getorgtrees} from '@/api/res/management.js'
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -262,7 +261,7 @@ export default {
   },
   methods: {
     loadLeftTree() {
-      tree().then((res) => {
+      getorgtrees().then((res) => {
         const data = res.data.list
         this.dataArray = data
         // 第一次默认
@@ -272,7 +271,7 @@ export default {
         this.getList()
      
       }).catch((errorRes) => {
-   
+        console.error("errror:::::::",errorRes)
         this.$message({
           type: "error",
           message: "网络错误!"

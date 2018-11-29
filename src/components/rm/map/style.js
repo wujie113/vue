@@ -52,11 +52,11 @@ export const vectorStyleFunc = function(f, resolution) {
 export const selectedStyleFunc = function(feature, resolution) {
     return new Style({
         stroke: new Stroke({
-            color: 'blue',
-            width: 2
+            color: '#FF6100',
+            width: 2.5
         }),
         fill: new Fill({
-            color: 'rgba(255,0,0,0.2)'
+            color: 'rgba(255,0,0,0.8)'
         })
     })
 }

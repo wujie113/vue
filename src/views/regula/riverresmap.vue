@@ -11,8 +11,15 @@
         </span>
       </div>
     </el-container> 
-     <Layer title="河流管理" v-model="dialogVisible"   :dialog="false" class="layer-1" width="1000" :animation="2" :maskLayer="false" :shade= "false"
-        height="600" confirm="确定" cancel="取消" > 
+     <Layer 
+title="河流管理" 
+v-model="dialogVisible"   
+:dialog="false" 
+class="layer-1" 
+width="1000" :animation="2" :maskLayer="false" :shade= "false"
+        height="600" 
+confirm="确定" 
+cancel="取消" > 
             <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
               <el-tab-pane name="HL">
                  <span slot="label"><i class="el-icon-date"></i> 河流</span>  
@@ -118,8 +125,16 @@
           </el-tabs>
     </Layer> 
      <!--责任段form-->
-    <Layer :title="duty.dialogTitle" v-model="duty.visible"   :dialog="false" class="layer-1" width="600" :animation="2" :maskLayer="false" :shade= "false"
-                    height="500" confirm="保存" cancel="关闭" :confirmBack="dutysave"> 
+    <Layer 
+:title="duty.dialogTitle" 
+v-model="duty.visible"   
+:dialog="false" 
+class="layer-1" 
+width="600" :animation="2" :maskLayer="false" :shade= "false"
+                    height="500" 
+confirm="保存" 
+cancel="关闭" 
+:confirmBack="dutysave"> 
             <el-form ref="dutyform" :model="duty.form" label-width="90px">
               <el-form-item prop="name" label="责任段名称">
                 <el-input v-model="duty.form.name" />
@@ -140,14 +155,27 @@
                   <el-button type="button"  @click="drawRiverLine()">请点击按钮后绘图</el-button>
               </el-form-item>
             </el-form>
-            <el-upload :action="duty.doUpload" list-type="picture-card" :auto-upload="false" :on-preview="riverhandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="river.fileList" :before-remove="riverremovefile" :data="river.uploaddata" :on-success="riverhandleSuccess" :on-remove="riverhandleRemove">
+            <el-upload 
+:action="duty.doUpload" 
+list-type="picture-card" 
+:auto-upload="false" 
+:on-preview="riverhandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="river.fileList" :before-remove="riverremovefile" :data="river.uploaddata" :on-success="riverhandleSuccess" 
+:on-remove="riverhandleRemove">
               <i class="el-icon-plus"></i>
             </el-upload> 
     </Layer>
     <!--end 责任段form-->
     <!-- 河流form --> 
-    <Layer :title="river.dialogTitle" v-model="river.visible"   :dialog="false" class="layer-1" width="500" :animation="2" :maskLayer="false" :shade= "false"
-                    height="400" confirm="保存" cancel="关闭" :confirmBack="riversave"> 
+    <Layer 
+:title="river.dialogTitle" 
+v-model="river.visible"   
+:dialog="false" 
+class="layer-1" 
+width="500" :animation="2" :maskLayer="false" :shade= "false"
+                    height="400" 
+confirm="保存" 
+cancel="关闭" 
+:confirmBack="riversave"> 
                       <el-form ref="form" :model="river.form" label-width="80px">
                         <el-form-item prop="name" label="河流名称">
                           <el-input v-model="river.form.name" />
@@ -172,13 +200,26 @@
                           <el-input v-model="river.form.description" :rows="4" type="textarea" />
                         </el-form-item>
                       </el-form>
-                      <el-upload :action="river.doUpload" list-type="picture-card" :auto-upload="false" :on-preview="riverhandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="river.fileList" :before-remove="riverremovefile" :data="river.uploaddata" :on-success="riverhandleSuccess" :on-remove="riverhandleRemove">
+                      <el-upload 
+:action="river.doUpload" 
+list-type="picture-card" 
+:auto-upload="false" 
+:on-preview="riverhandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="river.fileList" :before-remove="riverremovefile" :data="river.uploaddata" :on-success="riverhandleSuccess" 
+:on-remove="riverhandleRemove">
                         <i class="el-icon-plus"></i>
                       </el-upload> 
     </Layer>
     <!--湖泊form-->
-    <Layer :title="lake.dialogTitle"  v-model="lake.visible"   :dialog="false" class="layer-1" width="500" :animation="2" :maskLayer="false" :shade= "false"
-             height="400" confirm="保存" cancel="关闭" :confirmBack="lakesave"> 
+    <Layer 
+:title="lake.dialogTitle"  
+v-model="lake.visible"   
+:dialog="false" 
+class="layer-1" 
+width="500" :animation="2" :maskLayer="false" :shade= "false"
+             height="400" 
+confirm="保存" 
+cancel="关闭" 
+:confirmBack="lakesave"> 
             <el-form ref="lakeform" :model="lake.form" label-width="80px">
               <el-form-item label="水库名称">
                     <el-input v-model="lake.form.name" />
@@ -204,8 +245,15 @@
                 </el-form-item>
                 </el-form>   
      </Layer>
-    <Layer title="关联管理人员" v-model="areauser.selecteduser"   :dialog="false" class="layer-1" width="500" :animation="2" :maskLayer="false" :shade= "false"
-                  height="400" confirm="保存" cancel="关闭" > 
+    <Layer 
+title="关联管理人员" 
+v-model="areauser.selecteduser"   
+:dialog="false" 
+class="layer-1" 
+width="500" :animation="2" :maskLayer="false" :shade= "false"
+                  height="400" 
+confirm="保存" 
+cancel="关闭" > 
                         <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="adduser">添加新用户</el-button>
                         <el-table  v-loading="areauser.userloadinged" :data="areauser.userlisted"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%"> 
                             <el-table-column prop="userName" label="姓名"/> 
@@ -217,8 +265,16 @@
                             </el-table-column>    
                         </el-table>   
     </Layer> 
-    <Layer title="人员选择" v-model="areauser.selectinguser"   :dialog="false" class="layer-1" width="400" :animation="2" :maskLayer="false" :shade= "false"
-      height="300" confirm="人员添加" cancel="关闭" :confirmBack="saveusers"  > 
+    <Layer 
+title="人员选择" 
+v-model="areauser.selectinguser"   
+:dialog="false" 
+class="layer-1" 
+width="400" :animation="2" :maskLayer="false" :shade= "false"
+      height="300" 
+confirm="人员添加" 
+cancel="关闭" 
+:confirmBack="saveusers"  > 
       <el-table  v-loading="areauser.userloading" :data="areauser.userlist"    @selection-change="handleSelectionChange"  border  fit highlight-current-row  row-key="id"  stripe style="width: 100%">
             <el-table-column type="selection" width="55" />
             <el-table-column type="index" label="序号" width="100px" />
@@ -229,8 +285,15 @@
     <!--打卡点-->
 
 
-  <Layer title="设置打卡点" v-model="duty.visiblespot"   :dialog="false" class="layer-1" width="500" :animation="2" :maskLayer="false" :shade= "false"
-                  height="400" confirm="保存" cancel="关闭" >  
+  <Layer 
+title="设置打卡点" 
+v-model="duty.visiblespot"   
+:dialog="false" 
+class="layer-1" 
+width="500" :animation="2" :maskLayer="false" :shade= "false"
+                  height="400" 
+confirm="保存" 
+cancel="关闭" >  
        <div style="width:100%">
          <label class="upload-demo">请在地图上设置打卡点</label>
          <el-table style="width:100%"    :data="duty.dutyClockList">
@@ -261,26 +324,26 @@ import { getToken } from '@/utils/auth'
 import RmRiverSelect from "@/components/rm/riverselect"
 import { delBtn,addspot,getspot } from "@/api/res/dutyPart.js"
 export default {
-  name: "rivermap",
+  name: "Rivermap",
   components: { Pagination, RmMap, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect,RmRiverSelect },
   data() {
     return {
       activeName: "HL", 
       checked: false,
       dataArray: [],
-      map:null,
+      map: null,
       hpdataarray: [],
       dialogVisible: false,
       defaultProps: {
         children: "children",
         label: "label"
       }, 
-      commonrow:null,
-      currentType:'HL',
-      areadid:null,
-      bizid:null,
+      commonrow: null,
+      currentType: 'HL',
+      areadid: null,
+      bizid: null,
       areauser: {
-              checkuserids:null,
+              checkuserids: null,
               userlisted: null,
               userloadinged: false,
               userlist: null,
@@ -291,10 +354,10 @@ export default {
                 userids: null
               }, 
               selecteduser: false,
-              selectinguser:false,
-              checkeduser: null,
+              selectinguser: false,
+              checkeduser: null
       },
-      river:{ 
+      river: { 
             visible: false,
             listLoading: null,
             doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
@@ -337,7 +400,7 @@ export default {
             typeOptions: [{ label: '河流', key: 'HL' }, { label: '沟渠', key: 'GQ' }],
             sxOptions: null
       },
-      lake:{
+      lake: {
             visible: false,
             listLoading: false,
             quOptions: null,  
@@ -355,9 +418,9 @@ export default {
               lake: { id: null },
               description: null,
               pid: null,
-              wkt:null,
-              acreage:null, 
-              isNew:true
+              wkt: null,
+              acreage: null, 
+              isNew: true
             },
             list: null,
             total: 0,
@@ -369,15 +432,15 @@ export default {
               type: undefined,
               sort: '+id'
             },
-            typeOptions: [{ label: '山塘', key: 'ST' }, { label: '湖泊', key: 'HP' }],
+            typeOptions: [{ label: '山塘', key: 'ST' }, { label: '湖泊', key: 'HP' }]
       },
-      duty:{
+      duty: {
           visible: false,
           listLoading: null,
           doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
           fileList: [],
           visiblespot: false,
-          dutyClockList:null, 
+          dutyClockList: null, 
           form: {
             id: null,
             type: "ZRD",
@@ -393,15 +456,15 @@ export default {
             area: null,
             river: null,
             sort: null,
-            wkt:null,
-            length:null,
-            isnew:true,
+            wkt: null,
+            length: null,
+            isnew: true
           },
           uploaddata: {
             bizId: null,
             bizType: "ZRD"
           },
-          params:  null,
+          params: null,
           list: null,
           total: 0,
           listQuery: {
@@ -417,70 +480,70 @@ export default {
    }
   },
   created() {
-    this.init();
+    this.init()
   },
   methods: {  
     handleClick(tab) { 
-        if(tab.name=='HP'){
-           this.lakegetList();
+        if (tab.name == 'HP') {
+           this.lakegetList()
             getqlist("B").then(response => {
               this.lake.quOptions = response.data.list
             })
         }
-        if(tab.name=='ZRD'){
-            this.dutygetList();
-            this.dutygetxslist();
-            this.duty.listQuery.type=tab.name;
-            this.duty.uploaddata.bizType=tab.name
-            this.duty.form.type=tab.name
+        if (tab.name == 'ZRD') {
+            this.dutygetList()
+            this.dutygetxslist()
+            this.duty.listQuery.type = tab.name
+            this.duty.uploaddata.bizType = tab.name
+            this.duty.form.type = tab.name
         }
-        if(tab.name=='HL'){
-            this.rivergetList();
-            this.rivergetxslist();
-            this.river.listQuery.type=tab.name;
-             this.river.uploaddata.bizType=tab.name
-           this.river.form.type=tab.name
+        if (tab.name == 'HL') {
+            this.rivergetList()
+            this.rivergetxslist()
+            this.river.listQuery.type = tab.name
+             this.river.uploaddata.bizType = tab.name
+           this.river.form.type = tab.name
         }
-        this.areauser.form.type=tab.name; 
+        this.areauser.form.type = tab.name 
     },
     handleNodeClick() {
       // console.log("tab:::",tab);
     },
-    clickrow(data){
+    clickrow(data) {
        this.centerView(data)
     },
-    clicktest(){ 
+    clicktest() { 
         this.$refs.river.testclick()
     },
     centerView(data) {
         // console.log(data);
-        console.log("data.lng, data.lat:::",data);
+        console.log("data.lng, data.lat:::",data)
         this.map.centerView([data.lng, data.lat],16)
     },
-    init(){
-      this.rivergetList();
-      this.rivergetxslist();
+    init() {
+      this.rivergetList()
+      this.rivergetxslist()
     } , 
     /***********************************************河流责任段画线部分**************************************************** */
     drawRiverLine() {
         // var id = '001'
         var self = this
-        var id=this.duty.form.id;
-        var name =this.duty.form.name;
+        var id = this.duty.form.id
+        var name = this.duty.form.name
         console.log(this.duty.form)
-        if(this.duty.form.length==null){
-            this.duty.form.isnew=false;
+        if (this.duty.form.length == null) {
+            this.duty.form.isnew = false
         }  
-        this.dialogVisible=false;
+        this.dialogVisible = false
         this.map.drawLine({ id: id,name: name },this.callback)
     },
-    callback(type,data){   
+    callback(type,data) {   
             // console.log('回调：',type,data)
         if (type === 'change') {
           this.duty.form.length = data.remarks
-          this.duty.form.lng=data.coord[0]
-          this.duty.form.lat=data.coord[1]
-          this.duty.form.wkt=data.wkt;
+          this.duty.form.lng = data.coord[0]
+          this.duty.form.lat = data.coord[1]
+          this.duty.form.wkt = data.wkt
         } 
     }, 
  
@@ -489,21 +552,21 @@ export default {
     drawlakeAarea() {
             // var id = '001'
             var self = this
-            var id=this.lake.form.id;
-            var name =this.lake.form.name; 
-            if(this.lake.form.acreage==null){
-                this.lake.form.isNew=false;
+            var id = this.lake.form.id
+            var name = this.lake.form.name 
+            if (this.lake.form.acreage == null) {
+                this.lake.form.isNew = false
             }  
-            this.dialogVisible=false;
+            this.dialogVisible = false
             this.map.drawArea({ id: id,name: name },this.lakecallback)
         },
-    lakecallback(type,data){   
+    lakecallback(type,data) {   
                 // console.log('回调：',type,data)
             if (type === 'change') {
               this.lake.form.acreage = data.remarks
-              this.lake.form.lng=data.coord[0]
-              this.lake.form.lat=data.coord[1]
-              this.lake.form.wkt=data.wkt;
+              this.lake.form.lng = data.coord[0]
+              this.lake.form.lat = data.coord[1]
+              this.lake.form.wkt = data.wkt
             } 
    }, 
    /***********************************************end 湖泊画多边形部分**************************************************** */
@@ -515,7 +578,7 @@ export default {
         this.river.listLoading = false
         this.river.list = response.data.list
         this.river.total = response.data.count 
-        this.dialogVisible=true; 
+        this.dialogVisible = true 
         this.duty.visible = false
         this.duty.listLoading = false
       })
@@ -533,7 +596,6 @@ export default {
       this.river.visible = true
       this.river.dialogTitle = '新增'  
         Object.assign(this.river.form, this.$options.data().river.form)
-       
     },
     riveredit(row) {
       this.river.visible = true
@@ -541,39 +603,39 @@ export default {
       Object.assign(this.river.form, row)
       // console.log('form', this.river.form)
       getfiles({ bizId: this.river.form.id, bizType: "R" }).then(response => {
-        this.river.fileList = response.data;
+        this.river.fileList = response.data
       }) 
     },  
     riversave() {
       this.river.visible = false
       this.river.listLoading = true
       save(this.river.form).then(response => {
-        this.river.uploaddata.bizId = response.data.id;
+        this.river.uploaddata.bizId = response.data.id
         if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
           // 上传到服务器
-          this.river.$refs.upload.submit();
+          this.river.$refs.upload.submit()
         } else {
-          this.rivergetList();
+          this.rivergetList()
         }
       }).catch(error => {
         this.river.listLoading = false
       })
     },
     riverhandleSuccess() {
-      this.river.fileList = [];
-      this.river.getList();
+      this.river.fileList = []
+      this.river.getList()
     },
     riverremovefile(file) {
       delfiles({ ids: file.id }).then(response => {
-        console.log("图片删除成功!!!!!");
+        console.log("图片删除成功!!!!!")
       })
     },
     riverhandleRemove(file, fileList) {
-      console.log(file, fileList);
+      console.log(file, fileList)
     },
     riverhandlePictureCardPreview(file) {
-      this.river.dialogImageUrl = file.url;
-      this.river.dialogVisibleImg = true;
+      this.river.dialogImageUrl = file.url
+      this.river.dialogVisibleImg = true
     },
     riverdel(row) {
       var self = this
@@ -587,23 +649,23 @@ export default {
     /*******************************************************用户部分 **************************************************************/
    personEdit(row) {
        this.commonrow = row
-       this.areauser.selecteduser = true;
+       this.areauser.selecteduser = true
        this.areauser.listLoadinged = true
-       this.findmanagerlist(row.id);
+       this.findmanagerlist(row.id)
     },
     findmanagerlist(id) {
       getmanagerlist({ type: this.currentType, bizid: id }).then(response => { 
-        this.areauser.userlisted = response.data.list;
+        this.areauser.userlisted = response.data.list
         this.areauser.userloadinged = false
       })
     },
     adduser() {
-      this.areauser.selectinguser = true; 
+      this.areauser.selectinguser = true 
       gethzbuserbyareaid({ areaid: this.commonrow.area.id, bizid: this.commonrow.id }).then(response => {
-        if(response.data==undefined||response.data.list==null||response.data.list==undefined){
-          this.areauser.userlist = [];
-        }else{
-          this.areauser.userlist = response.data.list; 
+        if (response.data == undefined || response.data.list == null || response.data.list == undefined) {
+          this.areauser.userlist = []
+        } else {
+          this.areauser.userlist = response.data.list 
         } 
         this.areauser.listLoading = false
       })
@@ -613,72 +675,71 @@ export default {
         this.$message({
           message: "删除用户成功!!",
           type: "success"
-        });
+        })
         this.areauser.userloadinged = true
-        this.findmanagerlist(this.commonrow.id);
+        this.findmanagerlist(this.commonrow.id)
       })
     },
     saveusers() {
         if (this.areauser.checkuserids == null || this.areauser.checkuserids  == '') {
-          this.closeuser();
-          return;
+          this.closeuser()
+          return
         }
-        saveusers({ bizid: this.commonrow.id, userids: this.areauser.checkuserids , type: this.currentType}).then(response => {
-          console.log("response:::", response); 
+        saveusers({ bizid: this.commonrow.id, userids: this.areauser.checkuserids , type: this.currentType }).then(response => {
+          console.log("response:::", response) 
           if (response.success == true) {
             this.$message({
               message: "新增用户成功",
               type: "success"
-            });
-            this.closeuser();
+            })
+            this.closeuser()
           } else {
             this.$message({
               message: "新增用户失败",
               type: "error"
-            });
+            })
           }
-
         }).catch(error => {
           this.river.listLoading = false
         })
     },
 	handleSelectionChange(val) {
-      this.river.multipleSelection = val;
+      this.river.multipleSelection = val
       val.forEach((a, b) => {
         if (b == 0) {
-          this.areauser.checkuserids = a.id;
+          this.areauser.checkuserids = a.id
         } else {
-          this.areauser.checkuserids  += "," + a.id;
+          this.areauser.checkuserids  += "," + a.id
         }
-      });
+      })
     },
 	closeuser() { 
-      this.areauser.userlist = [];
-      this.findmanagerlist(this.commonrow.id);
-      this.areauser.checkuserids  = null;
-      this.areauser.selectinguser  = false;
+      this.areauser.userlist = []
+      this.findmanagerlist(this.commonrow.id)
+      this.areauser.checkuserids  = null
+      this.areauser.selectinguser  = false
     },
     closedialog() {
-      this.areauser.tbshow = true;
-      this.areauser.userlist = [];
-      this.areauser.visible = false;
-      this.areauser.checkuserids  = null;
-      this.riverrow = null;
+      this.areauser.tbshow = true
+      this.areauser.userlist = []
+      this.areauser.visible = false
+      this.areauser.checkuserids  = null
+      this.riverrow = null
     },
     /*******************************************************用户部分 end******************************************************************************** */
     //地图界面交互操作
     riverhandleCurrentChange(row) {  
     },
-    rivertestclick(data){
-      console.log("子界面data:::",data);
-    }
+    rivertestclick(data) {
+      console.log("子界面data:::",data)
+    },
     /******************************************************** end 河流部分**************************************************************************/
 
     
     /******************************************************** 湖泊部分***************************************************************************/
-    ,lakegetList() {
-      this.lake.listLoading = true;
-      console.log("this.listQuery::::", this.lake.listQuery);
+    lakegetList() {
+      this.lake.listLoading = true
+      console.log("this.listQuery::::", this.lake.listQuery)
       lakegetList(this.lake.listQuery).then(response => {
         this.lake.listLoading = false 
         this.lake.list = response.data.list
@@ -690,28 +751,28 @@ export default {
       this.lakegetList()
     }, 
     lakeadd() {
-      this.lake.visible = true; 
+      this.lake.visible = true 
        this.lake.dialogTitle = '新增'  
       Object.assign(this.lake.form, this.$options.data().lake.form) 
     },
     lakeedit(row) { 
-      this.lake.visible = true;
+      this.lake.visible = true
          this.lake.dialogTitle = '编辑'  
       Object.assign(this.lake.form, row)
     },
     lakesave() {
-      console.log('保存:',JSON.stringify(this.form));
+      console.log('保存:',JSON.stringify(this.form))
       this.lake.visible = false
       this.lake.listLoading = true
       lakesave(this.lake.form).then(response => {
-        this.lakegetList();
+        this.lakegetList()
       }).catch(error => {
         this.listLoading = false
       })
       //
     },
     lakedel(row) {
-      var self = this;
+      var self = this
       var self = this
       console.log(row)
       lakedel(row.id).then(response => {
@@ -721,140 +782,141 @@ export default {
       })
     }, 
     lakeclosedialog() {
-      this.lake.areauser.tbshow = true;
-      this.lake.areauser.userlist = [];
-      this.lake.areauser.visible = false;
-      this.lake.areauser.checkuserids  = null;
-      this.lake.riverrow = null;
-    }
+      this.lake.areauser.tbshow = true
+      this.lake.areauser.userlist = []
+      this.lake.areauser.visible = false
+      this.lake.areauser.checkuserids  = null
+      this.lake.riverrow = null
+    },
      /******************************************************** 湖泊部分 end***************************************************************************/
     
      /******************************************************** 责任段部分 ***************************************************************************/
-     ,dutygetList() {
-      this.listLoading = true;
-      console.log("this.listQuery::::", this.listQuery);
+     dutygetList() {
+      this.listLoading = true
+      console.log("this.listQuery::::", this.listQuery)
       getList(this.duty.listQuery).then(response => {
-        this.duty.listLoading = false;
-        this.duty.list = response.data.list;
-        this.duty.total = response.data.count;
-      });
+        this.duty.listLoading = false
+        this.duty.list = response.data.list
+        this.duty.total = response.data.count
+      })
     },
-    formatterthis(row){
-      return row.lng+","+ row.lat
+    formatterthis(row) {
+      return row.lng + "," + row.lat
     },
     dutyhandleFilter() {
-      this.duty.listQuery.pageNo = 1;
-      this.dutygetList();
+      this.duty.listQuery.pageNo = 1
+      this.dutygetList()
     },
     dutygetxslist() {
       getxslist(this.duty.listQuery).then(response => {
-        this.sxOptions = response.data.list;
-      });
+        this.sxOptions = response.data.list
+      })
     },
     dutyaddRiver() {
-      this.duty.visible = true;
-      this.duty.dialogTitle="新增"
+      this.duty.visible = true
+      this.duty.dialogTitle = "新增"
       if (this.$refs.form != undefined) {
-        Object.assign(this.duty.form, this.$options.data().duty.form);
+        Object.assign(this.duty.form, this.$options.data().duty.form)
       }
     },
  
     dutysave() {
-      this.duty.visible = false;
-      this.duty.listLoading = true;
+      this.duty.visible = false
+      this.duty.listLoading = true
       save(this.duty.form).then(response => { 
-          this.duty.uploaddata.bizId = response.data.id; 
-          this.dialogVisible=true;
-          if (this.$refs.upload.uploadFiles != undefined &&this.$refs.upload.uploadFiles.length > 0) { 
-            this.$refs.upload.submit();
+          this.duty.uploaddata.bizId = response.data.id 
+          this.dialogVisible = true
+          if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) { 
+            this.$refs.upload.submit()
           } else {  
-            this.dutygetList();
+            this.dutygetList()
           }
         })
         .catch(error => {
-          this.duty.listLoading = false;
-        });
+          this.duty.listLoading = false
+        })
     },
     dutyhandleSuccess() {
-      this.duty.fileList = [];
-      this.dutygetList();
+      this.duty.fileList = []
+      this.dutygetList()
     },
     dutyremovefile(file) {
       delfiles({ ids: file.id }).then(response => {
-        console.log("图片删除成功!!!!!");
-      });
+        console.log("图片删除成功!!!!!")
+      })
     },
     dutyhandleRemove(file, fileList) {
-      console.log(file, fileList);
+      console.log(file, fileList)
     },
     dutyhandlePictureCardPreview(file) {
-      this.duty.dialogImageUrl = file.url;
-      this.duty.dialogVisible = true;
+      this.duty.dialogImageUrl = file.url
+      this.duty.dialogVisible = true
     },
     dutydel(row) {
-      var self = this;
-      console.log(row.id);
+      var self = this
+      console.log(row.id)
       del(row.id)
         .then(response => {
-          this.dutygetList();
+          this.dutygetList()
         })
         .catch(error => {
-          this.duty.listLoading = false;
-        });
-    }
-    ,dutyedit(row){
+          this.duty.listLoading = false
+        })
+    },
+    dutyedit(row) {
         this.duty.visible = true
         this.duty.dialogTitle = '编辑'
         Object.assign(this.duty.form, row)
-        if(this.duty.form.lat!=null&&this.duty.form.lng!=null){
-            this.centerView(this.duty.form);
+        if (this.duty.form.lat != null && this.duty.form.lng != null) {
+            this.centerView(this.duty.form)
+            this.map.selectLine({ id: row.id,lng: row.lng,lat: row.lat })
         }
-        this.commonrow=row;
+        this.commonrow = row
         // console.log('form', this.river.form)
         getfiles({ bizId: this.duty.form.id, bizType: "R" }).then(response => {
-          this.duty.fileList = response.data;
+          this.duty.fileList = response.data
         }) 
     },  
    //责任段id
     spot(row) {
-      this.duty.visiblespot = true;
-      this.commonrow = row;
-      console.log("row:::::",row);
-      getspot(row.id).then( response =>{
-            this.duty.dutyClockList=response.data.list
+      this.duty.visiblespot = true
+      this.commonrow = row
+      console.log("row:::::",row)
+      getspot(row.id).then(response => {
+            this.duty.dutyClockList = response.data.list
       })
     },
     //提交打卡点
     commit() {
       //  数组转成json字符串
       //  var jsonstr = JSON.stringify(this.dutyClockList)
-       var json= {
-            idA:this.commonrow.id,
+       var json = {
+            idA: this.commonrow.id,
             latlng: JSON.stringify(this.dutyClockList)
       }
       addspot(json).then(response => {
-        this.duty.visiblespot = false;
+        this.duty.visiblespot = false
         this.$message({
             message: "添加打卡点成功!!",
             type: "success"
-        });
-      });
+        })
+      })
     },
     //删除打卡点
-    delspot(index, row){
-       var arry =this.duty.dutyClockList
-       arry.splice(index, 1);
-       delBtn(row.id).then(response =>{
+    delspot(index, row) {
+       var arry = this.duty.dutyClockList
+       arry.splice(index, 1)
+       delBtn(row.id).then(response => {
           this.$message({
           message: "删除打卡点成功!!",
           type: "success"
-        });
+        })
        })
     },
     //还原
-    rest(){
-      this.duty.dutyClockList = null;
-    },
+    rest() {
+      this.duty.dutyClockList = null
+    }
      
      /******************************************************** 责任段部分 end***************************************************************************/
   }

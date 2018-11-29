@@ -340,7 +340,7 @@ export const asyncRouterMap = [
 
   /** When your routing table is too long, you can split it into small modules**/
   // componentsRouter,
-  chartsRouter,
+  // chartsRouter,
   nestedRouter,
   // tableRouter,
 
@@ -387,6 +387,7 @@ export const asyncRouterMap = [
     path: '/tab',
     component: Layout,
     meta: { title: 'tab', icon: 'tab' },
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -449,6 +450,7 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/excel/export-excel',
     name: 'Excel',
+    hidden: true,
     meta: {
       title: 'excel',
       icon: 'excel'

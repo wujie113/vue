@@ -2,31 +2,34 @@ import request from '@/utils/request'
 
 	export function getList(params) {
 	  return request({
-	    url: '/api/work/report/list',
+	    url: '/api/res/workTrajectory/list',
 	    method: 'get',
 	    params
 	  })
-	} 
+	}
 	
-	export function get(id) {
+	//查看轨迹
+	export function gettrajectory(id) {
 	  return request({
-	    url: '/api/work/report/get',
+	    url: '/api/res/workTrajectory/get',
 	    method: 'get',
-	    params: { id: id  }
+	    params:{id:id}
 	  })
 	}
+ 
 	export function save(data) {
 	  return request({
-	    url: '/api/work/report/save',
+	    url: '/api/res/workTrajectory/save',
 	    method: 'post',
 	    data
 	  })
-	} 
+	}
 	
 	export function del(ids) {
 	  return request({
-	    url: '/api/work/report/del',
+	    url: '/api/res/workTrajectory/del',
 	    method: 'post',
-	    params: { ids: ids }
+	    params:{ids:ids}
 	  })
 	}
+

@@ -12,7 +12,6 @@
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
           </div>
         </el-header>
-
         <el-main>
           <div class="widget-divBox">
             <div class="widget-div" v-for="(list, index) in lists" :key="index">
@@ -83,54 +82,54 @@
               </div>
             </div>
           </div>
-          <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
-          <!-- 详情弹窗 -->
-          <el-dialog :visible.sync="visible" title="投诉详情">
-            <el-form :model="form" abel-width="80px" size="mini">
-              <el-form-item label="问题类型">
-                {{form.typename}}
-              </el-form-item>
-              <el-form-item label="纬度纬度">
-                {{form.lat}},{{form.lng}}
-              </el-form-item>
-              <el-form-item label="上报人">
-                {{form.report}}
-              </el-form-item>
-              <el-form-item label="上报电话">
-                {{form.reportPhone}}
-              </el-form-item>
-              <el-form-item label="上报时间">
-                {{form.reportDate}}
-              </el-form-item>
-              <el-form-item label="问题描述">
-                {{form.description}}
-              </el-form-item>
-            </el-form>
-            <viewer :images="slide1">
-              <img :src="img.url" :key="index" v-for="(img, index) in slide1">
-            </viewer>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="visible = false">关 闭</el-button>
-            </div>
-          </el-dialog>
-          <!-- 回复弹窗 -->
-          <el-dialog :visible.sync="replayDialogVisible" title="投诉回复">
-            <el-form :model="form2" ref="form2" label-width="80px">
-              <el-form-item label="回复详情">
-                <el-input type="textarea" v-model="form2.desc" placeholder="请输入回复内容" rows="5"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-checkbox v-model="checked" @change="handleChecked">无效投诉</el-checkbox>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="replayDialogVisible = false">取 消</el-button>
-              <el-button @click="saveReplay" type="primary">提 交</el-button>
-            </div>
-          </el-dialog>
+          <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />          
         </el-main>
       </el-container>
     </el-container>
+    <!-- 详情弹窗 -->
+    <el-dialog :visible.sync="visible" title="投诉详情">
+      <el-form :model="form" abel-width="80px" size="mini">
+        <el-form-item label="问题类型">
+          {{form.typename}}
+        </el-form-item>
+        <el-form-item label="纬度纬度">
+          {{form.lat}},{{form.lng}}
+        </el-form-item>
+        <el-form-item label="上报人">
+          {{form.report}}
+        </el-form-item>
+        <el-form-item label="上报电话">
+          {{form.reportPhone}}
+        </el-form-item>
+        <el-form-item label="上报时间">
+          {{form.reportDate}}
+        </el-form-item>
+        <el-form-item label="问题描述">
+          {{form.description}}
+        </el-form-item>
+      </el-form>
+      <viewer :images="slide1">
+        <img :src="img.url" :key="index" v-for="(img, index) in slide1">
+      </viewer>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="visible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
+    <!-- 回复弹窗 -->
+    <el-dialog :visible.sync="replayDialogVisible" title="投诉回复">
+      <el-form :model="form2" ref="form2" label-width="80px">
+        <el-form-item label="回复详情">
+          <el-input type="textarea" v-model="form2.desc" placeholder="请输入回复内容" rows="5"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox v-model="checked" @change="handleChecked">无效投诉</el-checkbox>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="replayDialogVisible = false">取 消</el-button>
+        <el-button @click="saveReplay" type="primary">提 交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template> 
 <script>

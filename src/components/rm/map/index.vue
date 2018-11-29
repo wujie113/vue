@@ -112,6 +112,13 @@
             })
         },
         methods: {
+            /**选中线段*/
+            selectLine(options) {
+                this.resetAction()
+                //放大
+                this.centerView([options.lng,options.lat],16)
+                drawGeom.selectGeom(this.map,'zerenduan', options)
+            },
             /**绘制责任段 */
             drawLine(options, callbackFunc) {
                 this.resetAction()

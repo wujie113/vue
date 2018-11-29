@@ -4,56 +4,121 @@
       <el-aside style="margin-right: 0;">
         <div class="panel">
           <div class="source panel-body">
-
-            <el-tree :data="myofficeusertreelist" :props="defaultProps" empty-text="暂无数据" highlight-current>
-              <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span>{{ node.label }}</span>
-                <span>
-                  <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick(data)" />
+            <div style="padding-top:10px;">
+              <!-- <el-tree :data="myofficeusertreelist" :props="defaultProps" empty-text="暂无数据" highlight-current>
+                <span class="custom-tree-node" slot-scope="{ node, data }">
+                  <span>{{ node.label }}</span>
+                  <span>
+                    <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick(data)" />
+                  </span>
                 </span>
-              </span>
-            </el-tree>
-
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>下级部门</span>
-              </div>
-              <!--
-               <el-tree :data="lowerofficeusertreelist" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current>  
-                   <span class="custom-tree-node" slot-scope="{ node, data }"  > 
-                      <span>{{ node.label }}</span>
-                      <span>
-                        <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick(data)"/>  
-                      </span> 
-                   </span> 
-              </el-tree> 
-              -->
-              <el-collapse @change="handleChange" :data="list" v-for="(menu,index) in list" :key="index">
-                <el-collapse-item :title="menu.label" name="1">
-                  <div v-for="(child,index2) in menu.children" :key="index2" class="wrapBoxDiv">
-                    <img src="../../../static/img/offline.png" alt="离线" srcset="">
-                    <!-- <img src="../../../static/img/online.png" alt="在线" srcset=""> -->
+              </el-tree> -->
+              <el-form :inline="true" :model="formInline" class="demo-form-inline" size="mini">
+                <el-form-item>
+                  <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+                </el-form-item>              
+                <el-form-item>
+                  <el-button type="primary" >查询</el-button>
+                </el-form-item>
+              </el-form>
+              <el-collapse @change="handleChange" :data="myofficeusertreelist" v-for="(menu,index) in myofficeusertreelist" :key="index + '1'">
+                <el-collapse-item :title="menu.label" name="0">
+                  <div v-for="(child,index2) in menu.children" class="wrapBoxDiv"  :key="index2" @click="topSelected(index2)" :class="{ showThePerson : topActiveIndex === index2 }">
                     <div class="divPatrol">
-                      <span>
-                        {{child.label}}-111111
-                      </span>
-                      <p>2018-11-11</p>
+                      <img src="../../../static/img/offline.png" alt="离线">
+                      <!-- <img src="../../../static/img/online.png" alt="在线" > -->
+                      <div>
+                        <span>{{child.label}}</span>
+                      <p>2018-11-11</p>  
+                      </div>                      
                     </div>
                     <div class="btn-group MonitorStationItem-operations">
-                      <svg-icon icon-class="edit" title="查看绑定责任段"  />
-                      <svg-icon icon-class="user" title="查看轨迹" />
-                      <svg-icon icon-class="deleteColor" title="个人详情" />
+                      <el-button type="text" title="查看绑定责任段">
+                        <!-- <svg-icon icon-class="edit" title="查看绑定责任段" />                         -->
+                        <i class="el-icon-ali-bolangneng"></i>
+                      </el-button>
+                      <el-button type="text" title="查看轨迹">
+                        <!-- <svg-icon icon-class="user" title="查看轨迹" /> -->
+                        <i class="el-icon-ali-user"></i>
+                      </el-button>
+                      <el-button type="text" title="个人详情">
+                        <i class="el-icon-ali-lishi"></i>
+                      </el-button>
+
                     </div>
                   </div>
                 </el-collapse-item>
               </el-collapse>
-            </el-card>
+              <span class="nextDeptName">下级部门</span>
+              <el-collapse @change="handleChange" :data="lowerofficeusertreelist" v-for="(menu,index) in lowerofficeusertreelist" :key="index">
+                <el-collapse-item :title="menu.label" name="1">
+                  <div v-for="(child,index2) in menu.children" class="wrapBoxDiv" :key="index2" @click="bottomSelected(index, index2)" :class="{ showThePerson : firstIndex === index && bottomActiveIndex === index2 }">
+                    <div class="divPatrol">
+                      <img src="../../../static/img/offline.png" alt="离线">
+                      <!-- <img src="../../../static/img/online.png" alt="在线" > -->
+                      <div>
+                        <span>{{child.label}}</span>
+                      <p>2018-11-11</p>  
+                      </div>                      
+                    </div>
+                    <div class="btn-group MonitorStationItem-operations">
+                      <el-button type="text" title="查看绑定责任段" @click="showresponsibility">
+                        <!-- <svg-icon icon-class="edit" title="查看绑定责任段" />                         -->
+                        <i class="el-icon-ali-bolangneng"></i>
+                      </el-button>
+                      <el-button type="text" title=" 个人详情" @click="showdetails(child.id)">
+                        <!-- <svg-icon icon-class="user" title="个人详情" /> -->
+                        <i class="el-icon-ali-user"></i>
+                      </el-button>
+                       <el-button type="text" title=" 查看轨迹" @click="showtrajectory(child.id)" >
+                        <i class="el-icon-ali-lishi"></i>
+                      </el-button>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+
+              
           </div>
         </div>
       </el-aside>
       <el-container>
         <!--插入地图-->
         <rm-map v-model="map" />
+
+         <Layer title="个人详情"  v-model="details"   :dialog="false" class="layer-1" width="300" :animation="2" :maskLayer="false" :shade= "false"
+                 height="600" confirm="确定" cancel="取消" >
+                  <el-form :v-model="userdetails"  abel-width="80px" size="mini" class="leftBox" style="">
+                      <el-form-item label="头    像:">{{userdetails.name}}</el-form-item>
+                      <el-form-item label="头像下单位:">{{userdetails.officeName}}</el-form-item>
+                      <el-form-item label="区   划:">{{userdetails.address}}</el-form-item>
+                      <el-form-item label="单   位:">{{userdetails.officeName}}</el-form-item>
+                      <el-form-item label="部   门:">{{userdetails.postLabel}}</el-form-item>
+                      <el-form-item label="状   态:">{{userdetails.postState}}</el-form-item>
+                      <el-form-item label="手机号码:">{{userdetails.phone}}</el-form-item>
+                      <el-form-item label="性   别:">{{userdetails.gender}}</el-form-item>
+                      <el-form-item label="邮   箱:">{{userdetails.email}}</el-form-item>
+                      <el-form-item label="职   务:"> </el-form-item>
+                      <el-form-item label="固定电话:">{{userdetails.mobile}}</el-form-item>
+                      <el-form-item label="传   真:"></el-form-item> 
+                  </el-form>
+         </Layer>
+
+         <Layer title="巡护轨迹 - (用户)"  v-model="trajectory"   :dialog="false" class="layer-1" width="500" :animation="2" :maskLayer="false" :shade= "false"
+                 height="600" confirm="确定" cancel="取消" >
+                    <template> 
+                     <div class="block">
+                      <span class="demonstration"></span>
+                      <el-date-picker v-model="value4" type="datetimerange"  range-separator="至"  start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+                      <el-button icon="el-icon-search"></el-button>
+                    </div>
+                    </template>
+                   <span>共有轨迹(count)条</span> 
+                    <div>轨迹1</div>
+                    <div>轨迹2</div>
+                    <div>轨迹3</div>
+         </Layer>
       </el-container>
     </el-container>
   </div>
@@ -66,18 +131,43 @@ import RmMap from "@/components/rm/map"
 import { getfiles, delfiles, uploadFile } from '@/api/core/file.js'
 import { getToken } from '@/utils/auth'
 import { getgeometryList } from '@/api/res/geometry'
+
+import { userinfo } from '@/api/core/user'
 import Layer from '@/components/layer'
 import { findOfficeUserstree } from '@/api/res/management'
+import {gettrajectory } from '@/api/res/workTrajectory'
 export default {
   name: "usermanger",
   components: { Pagination, RmMap },
   data() {
     return {
+      formInline: {
+        user: '',
+        region: ''
+      },
+      topActiveIndex: '',
+      bottomActiveIndex: '',
+      firstIndex: '',
       map: null,
       lowerofficeusertreelist: [],
       activeNames: ['1'],
       menu: null,
       myofficeusertreelist: [],
+      trajectory:false,
+      details:false,
+      value4: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+      userdetails:{
+          name:null,
+          officeName:null,
+          address:null,
+          officeName:null,
+          postLabel:null,
+          postState:null,
+          phone:null,
+          gender:null,
+          email:null,
+          mobile:null
+      },
       defaultProps: {
         children: "children",
         label: "label"
@@ -86,45 +176,20 @@ export default {
         pid: "58e0b27968354ae0b51d532cc092637e",
         loading: false,
       },
-      list: [
-        {
-          "id": "dfd6a05879c84a9fa095392bef17b5c4",
-          "parentId": "58e0b27968354ae0b51d532cc092637e",
-          "label": "安源区河长办",
-          "code": "100001007001001",
-          "type": "o",
-          "sort": 30,
-          "children": [
-            {
-              "id": "80f259115cd24c7198dac136790adae8",
-              "parentId": "dfd6a05879c84a9fa095392bef17b5c4",
-              "label": "555",
-              "type": "u"
-            },
-            {
-              "id": "55e5cea42d9c417a96898d6df8451cb5",
-              "parentId": "dfd6a05879c84a9fa095392bef17b5c4",
-              "label": "康峰",
-              "type": "u"
-            }
-          ]
-        },
-        {
-          "id": "54edd6b3718348e0ac254394ada6cfac",
-          "parentId": "58e0b27968354ae0b51d532cc092637e",
-          "label": "湘东河长办",
-          "code": "100001007001001007",
-          "type": "o",
-          "sort": 30,
-          "isDisabled": true
-        }
-      ]
+      loading:false 
     }
   },
   created() {
     this.loadOfficeTree()
   },
   methods: {
+    topSelected(i){
+      this.topActiveIndex = i
+    },
+    bottomSelected(index, i){
+      this.firstIndex = index
+      this.bottomActiveIndex = i
+    },
     handleNodeClick(data) {
       this.centerView(data);
     },
@@ -139,7 +204,31 @@ export default {
         this.myofficeusertreelist = response.data.currentlist;
         this.loading = false;
       })
-    }
+    },
+    //查看绑定责任段
+    showresponsibility(){
+      alert("查看绑定责任段")
+    },
+    //查看个人详情
+    showdetails(child){
+       // alert("查看个人详情")
+       console.log(" child", child)
+       this.details = true
+      userinfo(child).then(response => {
+         this.userdetails = response.data
+          console.log(" this.userdetails ", this.userdetails )
+      })
+    },
+    //查看轨迹
+    showtrajectory(child){
+       // alert("查看轨迹")
+      // 获取用户
+       //var username  =child.label
+        this.trajectory = true
+        gettrajectory(child).then(response =>{
+          //this.trajectory = response.data
+        })
+    },
 
   }
 }
@@ -156,6 +245,7 @@ export default {
 .el-container {
   .el-aside {
     width: 17% !important;
+    min-width: 255px;
   }
   .el-header,
   .el-main {
@@ -206,26 +296,55 @@ export default {
       margin: 0;
       padding: 0;
     }
-    /deep/ .box-card {
-      .el-card__header {
-        padding: 10px;
+    /deep/ .el-form--inline {
+      .el-form-item {
+        margin-right: 0px;
+        margin-bottom: 10px;
       }
     }
-    /deep/ .el-card__body {
-      padding: 10px;
+    /deep/ .el-collapse {
+      .el-collapse-item__header {
+        padding-left: 10px;
+        color: #03a9f4;
+      }
+      .el-collapse-item__content {
+        padding: 5px 0 10px 0;
+      }
+      .el-collapse-item__header:hover {
+        background-color: #388bf3;
+        color: #fff;
+      }
+      div.is-active {
+        background-color: #388bf3;
+        color: #fff;
+      }
+    }
+    .nextDeptName {
+      font-size: 13px;
+      color: #9e9e9e;
+      line-height: 30px;
     }
     .wrapBoxDiv:hover {
       box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.12),
         0 1px 4px 0 rgba(0, 0, 0, 0.12);
     }
+    .showThePerson {
+      box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.12),
+        0 1px 4px 0 rgba(0, 0, 0, 0.12);
+    }
     .wrapBoxDiv {
       position: relative;
-      display: -webkit-inline-box;
+      // display: -webkit-inline-box;
       width: 100%;
       cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 6px;
+      margin-top: 5px;
       .svg-icon {
-        width: 1.2rem;
-        height: 1.2rem;
+        width: 1.1rem;
+        height: 1.1rem;
         cursor: pointer;
       }
       .svg-icon:nth-last-of-type() {
@@ -233,25 +352,46 @@ export default {
 
       }
       img {
-        position: absolute;
-        left: 6px;
-        top: 7px;
+        // position: absolute;
+        // left: 6px;
+        // top: 7px;
         width: 32px;
         height: 32px;
         border-radius: 100%;
+        margin-right: 10px;
       }
       .divPatrol {
-        margin-left: 50px;
-        width: 110px;
+        // margin-left: 50px;
+        // width: 155px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        p {
+          line-height: 18px;
+          font-size: 12px;
+          color: #999;
+          max-width: 120px;
+          vertical-align: top;
+          word-break: break-all;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 120px;
+        }
       }
       .MonitorStationItem-operations {
-        width: 80px;
+        // width: 80px;
         text-align: right;
         vertical-align: middle;
-        padding-top: 12px;
         position: relative;
         display: inline-block;
         vertical-align: middle;
+        white-space: nowrap;
       }
     }
   }
@@ -266,7 +406,7 @@ export default {
   padding-right: 8px;
 }
 .panel {
-  background-color: #fff;
+  background-color: #f2f6fc;
   border: 1px solid transparent;
   border-color: #ddd;
   border-radius: 4px;

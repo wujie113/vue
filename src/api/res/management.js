@@ -17,30 +17,37 @@ export function	getmanagerlist(params){
 		})
 	}
 		//删除选择的人员
-		export function	deluser(idx){  
-			const params={ids:idx}
-			console.log("params:::",params);
-			return request({
-				url: 'api/res/management/del',
-				method: 'get',
-				params
-			})
-		}
-		export function	gethzbuserbyareaid(params){   
-			return request({
-				url: 'api/res/management/gethzbuserbyareaid',
-				method: 'get',
-				params
-			})
-		}
+export function	deluser(idx){  
+	const params={ids:idx}
+	console.log("params:::",params);
+	return request({
+		url: 'api/res/management/del',
+		method: 'get',
+		params
+	})
+}
+export function	gethzbuserbyareaid(params){   
+	return request({
+		url: 'api/res/management/gethzbuserbyareaid',
+		method: 'get',
+		params
+	})
+}
 
-		export function	findOfficeUserstree(params){   
-			return request({
-				url: 'api/res/management/user/trees',
-				method: 'get',
-				params
-			})
-		}
+export function	findOfficeUserstree(params){   
+	return request({
+		url: 'api/res/management/orgusertrees',
+		method: 'get',
+		params
+	})
+}
+export function getorgtrees(params) {
+	return request({
+	  url: "/api/res/management/orgtrees",
+	  method: "get",
+	  params
+	});
+  }
 		
 
 

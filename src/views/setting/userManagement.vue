@@ -78,7 +78,7 @@
       </el-container>
     </el-container>
     <!-- 新增用户弹窗 -->
-    <el-dialog :visible.sync="dialogVisible" width="40%" title="添加用户" top="5vh">
+    <el-dialog :visible.sync="dialogVisible" width="40%" title="添加用户" top="5vh" :modal-append-to-body="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
         <el-form-item label="单位">
           {{ unit }}
@@ -135,7 +135,7 @@
       </div>
     </el-dialog>
     <!-- 编辑弹窗 -->
-    <el-dialog :visible.sync="dialogVisible1" width="40%" title="用户详情" top="5vh">
+    <el-dialog :visible.sync="dialogVisible1" width="40%" title="用户详情" top="5vh" :modal-append-to-body="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
         <el-form-item label="单位">
           {{ unit }}
@@ -188,7 +188,7 @@
     </el-dialog>
 
     <!-- 修改密码弹窗 -->
-    <el-dialog :visible.sync="dialogVisible2" width="40%" title="修改密码" top="5vh">
+    <el-dialog :visible.sync="dialogVisible2" width="40%" title="修改密码" top="5vh" :modal-append-to-body="false">
       <el-form :model="form2" :rules="rules2" ref="form2" label-width="80px" status-icon>
         <el-form-item label="旧密码" prop="oldPassword">
           <el-input type="text" v-model="form2.oldPassword" auto-complete="off" placeholder="请输入旧的密码"></el-input>
@@ -351,7 +351,7 @@ export default {
         this.loading = false
         this.$message({
           type: "error",
-          message: "网络错误!"
+          message: errorRes
         })
       })
     },

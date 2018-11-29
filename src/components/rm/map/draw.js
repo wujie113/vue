@@ -8,11 +8,29 @@ import Collection from 'ol/Collection'
 import { getArea, getLength } from 'ol/sphere.js'
 import Overlay from 'ol/Overlay.js'
 import WKT from 'ol/format/WKT.js'
-import { drawingStyleFunc,markerSelectedStyleFunc, measureStyleFunc } from "@/components/rm/map/style.js"
+import { drawingStyleFunc, markerSelectedStyleFunc, measureStyleFunc,selectedStyleFunc } from "@/components/rm/map/style.js"
 
 
 //绘制河流责任段
 export const drawGeom = {
+    selectGeom: function(map, layerCode, options) {
+        this.map = map
+        this.featureId = options.id
+        this.featureName = options.name
+        
+        this.fid = layerCode + '.' + this.featureId
+        this.layer = this.getLayerByCode(layerCode)
+        if (this.selectedFeature) {
+            this.selectedFeature.setStyle(null)
+        }
+        if (this.layer) {
+            this.layer.setVisible(true)
+            this.selectedFeature = this.layer.getSource().getFeatureById(this.fid)
+            //console.log("选中记录",this.fid,this.selectedFeature)
+            if (!this.selectedFeature) return 
+            this.selectedFeature.setStyle(selectedStyleFunc)
+        }
+    },
     /**
      * 
      * @param {地图组件} map 
@@ -20,7 +38,7 @@ export const drawGeom = {
      * @param {对象属性} options
      * @param { 绘画回调函数} callbackFunc  
      */
-    draw: function(map, geotype,layerCode, options, callbackFunc) {
+    draw: function(map, geotype, layerCode, options, callbackFunc) {
         var isInit = true
         if (this.map) {
             isInit = false
@@ -87,6 +105,9 @@ export const drawGeom = {
             this.sketch.setStyle(null)
             this.unbindLister(this.sketch)
         }
+        if (this.selectedFeature) {
+            this.selectedFeature.setStyle(null)
+        }
     },
     bindChangeLister: function(f) {
         if (f) {
@@ -100,7 +121,7 @@ export const drawGeom = {
                 } else if (geom instanceof LineString) {
                     output = self.formatLength(geom)
                 }
-                self.callbackFunc('change', { feature: self.sketch, remarks: output,coord: geom.getFirstCoordinate(), wkt: self.toWKT(geom) })
+                self.callbackFunc('change', { feature: self.sketch, remarks: output, coord: geom.getFirstCoordinate(), wkt: self.toWKT(geom) })
             })
         }
     },
@@ -112,9 +133,9 @@ export const drawGeom = {
     close: function() {
         //if (this.drawInteraction) {
         //    this.drawInteraction.setActive(false)
-       //     this.modifyInteraction.setActive(false)
-       // }
-       this.clean()
+        //     this.modifyInteraction.setActive(false)
+        // }
+        this.clean()
     },
     initInteraction: function(isInit) {
         this.initDraw()
@@ -342,7 +363,7 @@ export const drawMark = {
 
 
         //指定固定layer有效
-        this.select = new Select({ layers: [this.layer],style: markerSelectedStyleFunc })
+        this.select = new Select({ layers: [this.layer], style: markerSelectedStyleFunc })
         this.select.set('code', 'marker')
         this.map.addInteraction(this.select)
         // console.log('init modify fs ', fs.getArray().length)
@@ -355,9 +376,9 @@ export const drawMark = {
         this.modifyInteraction.on('modifyend',
             function(evt) {
                 if (evt.features.getLength() > 0) {
-                self.sketch = evt.features.item(0)
-                //self.showInputOverlay(self.sketch)
-                self.callbackFunc({ type: 'end', coord: self.sketch ?  self.sketch.getGeometry().getFirstCoordinate() : null, f: self.sketch })
+                    self.sketch = evt.features.item(0)
+                    //self.showInputOverlay(self.sketch)
+                    self.callbackFunc({ type: 'end', coord: self.sketch ? self.sketch.getGeometry().getFirstCoordinate() : null, f: self.sketch })
                 }
             })
         // var selectedFeatures = this.select.getFeatures()
@@ -551,7 +572,7 @@ export const drawMeasure = {
                     self.count = 0
                 }
                 self.count = self.count + 1
-                var id = self.count 
+                var id = self.count
                 self.sketch.set('code', id)
 
                 /** @type {module:ol/coordinate~Coordinate|undefined} */
@@ -580,7 +601,7 @@ export const drawMeasure = {
                     //修改相应对象的值
                     var tooltipElement = geom.get('_m_ele')
                     var measureTooltip = geom.get('_m_tip')
-                    if (measureTooltip) { 
+                    if (measureTooltip) {
                         tooltipElement.innerHTML = output
                         measureTooltip.setPosition(tooltipCoord)
                     }
@@ -591,7 +612,7 @@ export const drawMeasure = {
             function() {
                 self.measureTooltipElement.className = 'tooltip tooltip-static'
                 self.measureTooltip.setOffset([0, -7])
- 
+
                 // unset sketch
                 // self.sketch = null
                 // unset tooltip so that a new one can be created
@@ -608,8 +629,8 @@ export const drawMeasure = {
         })
         this.map.addInteraction(this.modifyInteraction)
         // this.modifyInteraction.on('modifystart', function(evt) {
-            //self.sketch = evt.features.item(0)
-            ///console.log('modifystart', evt.features.getLength(), self.sketch.get('code'),evt)
+        //self.sketch = evt.features.item(0)
+        ///console.log('modifystart', evt.features.getLength(), self.sketch.get('code'),evt)
         // })
         var snap = new Snap({
             source: this.layer.getSource()
