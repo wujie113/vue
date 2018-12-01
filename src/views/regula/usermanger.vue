@@ -153,31 +153,31 @@
                 </div>
               </div>
             </el-form-item>
-            <el-form-item label="头像下单位:">{{
-              userdetails.officeName
-            }}</el-form-item>
-            <el-form-item label="区   划:">{{
-              userdetails.address
-            }}</el-form-item>
-            <el-form-item label="单   位:">{{
-              userdetails.officeName
-            }}</el-form-item>
-            <el-form-item label="部   门:">{{
-              userdetails.postLabel
-            }}</el-form-item>
-            <el-form-item label="状   态:">{{
-              userdetails.postState
-            }}</el-form-item>
-            <el-form-item label="手机号码:">{{
-              userdetails.mobile
-            }}</el-form-item>
-            <el-form-item label="性   别:">{{
-              userdetails.gender
-            }}</el-form-item>
-            <el-form-item label="邮   箱:">{{
-              userdetails.email
-            }}</el-form-item>
-            <el-form-item label="职   务:"> </el-form-item>
+            <el-form-item label="头像下单位:">
+              {{userdetails.officeName }}
+            </el-form-item>
+            <el-form-item label="区   划:">
+              {{userdetails.address }}
+            </el-form-item>
+            <el-form-item label="单   位:">
+              {{userdetails.officeName }}
+            </el-form-item>
+            <el-form-item label="部   门:">
+              {{userdetails.postLabel }}
+            </el-form-item>
+            <el-form-item label="状   态:">
+              {{ userdetails.postState }}
+            </el-form-item>
+            <el-form-item label="手机号码:">
+              {{userdetails.mobile }}
+            </el-form-item>
+            <el-form-item label="性   别:">
+              {{userdetails.gender }}
+            </el-form-item>
+            <el-form-item label="邮   箱:">
+              {{ userdetails.email }}
+            </el-form-item>
+            <el-form-item label="职   务:"></el-form-item>
             <el-form-item label="固定电话:"></el-form-item>
             <el-form-item label="传   真:"></el-form-item>
           </el-form>
@@ -236,7 +236,7 @@
           </template>
           <div class="divHistoricalRouteClear">
             <span style="margin-left: 10px;"> 共有轨迹 </span>
-            <div :class="{showLoad: isShowLoad, showLoading: isLoading }">
+            <div :class="{ showLoad: isShowLoad, showLoading: isLoading }">
               <div class="loadEffect">
                 <span></span>
                 <span></span>
@@ -268,7 +268,8 @@
                   <li
                     :class="{ 'get-focus-list': getFocusList === index }"
                     @click="getFocusListBtn(index);"
-                    v-for="(item, index) in workTrajectory" :key="index"
+                    v-for="(item, index) in workTrajectory" 
+:key="index"
                   >
                     <div class="routeItem">
                       <div class="routeItemTag">轨迹 {{ index + 1}}</div>
@@ -292,20 +293,20 @@
   </div>
 </template>
 <script>
-import { tree, getmanagerlist, get,getusermanagentriver } from "@/api/res/river";
-import { hptree } from "@/api/res/lake";
-import Pagination from "@/components/Pagination";
-import RmMap from "@/components/rm/map";
-import { getfiles, delfiles, uploadFile } from "@/api/core/file.js";
-import { getToken } from "@/utils/auth";
-import { getgeometryList } from "@/api/res/geometry";
+import { tree, getmanagerlist, get,getusermanagentriver } from "@/api/res/river"
+import { hptree } from "@/api/res/lake"
+import Pagination from "@/components/Pagination"
+import RmMap from "@/components/rm/map"
+import { getfiles, delfiles, uploadFile } from "@/api/core/file.js"
+import { getToken } from "@/utils/auth"
+import { getgeometryList } from "@/api/res/geometry"
 
-import { userinfo } from "@/api/core/user";
-import Layer from "@/components/layer";
-import { findOfficeUserstree } from "@/api/res/management";
-import { gettrajectory } from "@/api/res/workTrajectory";
+import { userinfo } from "@/api/core/user"
+import Layer from "@/components/layer"
+import { findOfficeUserstree } from "@/api/res/management"
+import { gettrajectory } from "@/api/res/workTrajectory"
 export default {
-  name: "usermanger",
+  name: "Usermanger",
   components: { Pagination, RmMap },
   data() {
     return {
@@ -324,7 +325,7 @@ export default {
       firstIndex: "",
       getFocusList: "",
       map: null,
-      maplnglat:{
+      maplnglat: {
           lng: null,
           id: null,
           lat: null
@@ -338,7 +339,7 @@ export default {
       parems: {
         starttime: null,
         endtime: null,
-        id:''
+        id: ''
       },
       value1: "",
       value2: "",
@@ -364,82 +365,80 @@ export default {
         loading: false
       },
       loading: false
-    };
+    }
   },
   created() {
-    this.loadOfficeTree();
+    this.loadOfficeTree()
   },
   methods: {
     // 计算相差时间 date2 > date1
     DateTime(date1, date2) {
       // var date1= '2018-11-30 11:39:10';  //开始时间
       // var date2 = new Date();    //结束时间
-      var date3 = new Date(date2).getTime() - new Date(date1).getTime(); //时间差的毫秒数
+      const date3 = new Date(date2).getTime() - new Date(date1).getTime() //时间差的毫秒数
 
       //计算出相差天数
-      var days = Math.floor(date3 / (24 * 3600 * 1000));
+      const days = Math.floor(date3 / (24 * 3600 * 1000))
       //计算出小时数
-      var leave1 = date3 % (24 * 3600 * 1000); //计算天数后剩余的毫秒数
-      var hours = Math.floor(leave1 / (3600 * 1000));
+      const leave1 = date3 % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+      const hours = Math.floor(leave1 / (3600 * 1000))
       //计算相差分钟数
-      var leave2 = leave1 % (3600 * 1000); //计算小时数后剩余的毫秒数
-      var minutes = Math.floor(leave2 / (60 * 1000));
+      const leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+      const minutes = Math.floor(leave2 / (60 * 1000))
       //计算相差秒数
-      var leave3 = leave2 % (60 * 1000); //计算分钟数后剩余的毫秒数
-      var seconds = Math.round(leave3 / 1000);
-      let diffValue;
+      const leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
+      const seconds = Math.round(leave3 / 1000)
+      let diffValue
       if (days > 0) {
-        diffValue =
-          days + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒";
+        diffValue = days + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒"
       } else {
-        diffValue = hours + "小时 " + minutes + " 分钟" + seconds + " 秒";
+        diffValue = hours + "小时 " + minutes + " 分钟" + seconds + " 秒"
       }
-      return diffValue;
-      
+      return diffValue
     },
     topSelected(i) {
-      this.topActiveIndex = i;
+      this.topActiveIndex = i
     },
     bottomSelected(index, i) {
-      this.firstIndex = index;
-      this.bottomActiveIndex = i;
+      this.firstIndex = index
+      this.bottomActiveIndex = i
     },
     getFocusListBtn(i) {
-      this.getFocusList = i;
+      this.getFocusList = i
     },
     handleNodeClick(data) {
-      this.centerView(data);
+      this.centerView(data)
     },
     handleChange(val) {
     },
     loadOfficeTree() {
-      this.loading = true;
+      this.loading = true
       findOfficeUserstree(this.query).then(response => {
-        this.lowerofficeusertreelist = response.data.lowerlist;
-        this.myofficeusertreelist = response.data.currentlist;
-        this.loading = false;
+        this.lowerofficeusertreelist = response.data.lowerlist
+        this.myofficeusertreelist = response.data.currentlist
+        this.loading = false
       }).catch((errorRes) => {
         
       })
     },
     //查看绑定责任段
     showresponsibility(child) {
-      getusermanagentriver({id:child.id}).then(response =>{
+      getusermanagentriver({ id: child.id }).then(response => {
         //绑定责任段数据
         //this.map.selectLine({ id: row.id,lng: row.lng,lat: row.lat })
-        var maplnglat = response.data.list
+        const maplnglat = response.data.list;
         console.log("maplnglat",maplnglat)
-        maplnglat.map(item =>{
+        maplnglat.map(item => {
           this.map.selectLine({ id: item.id,lng: item.lng,lat: item.lat }) 
         })
       })
     },
     //查看个人详情
     showdetails(child) {
-      this.details = true;
+      this.details = true
       userinfo(child).then(response => {
-        this.userdetails = response.data;
-      });
+        this.userdetails = response.data
+      })
     },
 
     //查看轨迹
@@ -447,22 +446,22 @@ export default {
       // alert("查看轨迹")
       // 获取用户
       //var username  =child.label
-      this.trajectory = true;
+      this.trajectory = true
       this.isLoading = true
-      this.getFocusList = "";
-      this.workTrajectory = [];
-      this.parems.id = child.id;
-      this.titleName = child.label;
+      this.getFocusList = ""
+      this.workTrajectory = []
+      this.parems.id = child.id
+      this.titleName = child.label
 
-      gettrajectory({id:child.id}).then(response => {
+      gettrajectory({ id: child.id }).then(response => {
         this.isLoading = false
-        this.trajectoryCount = response.data.trajectoryCount;
+        this.trajectoryCount = response.data.trajectoryCount
         if (response.data.workTrajectoryList.length > 0) {
           // DateTime()
           response.data.workTrajectoryList.map(item => {
-            item.timeZones = this.DateTime(item.startTime, item.endTime);
-          });
-          this.workTrajectory = response.data.workTrajectoryList;
+            item.timeZones = this.DateTime(item.startTime, item.endTime)
+          })
+          this.workTrajectory = response.data.workTrajectoryList
           // 弹窗顶部的title
         }
       }).catch(() => {
@@ -470,40 +469,40 @@ export default {
       })
     },
     start(start) {
-      this.parems.starttime = start;
+      this.parems.starttime = start
     },
     end(end) {
-      this.parems.endtime = end;
+      this.parems.endtime = end
     },
     //根据时间进行查询
     searchBtn() {
       if (this.parems.starttime > this.parems.endtime) {
-        this.popoverVisible = true;
+        this.popoverVisible = true
         setTimeout(() => {
-          this.popoverVisible = false;
-        }, 1500);
-        return;
+          this.popoverVisible = false
+        }, 1500)
+        return
       } else {
-        var querytrajectory = {
+        const querytrajectory = {
           starttime: this.parems.starttime,
           endtime: this.parems.endtime
         };
         //时间区间正确选择,调用查询接口
         gettrajectory(querytrajectory).then(response => {
           //轨迹列表显示
-          this.trajectoryCount = response.data.trajectoryCount;
+          this.trajectoryCount = response.data.trajectoryCount
           if (response.data.workTrajectoryList.length > 0) {
             // DateTime()
             response.data.workTrajectoryList.map(item => {
-              item.timeZones = this.DateTime(item.startTime, item.endTime);
-            });
-            this.workTrajectory = response.data.workTrajectoryList;
+              item.timeZones = this.DateTime(item.startTime, item.endTime)
+            })
+            this.workTrajectory = response.data.workTrajectoryList
           }
-        });
+        })
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
