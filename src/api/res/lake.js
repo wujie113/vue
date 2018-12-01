@@ -21,8 +21,7 @@ import request from '@/utils/request'
 	    params:{id:id}
 	  })
 	}
-	export function lakesave(data) {
-		console.log("data::",data)
+	export function lakessave(data) { 
 	  return request({
 	    url: '/api/res/lake/save',
 	    method: 'post',

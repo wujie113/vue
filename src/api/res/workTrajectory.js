@@ -8,12 +8,12 @@ import request from '@/utils/request'
 	  })
 	}
 	
-	//查看轨迹
-	export function gettrajectory(id) {
+	//查看轨迹和日期筛选
+	export function gettrajectory(params) {
 	  return request({
 	    url: '/api/res/workTrajectory/get',
 	    method: 'get',
-	    params:{id:id}
+	    params
 	  })
 	}
  
@@ -32,4 +32,5 @@ import request from '@/utils/request'
 	    params:{ids:ids}
 	  })
 	}
+
 

@@ -8,7 +8,7 @@
               单位
             </div>
             <div>
-              <el-checkbox v-model="checked" @change="onlyShowSelectBtn">仅显示所选单位</el-checkbox>
+              <el-checkbox v-model="checked" @change="onlyShowSelectBtn()">仅显示所选单位</el-checkbox>
             </div>
           </div>
           <div class="source panel-body">
@@ -33,6 +33,13 @@
 
         <el-main>
           <div class="widget-divBox">
+            <!-- 暂无数据的提示 -->
+            <div class="noData-divBox" v-show="list.length <= 0">
+              <div>
+                <img src="../../../static/img/empty.png" alt="无数据记录">
+                <p>无数据记录</p>
+              </div>
+            </div>
             <div class="widget-div" v-for="(list, index) in list" :key="index">
               <div class="widget-divContent clearfix">
                 <div class="widget-divContent-main">
@@ -76,23 +83,17 @@
                           {{ list.typeLabel }}
                         </span>
                         <span>
-                          <a href="javascript:void(0)" title="上报类型">
-                            <svg-icon icon-class="user1" />
-                          </a>
-                         点、线、面
-                        </span>
-                        <span>
                           <a href="javascript:void(0)" title="所属区划">
                             <svg-icon icon-class="areaColor" />
                           </a>
-                          {{ list['area.id'] }}
+                          {{ list.officeName }}
                         </span>
                       </div>
                     </el-col>
                     <el-col :xs="12" :sm="12" :md="9" :lg="7" :xl="6">
                       <div class="grid-content bg-purple-light">
-                        <a href="javascript:void(0)" title="生成工单" @click="addOrder(list.id)">
-                          <svg-icon icon-class="addColor" />
+                        <a href="javascript:void(0)" title="生成工单" @click="addOrder(list.id, list.auditStatus)">
+                          <svg-icon :icon-class="list.auditStatus == '未处理' ? 'addLightColor' : 'addColor'" />
                         </a>
                         <a href="javascript:void(0)" title="定位">
                           <svg-icon icon-class="locationColor" />
@@ -121,29 +122,35 @@
     </el-container>
     
   <!-- 工单弹窗 -->
-          <el-dialog :visible.sync="visibleOrder" title="生成工单">
+          <el-dialog :visible.sync="visibleOrder" title="生成工单" top="1vh">
                <el-form ref="proTaskFrom" :model="proTaskFrom" abel-width="80px" size="mini">
              
-              <el-form-item prop="area" label="所属区划">
+           <!--    <el-form-item prop="area" label="所属区划">
                 <rm-area-select v-model="proTaskFrom.area" />
+              </el-form-item> -->
+              <el-form-item label="接单单位">                                
+                   <el-select v-model="proTaskFrom.dept" placeholder="请选择单位" clearable class="filter-item">
+                      <el-option v-for="item in lowerofficeList" :key="item.id" :label="item.label" :value="item.id" />
+                  </el-select>
               </el-form-item>
-              <el-form-item label="接单单位">
-                   <el-input v-model="proTaskFrom.name" />
-              </el-form-item>
+              
               <el-form-item label="相关部门">
-                  <el-input v-model="proTaskFrom.name" />
+                  <el-select v-model="proTaskFrom.unit" placeholder="请选择部门" clearable class="filter-item">
+                      <el-option v-for="item in synergOfficeList" :key="item.id" :label="item.name" :value="item.id" />
+                  </el-select>
               </el-form-item>
+
               <el-form-item label="办结时间">
-                 <el-date-picker v-model="proTaskFrom.name" type="date" placeholder="Pick a date" style="width: 100%;"/>
+                 <el-date-picker v-model="proTaskFrom.handleTime" type="date" placeholder="Pick a date" style="width: 100%;"/>
               </el-form-item>
               <el-form-item label="问题描述">
-                 <el-input v-model="proTaskFrom.name" />
+                 <el-input v-model="proTaskFrom.description" />
               </el-form-item>
               <el-form-item label="任务描述">
-                 <el-input v-model="proTaskFrom.name" />
+                 <el-input v-model="proTaskFrom.taskcontent" />
               </el-form-item>
             </el-form> 
-             <el-upload :action="doUpload" list-type="picture-card" :auto-upload="false" :on-preview="handlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="fileList" :before-remove="removefile" :data="uploaddata" :on-success="handleSuccess" :on-remove="handleRemove">
+             <el-upload :action="doUpload" list-type="picture-card" :auto-upload="false" :on-preview="handlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="fileList" :before-remove="removefile" :data="uploaddata" :on-success="handleSuccess" :on-remove="handleRemove" class="elUpload">
             <i class="el-icon-plus"></i>
           </el-upload>
           <div slot="footer" class="dialog-footer">
@@ -162,14 +169,17 @@
               <el-form-item label="事件类型">
                 {{form.typeLabel}}
               </el-form-item>
-              <el-form-item label="上报人">
+              <el-form-item label="上 报 人">
                 {{form.userName}}
               </el-form-item> 
               <el-form-item label="上报时间"> 
                 {{form.reportTime}}
               </el-form-item>
               <el-form-item label="处理状态">
-                {{form.auditStatus}}
+                <span :class="[ form.auditStatus == '未处理' ? 'unHandle' : 'handling' ]">
+                  {{form.auditStatus}}
+                </span>
+                
               </el-form-item>
             </el-form>
             <viewer :images="slide1">
@@ -185,13 +195,14 @@
 </template> 
 <script>
 import Pagination from "@/components/Pagination";
-import { getList, save, del,get } from "@/api/work/report.js"; 
+import { getList,  del,get } from "@/api/work/report.js"; 
 import RmDict from "@/components/rm/dict";
 import RmOrgSelect from "@/components/rm/orgselect";
 import RmUserSelect from "@/components/rm/userselect";
 import RmAreaSelect from "@/components/rm/areaselect";
 import { getToken } from '@/utils/auth' 
-import { getorgtrees} from '@/api/res/management.js'
+import {save} from '@/api/work/proTask.js'
+import { getorgtrees,getSynergOffice,getLoweroffice} from '@/api/res/management.js'
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -216,11 +227,15 @@ export default {
       proTaskFrom:{
         name : null
       },
+      officeData:{},
       defaultProps: {
         children: "children",
         label: "label"
       },
       form: {
+        areaId : null,
+        officeId:null,
+        officeName:null,
         user: null,
         province: null,
         region: null,
@@ -236,21 +251,25 @@ export default {
         reportTime: null,
         auditPerson: null,
         auditDate: null,
-        auditStatus: null
+        auditStatus: ''
       },
       uploaddata: {
         bizId: null,
         bizType: "R"
       },
       slide1: [],
-      list: null,
+      list: [],
       total: 0,
+      synergOfficeList : null,
+      lowerofficeList : null,
       listQuery: {
         pageNo: 1,
         pageSize: 10,
         importance: undefined,
         search: undefined,
         type: undefined,
+        officeId :undefined,
+        areaId : undefined,
         sort: "+id"
       },
       importanceOptions: [1, 2, 3]
@@ -287,6 +306,15 @@ export default {
         this.list = response.data.list;
         this.total = response.data.count;
       });
+      //相关部门数据
+      getSynergOffice({id:'35cd0bbf1fe8402897f084f83b3918e2'}).then(response =>{
+        //console.log('相关部门数据：',response.data);
+        this.synergOfficeList = response.data.list
+      });
+      getLoweroffice().then(response =>{
+       // console.log('接单单位数据：',response.data);
+       this.lowerofficeList = response.data.list
+      });
     },
     handleFilter() {
       this.listQuery.pageNo = 1;
@@ -299,22 +327,32 @@ export default {
     },
     save() {
       //	console.log('保存:',JSON.stringify(this.form),this.selectUser);
-      this.visible = false;
-      this.listLoading = true;
-      save(this.form)
+ 
+      save(this.proTaskFrom)
         .then(response => {
           // 上传到服务器
           // this.$refs.upload.submit();
-          this.getList();
+          //this.getList();
+        this.visibleOrder = false
+        this.$message({
+          type: "success",
+          message: "提交成功!"
+        })
+
         })
         .catch(error => {
           this.listLoading = false;
         });
-    },   // 点击生成工单
-      addOrder(id) {/*  */
-      this.visibleOrder = true;
-       console.log("id", id);
-    },// 点击详情,查看详情
+    },   
+    // 点击生成工单
+    addOrder(id, auditStatus) {
+      if(auditStatus == '未处理'){
+        return
+      }else {
+        this.visibleOrder = true;
+      }
+    },
+    // 点击详情,查看详情
     detailBtn(idx) {
       this.visible = true;
       console.log("idx", idx);
@@ -333,15 +371,31 @@ export default {
         //   )
         // });
       });
+    }, 
+     onlyShowSelectBtn() {
+      console.log("只显示所属单位",this.listQuery,this.checked)
+
+     this.handleNodeClick(this.officeData);
     },
     handleNodeClick(data) {
       console.log("节点信息", data)
+      this.officeData = data
       //选择的是哪个单位
       this.unit = data.label
       this.companyID = data.id
-      console.log('this.form.unit', this.unit)
+      if(this.checked){
+          this.listQuery.officeId = data.id
+          this.listQuery.areaId = null
+          
+      }else{
+        this.listQuery.areaId = data.area.id
+        this.listQuery.officeId = null
+          
+      }
+     
+     // console.log('this.form.unit - label,officeId', this.unit,data.area.id)
 
-      this.listQuery['office.id'] = data.id
+      //this.listQuery['office.id'] = data.id
       this.getList()
     },
     handleSuccess() {
@@ -359,10 +413,7 @@ export default {
       delfiles({ ids: file.id }).then(response => {
         console.log("图片删除成功!!!!!");
       })
-    },   
-     onlyShowSelectBtn() {
-      console.log("只显示所属单位", v)
-    },
+    },  
     del(row) {
       var self = this;
       console.log(row.id);
@@ -389,13 +440,12 @@ export default {
 .app-container > .el-container {
   min-height: 86vh;
 }
-.widget-divBox {
-  p,
-  ul,
-  li {
-    margin: 0;
-    padding: 0;
+.app-container {
+  /deep/ .el-form-item--mini.el-form-item {
+    margin-bottom: 0px;
   }
+}
+.widget-divBox {
   padding: 14px 0 10px 0;
   width: 100%;
   // margin: 0 auto;
@@ -420,6 +470,11 @@ export default {
         height: auto;
         float: left;
         width: 100%;
+        > span {
+          min-height: 40px;
+          display: block;
+          padding-top: 5px;
+        }
         .widget-divContent-main-title > span:first-of-type {
           font-size: 16px;
           font-weight: bold;
@@ -459,7 +514,7 @@ export default {
             width: 100%;
             li {
               list-style: none;
-              width: 25%;
+              width: 20%;
               font-size: 12px;
               position: relative;
               vertical-align: middle;
@@ -509,6 +564,19 @@ export default {
     }
     .widget-divContent:hover {
       box-shadow: 0px 0px 10px 0px rgba(36, 44, 51, 0.8);
+    }
+  }
+  .noData-divBox {
+    padding: 14px 0 10 0;
+    width: 88%;
+    margin: 0 auto;
+    text-align: left;
+    div {
+      text-align: center;
+      margin: 10px auto;
+      img {
+        margin-top: 30px;
+      }
     }
   }
 }
@@ -581,5 +649,17 @@ export default {
 .userM >>> .el-dialog__body {
   max-height: 500px;
 }
+.elUpload {
+  margin-top: 20px;  
+}
+/* 未处理 */
+.unHandle {
+  color: #f25c5c;
+}
+/* 处理中 */ 
+.handling {
+  color: #3dc87e;
+}
+
 </style>
 

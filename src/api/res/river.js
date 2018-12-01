@@ -105,6 +105,15 @@ import request from '@/utils/request'
 				params
 			})
 		}
+
+		//用户责任段管理
+		export function getusermanagentriver(params){
+			return request({
+				url: 'api/res/river/usermanagentriver',
+				method: 'get',
+				params
+			})
+		}
 		
 
 

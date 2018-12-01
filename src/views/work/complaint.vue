@@ -14,6 +14,12 @@
         </el-header>
         <el-main>
           <div class="widget-divBox">
+            <div class="noData-divBox" v-show="lists.length <= 0">
+              <div>
+                <img src="../../../static/img/empty.png" alt="无数据记录">
+                <p>无数据记录</p>
+              </div>
+            </div>
             <div class="widget-div" v-for="(list, index) in lists" :key="index">
               <div class="widget-divContent clearfix">
                 <div class="widget-divContent-main">
@@ -213,7 +219,7 @@ export default {
         idA: ""
         // bizId:""
       },
-      lists: null,
+      lists: [],
       total: 0,
       listQuery: {
         pageNo: 1,
@@ -351,13 +357,12 @@ export default {
 .app-container > .el-container {
   min-height: 86vh;
 }
-.widget-divBox {
-  p,
-  ul,
-  li {
-    margin: 0;
-    padding: 0;
+.app-container {
+  /deep/ .el-form-item--mini.el-form-item {
+    margin-bottom: 0px;
   }
+}
+.widget-divBox {
   padding: 14px 0 10px 0;
   width: 100%;
   // margin: 0 auto;
@@ -471,6 +476,19 @@ export default {
     }
     .widget-divContent:hover {
       box-shadow: 0px 0px 10px 0px rgba(36, 44, 51, 0.8);
+    }
+  }
+  .noData-divBox {
+    padding: 14px 0 10 0;
+    width: 88%;
+    margin: 0 auto;
+    text-align: left;
+    div {
+      text-align: center;
+      margin: 10px auto;
+      img {
+        margin-top: 30px;
+      }
     }
   }
 }

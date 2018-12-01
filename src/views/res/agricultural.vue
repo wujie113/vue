@@ -86,7 +86,7 @@
     </el-dialog>
 
     <el-dialog :visible.sync="v.formupdate" title="上传提示" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" width="30%">
-      <el-form :model="form" abel-width="80px" size="mini" class="leftBox">
+      <el-form :model="form"  abel-width="80px" size="mini" class="leftBox">
         <el-form-item label="文件格式要求为：">
           <span style="color:red">.xls</span>(Excel 97-2018工作簿)
         </el-form-item>

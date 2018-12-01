@@ -41,7 +41,7 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination'
-import { lakegetList, lakesave, lakeget, lakedel } from '@/api/res/lake.js'
+import { lakegetList, lakessave, lakeget, lakedel } from '@/api/res/lake.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
@@ -120,7 +120,7 @@ export default {
       //console.log('保存:',JSON.stringify(this.form),this.selectUser);
       this.visible = false
       this.listLoading = true
-      lakesave(this.form).then(response => {
+      lakessave(this.form).then(response => {
         this.getList();
       }).catch(error => {
         this.listLoading = false

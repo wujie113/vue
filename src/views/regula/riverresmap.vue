@@ -156,11 +156,11 @@ cancel="关闭"
               </el-form-item>
             </el-form>
             <el-upload 
-:action="duty.doUpload" 
-list-type="picture-card" 
-:auto-upload="false" 
-:on-preview="riverhandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="river.fileList" :before-remove="riverremovefile" :data="river.uploaddata" :on-success="riverhandleSuccess" 
-:on-remove="riverhandleRemove">
+              :action="duty.doUpload" 
+              list-type="picture-card" 
+              :auto-upload="false" 
+              :on-preview="dutyhandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="dutyupload" :file-list="duty.fileList" :before-remove="dutyremovefile" :data="duty.uploaddata" :on-success="dutyhandleSuccess" 
+              :on-remove="dutyhandleRemove" :on-error="dutyfileerror">
               <i class="el-icon-plus"></i>
             </el-upload> 
     </Layer>
@@ -201,25 +201,25 @@ cancel="关闭"
                         </el-form-item>
                       </el-form>
                       <el-upload 
-:action="river.doUpload" 
-list-type="picture-card" 
-:auto-upload="false" 
-:on-preview="riverhandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="river.fileList" :before-remove="riverremovefile" :data="river.uploaddata" :on-success="riverhandleSuccess" 
-:on-remove="riverhandleRemove">
+                            :action="river.doUpload" 
+                            list-type="picture-card" 
+                            :auto-upload="false" 
+                            :on-preview="riverhandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="riverupload" :file-list="river.fileList" :before-remove="riverremovefile" :data="river.uploaddata" :on-success="riverhandleSuccess" 
+                            :on-remove="riverhandleRemove">
                         <i class="el-icon-plus"></i>
                       </el-upload> 
     </Layer>
     <!--湖泊form-->
     <Layer 
-:title="lake.dialogTitle"  
-v-model="lake.visible"   
-:dialog="false" 
-class="layer-1" 
-width="500" :animation="2" :maskLayer="false" :shade= "false"
-             height="400" 
-confirm="保存" 
-cancel="关闭" 
-:confirmBack="lakesave"> 
+          :title="lake.dialogTitle"  
+          v-model="lake.visible"   
+          :dialog="false" 
+          class="layer-1" 
+          width="500" :animation="2" :maskLayer="false" :shade= "false"
+                      height="400" 
+          confirm="保存" 
+          cancel="关闭" 
+          :confirmBack="lakesave"> 
             <el-form ref="lakeform" :model="lake.form" label-width="80px">
               <el-form-item label="水库名称">
                     <el-input v-model="lake.form.name" />
@@ -243,17 +243,28 @@ cancel="关闭"
                    <el-form-item prop="description" label="绘图">
                   <el-button type="button"  @click="drawlakeAarea()">请点击按钮后绘图</el-button>
                 </el-form-item>
-                </el-form>   
+            </el-form>   
+         
+
+
+                <el-upload 
+                            :action="lake.doUpload" 
+                            list-type="picture-card" 
+                            :auto-upload="false" 
+                            :on-preview="lakehandlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="lakeupload" :file-list="lake.fileList" :before-remove="lakeremovefile" :data="lake.uploaddata" :on-success="lakehandleSuccess" 
+                            :on-remove="lakehandleRemove">
+                        <i class="el-icon-plus"></i>
+                </el-upload> 
      </Layer>
     <Layer 
-title="关联管理人员" 
-v-model="areauser.selecteduser"   
-:dialog="false" 
-class="layer-1" 
-width="500" :animation="2" :maskLayer="false" :shade= "false"
-                  height="400" 
-confirm="保存" 
-cancel="关闭" > 
+            title="关联管理人员" 
+            v-model="areauser.selecteduser"   
+            :dialog="false" 
+            class="layer-1" 
+            width="500" :animation="2" :maskLayer="false" :shade= "false"
+                              height="400" 
+            confirm="保存" 
+            cancel="关闭" > 
                         <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="adduser">添加新用户</el-button>
                         <el-table  v-loading="areauser.userloadinged" :data="areauser.userlisted"    border  fit highlight-current-row  row-key="id"  stripe style="width: 100%"> 
                             <el-table-column prop="userName" label="姓名"/> 
@@ -310,7 +321,7 @@ cancel="关闭" >
 </template>
 <script>
 import { tree } from '@/api/res/river'
-import { lakegetList, lakesave, lakeget, lakedel, getqlist,hptree } from '@/api/res/lake' 
+import { lakegetList, lakessave, lakeget, lakedel, getqlist,hptree } from '@/api/res/lake' 
 import RmMap from "@/components/rm/map" 
 import Layer from '@/components/layer'
 import Pagination from '@/components/Pagination'
@@ -403,7 +414,11 @@ export default {
       lake: {
             visible: false,
             listLoading: false,
-            quOptions: null,  
+            quOptions: null, 
+           doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
+            dialogVisibleImg: false,
+           fileList: [],  
+           dialogImageUrl: null, 
             form: {
               id: null,
               name: null,
@@ -421,6 +436,10 @@ export default {
               wkt: null,
               acreage: null, 
               isNew: true
+            },
+            uploaddata: {
+              bizId: null,
+              bizType: "L"
             },
             list: null,
             total: 0,
@@ -441,6 +460,8 @@ export default {
           fileList: [],
           visiblespot: false,
           dutyClockList: null, 
+          dialogVisibleImg: false,
+          dialogImageUrl: null, 
           form: {
             id: null,
             type: "ZRD",
@@ -611,9 +632,10 @@ export default {
       this.river.listLoading = true
       save(this.river.form).then(response => {
         this.river.uploaddata.bizId = response.data.id
-        if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
-          // 上传到服务器
-          this.river.$refs.upload.submit()
+        console.log("uploadFiles:::::",this.$refs.riverupload.uploadFiles.length)
+        if (this.$refs.riverupload.uploadFiles != undefined && this.$refs.riverupload.uploadFiles.length > 0) {
+          // 上传到服务器 
+          this.$refs.riverupload.submit() 
         } else {
           this.rivergetList()
         }
@@ -622,8 +644,9 @@ export default {
       })
     },
     riverhandleSuccess() {
+      console.log("success:::::::::::::::::::::::::")
       this.river.fileList = []
-      this.river.getList()
+      this.rivergetList()
     },
     riverremovefile(file) {
       delfiles({ ids: file.id }).then(response => {
@@ -636,6 +659,9 @@ export default {
     riverhandlePictureCardPreview(file) {
       this.river.dialogImageUrl = file.url
       this.river.dialogVisibleImg = true
+    },
+    riverfileerror(error){
+      console.log("error::::",error);
     },
     riverdel(row) {
       var self = this
@@ -759,17 +785,47 @@ export default {
       this.lake.visible = true
          this.lake.dialogTitle = '编辑'  
       Object.assign(this.lake.form, row)
+       getfiles({ bizId: this.lake.form.id, bizType: "L" }).then(response => {
+        this.lake.fileList = response.data
+      }) 
     },
     lakesave() {
       console.log('保存:',JSON.stringify(this.form))
       this.lake.visible = false
-      this.lake.listLoading = true
-      lakesave(this.lake.form).then(response => {
-        this.lakegetList()
+      this.lake.listLoading = true 
+      lakessave(this.lake.form).then(response => {
+       this.lake.uploaddata.bizId = response.data.id   
+        if (this.$refs.lakeupload.uploadFiles != undefined && this.$refs.lakeupload.uploadFiles.length > 0) {
+          // 上传到服务器  
+          this.$refs.lakeupload.submit() 
+        } else { 
+          this.lakegetList()
+        }
       }).catch(error => {
+        console.error("error::",error);
         this.listLoading = false
       })
       //
+    }, 
+    lakehandleSuccess() {
+      console.log("success:::::::::::::::::::::::::")
+      this.lake.fileList = []
+      this.lakegetList()
+    },
+    lakeremovefile(file) {
+      delfiles({ ids: file.id }).then(response => {
+        console.log("图片删除成功!!!!!")
+      })
+    },
+    lakehandleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    lakehandlePictureCardPreview(file) {
+      this.lake.dialogImageUrl = file.url
+      this.lake.dialogVisibleImg = true
+    },
+    lakeerror(error){
+      console.log("error::::",error);
     },
     lakedel(row) {
       var self = this
@@ -826,8 +882,8 @@ export default {
       save(this.duty.form).then(response => { 
           this.duty.uploaddata.bizId = response.data.id 
           this.dialogVisible = true
-          if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) { 
-            this.$refs.upload.submit()
+          if (this.$refs.dutyupload.uploadFiles != undefined && this.$refs.dutyupload.uploadFiles.length > 0) { 
+            this.$refs.dutyupload.submit()
           } else {  
             this.dutygetList()
           }
@@ -852,6 +908,9 @@ export default {
       this.duty.dialogImageUrl = file.url
       this.duty.dialogVisible = true
     },
+    dutyfileerror(err){
+      console.log("err:::",err)
+    },
     dutydel(row) {
       var self = this
       console.log(row.id)
@@ -873,7 +932,7 @@ export default {
         }
         this.commonrow = row
         // console.log('form', this.river.form)
-        getfiles({ bizId: this.duty.form.id, bizType: "R" }).then(response => {
+        getfiles({ bizId: this.duty.form.id, bizType: "ZRD" }).then(response => {
           this.duty.fileList = response.data
         }) 
     },  

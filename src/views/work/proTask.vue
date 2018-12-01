@@ -29,20 +29,19 @@
             <el-table-column prop="launchName" label="发起人"/>
             <el-table-column prop="launchTime" label="发起时间"/>
             <el-table-column prop="dealStatus" label="处理状态"/>
-            <el-table-column prop="dealDept" label="处理单位"/>
+            <el-table-column prop="deptName" label="处理单位"/>
             <el-table-column prop="receivePesrson" label="接单人"/>
             <el-table-column prop="receiveTime" label="接单时间"/> 
             <el-table-column prop="id" label="操作" width="150"   >
               <template slot-scope="scope">
-                <!-- <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/> -->
-                <!-- <el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete"/> -->
+            
                 <el-button type="text" title="曝光" @click="edit(scope.row)">
                   <svg-icon icon-class="puguangColor" />                        
                 </el-button>
                 <el-button type="text" title="督办" @click="edit(scope.row)">
                   <svg-icon icon-class="jianduColor" />
                 </el-button>
-                <el-button type="text" title="删除" @click="edit(scope.row)">
+                <el-button type="text" title="删除" @click="del(scope.row)">
                   <svg-icon icon-class="deleteColor" />
                 </el-button>
                 <el-button type="text" title="详情" @click="edit(scope.row)">
@@ -67,24 +66,80 @@
   
 
    <!-- 详情弹窗 -->
-          <el-dialog :visible.sync="visible" title="工单详情">
-            <el-form :model="form" abel-width="80px" size="mini">
-              <el-form-item label="上报内容">
-                {{form.content}}
-              </el-form-item>
-              <el-form-item label="事件类型">
-                {{form.typeLabel}}
-              </el-form-item>
-              <el-form-item label="上报人">
-                {{form.userName}}
-              </el-form-item> 
-              <el-form-item label="上报时间"> 
-                {{form.reportTime}}
-              </el-form-item>
-              <el-form-item label="处理状态">
-                {{form.auditStatus}}
-              </el-form-item>
-            </el-form>
+          <el-dialog :visible.sync="visible" title="工单详情" top="1vh">
+            <div class="splitBox">
+              <div class="work-order-details-list-title">
+                上报详情
+              </div>
+              <el-form :model="form" abel-width="80px" size="mini">
+                <el-form-item label="上报内容">
+                  {{form.content}}
+                </el-form-item>
+                <el-form-item label="事件类型">
+                  {{form.typeLabel}}
+                </el-form-item>
+                <el-form-item label="上报人">
+                  {{form.userName}}
+                </el-form-item> 
+                <el-form-item label="上报时间"> 
+                  {{form.reportTime}}
+                </el-form-item>
+                <el-form-item label="处理状态">
+                  {{form.auditStatus}}
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <!-- 分割线 -->
+            <div class="work-order-details-list-split"></div>
+            <div class="splitBox">
+              <div class="work-order-details-list-title">
+                工单详情
+              </div>
+              <el-form :model="form" abel-width="80px" size="mini">
+                <el-form-item label="上报内容">
+                  {{form.content}}
+                </el-form-item>
+                <el-form-item label="事件类型">
+                  {{form.typeLabel}}
+                </el-form-item>
+                <el-form-item label="上报人">
+                  {{form.userName}}
+                </el-form-item> 
+                <el-form-item label="上报时间"> 
+                  {{form.reportTime}}
+                </el-form-item>
+                <el-form-item label="处理状态">
+                  {{form.auditStatus}}
+                </el-form-item>
+              </el-form>
+            </div>
+            <!-- 分割线 -->
+            <div class="work-order-details-list-split"></div>
+            <div class="splitBox">
+              <div class="work-order-details-list-title">
+                区、县河长回退工单
+              </div>
+              <el-form :model="form" abel-width="80px" size="mini">
+                <el-form-item label="上报内容">
+                  {{form.content}}
+                </el-form-item>
+                <el-form-item label="事件类型">
+                  {{form.typeLabel}}
+                </el-form-item>
+                <el-form-item label="上报人">
+                  {{form.userName}}
+                </el-form-item> 
+                <el-form-item label="上报时间"> 
+                  {{form.reportTime}}
+                </el-form-item>
+                <el-form-item label="处理状态">
+                  {{form.auditStatus}}
+                </el-form-item>
+              </el-form>
+            </div>
+
+            
             <viewer :images="slide1">
               <img :src="img" :key="index" v-for="(img, index) in slide1">
             </viewer>
@@ -187,12 +242,34 @@ export default {
 </script>
 <style lang="scss" scoped>
 .app-container > .el-container {
-  min-height: 86vh;
+  min-height: 86vh;  
+}
+.app-container {
   .city {
     color: #35Acf2;
   }
   .country {
     color: #3dc87e;
   }
+  /deep/ .el-form-item--mini.el-form-item {
+    margin-bottom: 0px;
+  }
+  .work-order-details-list-title {
+    color: #279cf5;
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 2px solid #279cf5;
+    height: 14px;
+    line-height: 14px;
+  }
+  .work-order-details-list-split {
+    border-top: 10px #f0f3f5 solid;
+    margin: -1px -20px 0 -20px;
+    padding: 0px 20px 0px 20px;
+  }
+  .splitBox:not(:first-of-type) {
+    padding-top: 10px;
+  }
 }
+
 </style>

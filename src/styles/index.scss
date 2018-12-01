@@ -126,7 +126,10 @@ code {
     font-weight: 600;
   }
 }
-
+ul,li,p{
+  margin: 0;
+  padding: 0;
+}
 //main-container全局样式
 .app-container {
   padding: 20px;
@@ -277,7 +280,7 @@ code {
 
 .el-container {
   .el-aside {
-    width: 25% !important;
+    width: 20% !important;
     margin-right: 1%;
   }
   .el-header,
@@ -370,5 +373,15 @@ code {
   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   border-radius: 0;
   background: rgba(0, 0, 0, 0.1);
+}
+// 调整riophae/vue-treeselect插件里面的高度和element的form组件写了size="mini"高度一样
+.el-form-item--mini {
+  /deep/ .vue-treeselect__control {
+    height: 28px;
+    .vue-treeselect__placeholder {
+      line-height: 30px;
+    }
+    
+  }
 }
 // 这里是我们自定义的通用样式-----end

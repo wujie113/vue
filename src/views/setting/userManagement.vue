@@ -293,7 +293,7 @@ export default {
       },
       rules: {
         post: [{ required: true, message: "请选择岗位", trigger: "change" }],
-        loginName: [{ required: true, message: "请填写描述内容", trigger: "blur" }],
+        loginName: [{ required: true, message: "请填写登录账号", trigger: "blur" }],
         name: [
           { required: true, message: "请填写您的姓名", trigger: "blur" },
           { min: 2, max: 4, message: "长度在 3 到 10 个字符", trigger: "blur" }
