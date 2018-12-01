@@ -72,20 +72,20 @@
                 上报详情
               </div>
               <el-form :model="form" abel-width="80px" size="mini">
-                <el-form-item label="上报内容">
-                  {{form.content}}
-                </el-form-item>
-                <el-form-item label="事件类型">
+                <el-form-item label="上报类型">
                   {{form.typeLabel}}
                 </el-form-item>
-                <el-form-item label="上报人">
+                <el-form-item label="上 报 人">
                   {{form.userName}}
                 </el-form-item> 
+                <el-form-item label="标    题">
+                  {{form.auditStatus}}
+                </el-form-item>
+                <el-form-item label="内    容">
+                  {{form.content}}
+                </el-form-item>
                 <el-form-item label="上报时间"> 
                   {{form.reportTime}}
-                </el-form-item>
-                <el-form-item label="处理状态">
-                  {{form.auditStatus}}
                 </el-form-item>
               </el-form>
             </div>
@@ -96,23 +96,39 @@
               <div class="work-order-details-list-title">
                 工单详情
               </div>
-              <el-form :model="form" abel-width="80px" size="mini">
-                <el-form-item label="上报内容">
-                  {{form.content}}
+              <el-form :model="formProTask" abel-width="80px" size="mini">
+                <el-form-item label="相关部门">
+                  {{formProTask.unitName}}
                 </el-form-item>
-                <el-form-item label="事件类型">
-                  {{form.typeLabel}}
-                </el-form-item>
-                <el-form-item label="上报人">
-                  {{form.userName}}
+                <el-form-item label="发 起 人">
+                  {{formProTask.launchName}}
                 </el-form-item> 
-                <el-form-item label="上报时间"> 
-                  {{form.reportTime}}
+                <el-form-item label="发起时间"> 
+                  {{formProTask.launchTime}}
                 </el-form-item>
-                <el-form-item label="处理状态">
-                  {{form.auditStatus}}
+                <el-form-item label="接单单位">
+                  {{formProTask.deptName}}
+                </el-form-item>
+                <el-form-item label="办结时间"> 
+                  {{formProTask.handleTime}}
+                </el-form-item>
+                <el-form-item label="问题描述">
+                  {{formProTask.description}}
+                </el-form-item>
+                <el-form-item label="任务描述">
+                  {{formProTask.taskcontent}}
                 </el-form-item>
               </el-form>
+              <viewer :images="imgArr" class="clearfix">
+                <img :src="img.url" :key="index" v-for="(img, index) in imgArr">
+              </viewer>
+              <viewer :images="videoArr" class="clearfix">
+                <video :src="video.url" :key="index" v-for="(video,index) in videoArr" controls="controls"/>                                         
+              </viewer> 
+              <viewer :images="audioArr" class="clearfix">
+                <audio :src="audio.url" :key="index" v-for="(audio,index) in audioArr" controls="controls"/>                                         
+              </viewer> 
+
             </div>
             <!-- 分割线 -->
             <div class="work-order-details-list-split"></div>
@@ -121,21 +137,15 @@
                 区、县河长回退工单
               </div>
               <el-form :model="form" abel-width="80px" size="mini">
-                <el-form-item label="上报内容">
+                <el-form-item label="处 理 人">
                   {{form.content}}
                 </el-form-item>
-                <el-form-item label="事件类型">
-                  {{form.typeLabel}}
-                </el-form-item>
-                <el-form-item label="上报人">
-                  {{form.userName}}
-                </el-form-item> 
-                <el-form-item label="上报时间"> 
+                <el-form-item label="处理时间"> 
                   {{form.reportTime}}
                 </el-form-item>
-                <el-form-item label="处理状态">
-                  {{form.auditStatus}}
-                </el-form-item>
+                <el-form-item label="备    注">
+                  {{form.typeLabel}}
+                </el-form-item> 
               </el-form>
             </div>
 
@@ -152,8 +162,9 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination' 
-import { getList ,del} from '@/api/work/proTask.js'
+import { getList ,del,get} from '@/api/work/proTask.js'
 import RmDict from '@/components/rm/dict'
+ import { getfiles, delfiles } from '@/api/res/river.js' 
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
@@ -172,7 +183,7 @@ export default {
    data() {
       return {
       visible: false,
-	    form: {
+	    formProTask: {
         reportId:null,
         lng: null,	  	
         lat: null,	  	
@@ -190,10 +201,14 @@ export default {
         dealDept: null,	  	
         dealStatus: null,	  	
         dealDate: null	  	
-	    },
+      },
+      form:{},
       list: null, 
       total: 0 ,
       slide1: [],
+      imgArr:[],
+      videoArr:[],
+      audioArr:[],
       listQuery: {
         pageNo: 1,
         pageSize: 10, 
@@ -213,19 +228,26 @@ export default {
         this.listLoading = true 
         console.log("this.listQuery::::",this.listQuery)
         getList(this.listQuery).then(response => { 
-          this.listLoading = false 
+           this.listLoading = false 
            this.list = response.data.list
            this.total = response.data.count
         })
     },
+       
      handleFilter() {
       this.listQuery.pageNo = 1
       this.getList()
     },
 	edit(row) {
-		//console.log(JSON.stringify(row));
-		this.visible = true
-		this.form = row
+		console.log(JSON.stringify(row));
+	
+    this.formProTask = row
+    getfiles({ bizId: this.formProTask.id}).then(response => {
+        this.imgArr = response.imgArr
+        this.audioArr = response.audioArr
+        this.videoArr = response.videoArr
+     })
+     	this.visible = true
 	}, 
    
 	del(row) {
@@ -245,6 +267,9 @@ export default {
   min-height: 86vh;  
 }
 .app-container {
+  /deep/ .el-dialog__body {
+    max-height: 650px;
+  }
   .city {
     color: #35Acf2;
   }
@@ -269,6 +294,21 @@ export default {
   }
   .splitBox:not(:first-of-type) {
     padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  /deep/ .el-dialog__body {
+    img {
+      width: 24%;
+      max-height: 15em;
+      margin: 0.5em 0.2em 0 0;
+      float: left;
+    }
+    video, audio {
+      width: 49%;
+      max-height: 15em;
+      margin: 0.5em 0.2em 0 0;
+      float: left;
+    }
   }
 }
 

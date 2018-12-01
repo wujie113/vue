@@ -43,7 +43,9 @@ export default {
     _chartData: {
       type: Array,
       required: true,
-      default: []
+      default: function() {
+        return []
+      }
     }
   },
   methods: {

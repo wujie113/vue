@@ -75,7 +75,7 @@
     //import XYZ from 'ol/source/XYZ.js'
     import { cfg as mapCfg } from "@/components/rm/map/config.js"
     import { utils as mapUtils } from "@/components/rm/map/utils.js"
-    import { drawGeom, drawMark, drawMeasure } from "@/components/rm/map/draw.js"
+    import { drawGeom, drawMark, drawMeasure,showUtil } from "@/components/rm/map/draw.js"
 
     import * as Driver from 'driver.js' // import driver.js
     import 'driver.js/dist/driver.min.css' // import driver.js css
@@ -112,27 +112,48 @@
             })
         },
         methods: {
-            /**选中线段*/
-            selectLine(options) {
+            /**展示点*/
+            showFeature(options) {
                 this.resetAction()
                 //放大
-                this.centerView([options.lng,options.lat],16)
-                drawGeom.selectGeom(this.map,'zerenduan', options)
+                this.centerView([options.lng,options.lat],15)
+                showUtil.showFeature(this, options)
+            },
+            /**展示轨迹*/
+            showTrail(options) {
+                this.resetAction()
+                //放大
+                if (options.lng) {
+                    this.centerView([options.lng,options.lat],15)
+                }
+                showUtil.showTrail(this, options)
             },
             /**绘制责任段 */
             drawLine(options, callbackFunc) {
                 this.resetAction()
                 drawGeom.draw(this.map, 'LineString','zerenduan', options, callbackFunc)
             },
+            /**删除责任段绘制内容 */
+            removeLine(options,callbackFunc) {
+                drawGeom.removeGeom(this.map,'zerenduan', options, callbackFunc)
+            },
             /**绘制胡泊 */
             drawArea(options, callbackFunc) {
                 this.resetAction()
                 drawGeom.draw(this.map, 'Polygon','hupo', options, callbackFunc)
             },
+            /**删除湖泊绘制内容 */
+            removeHupo(options,callbackFunc) {
+                drawGeom.removeGeom(this.map,'hupo', options, callbackFunc)
+            },
              /**打卡点 */
-            drawPoint(options, callbackFunc) {
+            drawDakadian(options, callbackFunc) {
                 this.resetAction()
                 drawGeom.draw(this.map, 'Point','dakadian', options, callbackFunc)
+            },
+            /**删除打卡点绘制内容 */
+            removeDakadian(options,callbackFunc) {
+                drawGeom.removeGeom(this.map,'dakadian', options, callbackFunc)
             },
             resetAction() {
                 /**还原操作，比如之前是做测距操作，接着想做标注操作，在每个操作之前，都应该清空之前的设置 */

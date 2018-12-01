@@ -93,7 +93,7 @@
                     <el-col :xs="12" :sm="12" :md="9" :lg="7" :xl="6">
                       <div class="grid-content bg-purple-light">
                         <a href="javascript:void(0)" title="生成工单" @click="addOrder(list.id, list.auditStatus)">
-                          <svg-icon :icon-class="list.auditStatus == '未处理' ? 'addLightColor' : 'addColor'" />
+                          <svg-icon :icon-class="list.auditStatus == '未处理' ? 'addColor' : 'addLightColor'" />
                         </a>
                         <a href="javascript:void(0)" title="定位">
                           <svg-icon icon-class="locationColor" />
@@ -150,7 +150,7 @@
                  <el-input v-model="proTaskFrom.taskcontent" />
               </el-form-item>
             </el-form> 
-             <el-upload :action="doUpload" list-type="picture-card" :auto-upload="false" :on-preview="handlePictureCardPreview" accept=".jpg,.jpeg,.png,.gif" ref="upload" :file-list="fileList" :before-remove="removefile" :data="uploaddata" :on-success="handleSuccess" :on-remove="handleRemove" class="elUpload">
+             <el-upload :action="doUpload" list-type="picture-card" :auto-upload="false" :on-preview="handlePictureCardPreview" accept="" ref="upload" :file-list="fileList" :before-remove="removefile" :data="uploaddata" :on-success="handleSuccess" :on-remove="handleRemove" class="elUpload">
             <i class="el-icon-plus"></i>
           </el-upload>
           <div slot="footer" class="dialog-footer">
@@ -202,6 +202,7 @@ import RmUserSelect from "@/components/rm/userselect";
 import RmAreaSelect from "@/components/rm/areaselect";
 import { getToken } from '@/utils/auth' 
 import {save} from '@/api/work/proTask.js'
+
 import { getorgtrees,getSynergOffice,getLoweroffice} from '@/api/res/management.js'
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
@@ -225,7 +226,9 @@ export default {
       fileList: [], 
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
       proTaskFrom:{
-        name : null
+        name : null,
+        reportId:null,
+        source : '巡河上报'
       },
       officeData:{},
       defaultProps: {
@@ -255,7 +258,7 @@ export default {
       },
       uploaddata: {
         bizId: null,
-        bizType: "R"
+        bizType: "report"
       },
       slide1: [],
       list: [],
@@ -328,31 +331,30 @@ export default {
     save() {
       //	console.log('保存:',JSON.stringify(this.form),this.selectUser);
  
-      save(this.proTaskFrom)
-        .then(response => {
+      save(this.proTaskFrom).then(response => {
           // 上传到服务器
-          // this.$refs.upload.submit();
-          //this.getList();
-        this.visibleOrder = false
-        this.$message({
-          type: "success",
-          message: "提交成功!"
-        })
-
-        })
-        .catch(error => {
+          this.uploaddata.bizId = response.data.id;
+          console.log('保存:', this.$refs.upload.uploadFiles.length);
+          if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
+            	
+           // 上传到服务器
+              this.$refs.upload.submit();         
+          }  
+          this.visibleOrder = false
+              this.$message({
+                type: "success",
+                message: "提交成功!"
+              })
+               this.getList();
+        }).catch(error => {
           this.listLoading = false;
         });
-    },   
-    // 点击生成工单
-    addOrder(id, auditStatus) {
-      if(auditStatus == '未处理'){
-        return
-      }else {
-        this.visibleOrder = true;
-      }
-    },
-    // 点击详情,查看详情
+    },   // 点击生成工单
+      addOrder(id) {/*  */
+      this.visibleOrder = true;
+       console.log("id", id);
+       this.proTaskFrom.reportId = id
+    },// 点击详情,查看详情
     detailBtn(idx) {
       this.visible = true;
       console.log("idx", idx);

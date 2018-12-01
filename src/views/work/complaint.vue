@@ -139,12 +139,12 @@
   </div>
 </template> 
 <script>
-import Pagination from "@/components/Pagination";
-import { getList, get, showstatus, addComment } from "@/api/work/complaint.js";
-import RmDict from "@/components/rm/dict";
-import RmOrgSelect from "@/components/rm/orgselect";
-import RmUserSelect from "@/components/rm/userselect";
-import RmAreaSelect from "@/components/rm/areaselect";
+import Pagination from "@/components/Pagination"
+import { getList, get, showstatus, addComment } from "@/api/work/complaint.js"
+import RmDict from "@/components/rm/dict"
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -153,8 +153,8 @@ export default {
         published: "success",
         draft: "gray",
         deleted: "danger"
-      };
-      return statusMap[status];
+      }
+      return statusMap[status]
     }
   },
   data() {
@@ -231,34 +231,34 @@ export default {
         sort: "+id"
       },
       importanceOptions: [1, 2, 3]
-    };
+    }
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     getList() {
-      this.listLoading = true;
+      this.listLoading = true
       getList(this.listQuery).then(response => {
-        this.listLoading = false;
-        this.lists = response.data.list;
-        this.total = response.data.count;
-      });
+        this.listLoading = false
+        this.lists = response.data.list
+        this.total = response.data.count
+      })
     },
     handleFilter() {
-      this.listQuery.pageNo = 1;
-      this.getList();
+      this.listQuery.pageNo = 1
+      this.getList()
     },
     // 点击详情,查看详情
     detailBtn(idx) {
-      this.visible = true;
-      console.log("idx", idx);
+      this.visible = true
+      console.log("idx", idx)
       get(idx).then(response => {
-        this.form = response.data;
-        const imagelist = this.form.imageurl;
-        this.slide1 = imagelist;
+        this.form = response.data
+        const imagelist = this.form.imageurl
+        this.slide1 = imagelist
 
-        console.log("imagelist", imagelist);
+        console.log("imagelist", imagelist)
         // imagelist.forEach((value, index) => {
         //   this.slide1.push(
         //     {
@@ -267,47 +267,46 @@ export default {
         //     }
         //   )
         // });
-      });
+      })
     },
     // 回复弹窗
     replayBtn(id) {
       // 打开弹窗
-      this.replayDialogVisible = true;
+      this.replayDialogVisible = true
       // 内容置空
       Object.assign(this.form2, this.$options.data().form2)
-      this.checked = false;
-      console.log("id", id);
-      this.params.idA = id;
+      this.checked = false
+      console.log("id", id)
+      this.params.idA = id
       showstatus(id).then(response => {
         if (response.data.comment1) {
           this.form2.desc = response.data.comment1.comment
         } else {
           this.form2.desc = ""
         }
-
-      });
+      })
     },
     // 无效投诉
     handleChecked(val) {
-      console.log("val", val);
+      console.log("val", val)
       if (val) {
-        this.form2.desc = "已收到投诉信息！谢谢您的反馈。";
+        this.form2.desc = "已收到投诉信息！谢谢您的反馈。"
       } else {
-        this.form2.desc = "";
+        this.form2.desc = ""
       }
     },
     // 回复内容提交
     saveReplay() {
-      let desc = this.form2.desc;
-      this.replayDialogVisible = false;
-      let data = Object.assign(this.form2, this.params);
+      const desc = this.form2.desc
+      this.replayDialogVisible = false
+      const data = Object.assign(this.form2, this.params)
       addComment(data).then(response => {
-        this.getList();
+        this.getList()
         this.$message({
           message: "回复成功",
           type: "success"
-        });
-      });
+        })
+      })
     },
     // edit(row) {
     //   //console.log(JSON.stringify(row));
@@ -332,18 +331,18 @@ export default {
     // },
     save() {
       //console.log('保存:',JSON.stringify(this.form),this.selectUser);
-      this.visible = false;
+      this.visible = false
       //
     },
     del(row) {
-      var self = this;
+      // const self = this
       //console.log(row);
     },
     handleClose() {
-      console.log(".......");
+      console.log(".......")
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .el-dialog__body {
@@ -479,7 +478,7 @@ export default {
     }
   }
   .noData-divBox {
-    padding: 14px 0 10 0;
+    padding: 14px 0px 10px 0px;
     width: 88%;
     margin: 0 auto;
     text-align: left;

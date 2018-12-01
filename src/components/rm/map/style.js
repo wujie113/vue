@@ -124,15 +124,51 @@ export const searchSelectStyleFunc = function(feature, resolution) {
 
 /**查询结果样式 */
 export const searchResultStyleFunc = function(feature, resolution) {
-    return new Style({
+    var style = new Style({
+        fill: new Fill({
+            color: 'rgba(255, 0, 0, 0.2)'
+        }),
         stroke: new Stroke({
-            color: 'green',
+            color: '#ff0000',
             width: 2
         }),
-        fill: new Fill({
-            color: 'rgba(255,0,0,0.2)'
+        image: new Circle({
+            radius: 7,
+            fill: new Fill({
+                color: '#ff0000'
+            })
+        }),
+        text: new Text({
+            text: feature.get('name'),
+            fill: new Fill({
+                color: '#000000'
+            }),
+            stroke: new Stroke({
+                color: '#ffffff',
+                width: 1
+            })
         })
     })
+    //点样式 
+    var style2 = new Style({
+        image: new Circle({
+            radius: 5,
+            fill: new Fill({
+                color: '#f00'
+            }),
+            stroke: new Stroke({
+                color: '#ffffff',
+                width: 1
+            })
+        }), geometry: function(f) {
+            var coordinates = f.getGeometry().getCoordinates()
+            if (f.getGeometry() instanceof Polygon) {
+                coordinates = coordinates[0]
+            }
+            return new MultiPoint(coordinates)
+        }
+    })
+    return [style, style2]
 }
 /**个人标注 */
 export const markerStyleFunc = function(feature, resolution) {

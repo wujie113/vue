@@ -36,7 +36,9 @@ export default {
     right_chartData: {
       type: Array,
       required: true,
-      default: []
+      default: function() {
+        return []
+      }
     }
   },
   watch: {

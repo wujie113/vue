@@ -2,13 +2,14 @@ import { cfg as mapCfg } from "@/components/rm/map/config.js"
 import { utils as mapUtils } from "@/components/rm/map/utils.js"
 import { Vector as VectorSource } from 'ol/source.js'
 import { Draw, Modify, Snap, Select } from 'ol/interaction.js'
-import { LineString, Polygon } from 'ol/geom.js'
+import { LineString, Polygon, Point } from 'ol/geom.js'
+import Feature from 'ol/Feature.js'
 import { unByKey } from 'ol/Observable.js'
 import Collection from 'ol/Collection'
 import { getArea, getLength } from 'ol/sphere.js'
 import Overlay from 'ol/Overlay.js'
 import WKT from 'ol/format/WKT.js'
-import { drawingStyleFunc, markerSelectedStyleFunc, measureStyleFunc,selectedStyleFunc } from "@/components/rm/map/style.js"
+import { drawingStyleFunc, markerSelectedStyleFunc, measureStyleFunc, selectedStyleFunc } from "@/components/rm/map/style.js"
 
 
 //绘制河流责任段
@@ -17,7 +18,7 @@ export const drawGeom = {
         this.map = map
         this.featureId = options.id
         this.featureName = options.name
-        
+
         this.fid = layerCode + '.' + this.featureId
         this.layer = this.getLayerByCode(layerCode)
         if (this.selectedFeature) {
@@ -27,9 +28,30 @@ export const drawGeom = {
             this.layer.setVisible(true)
             this.selectedFeature = this.layer.getSource().getFeatureById(this.fid)
             //console.log("选中记录",this.fid,this.selectedFeature)
-            if (!this.selectedFeature) return 
+            if (!this.selectedFeature) return
             this.selectedFeature.setStyle(selectedStyleFunc)
         }
+    },
+    /**清除对象 */
+    removeGeom: function(map, layerCode, options, callbackFunc) {
+        this.map = map
+        this.featureId = options.id
+        this.callbackFunc = callbackFunc
+
+        this.fid = layerCode + '.' + this.featureId
+        this.layer = this.getLayerByCode(layerCode)
+        if (!this.layer) {
+            console.log('没有绘制图层内容')
+            return
+        }
+        var source = this.layer.getSource()
+        if (source instanceof VectorSource) {
+            var f = source.getFeatureById(this.fid)
+            if (!f) return
+            source.removeFeature(f)
+            this.callbackFunc('OK')
+        }
+        this.clean()
     },
     /**
      * 
@@ -674,4 +696,92 @@ export const drawMeasure = {
         this.map.addOverlay(this.measureTooltip)
     }
 
+}
+
+//=================================================================================
+//=================================================================================
+//=================================================================================
+export const showUtil = {
+    /** 显示轨迹 */
+    showTrail: function(parent, options) {
+        this.layerCode = 'searchlayer'
+        this.init(parent, options)
+
+        var id = options.id
+        var lng = options.lng
+        var lat = options.lat
+        var fid = this.layerCode + '.' + id
+        var geom = this.wkt.readGeometry(options.wkt,{ dataProjection: mapCfg.projection,featureProjection: mapCfg.projection })
+        var geom2 = new Point([lng, lat])
+        //debugger
+        if (geom instanceof Point) {
+            console.log("=========")
+        } else {
+            console.log("===NO======")
+        }
+        //地图上是否已存在
+        var f = this.layer.getSource().getFeatureById(fid)
+        if (!f) {
+            f = new Feature({ 
+                //geometry: new Point([lng, lat]),
+                 geometry: geom,
+                id: fid,
+                name: options.name
+            })
+            //添加到图层
+            this.layer.getSource().addFeature(f)
+        }
+        //对象类型，根据这个类型，选用不同的样式
+        f.set("gtype", options.gtype)
+        //显示信息窗口
+        // TODO
+    },
+    /** 显示点 */
+    showFeature: function(parent, options) {
+        this.layerCode = 'searchlayer'
+        this.init(parent, options)
+
+        var id = options.id
+        var lng = options.lng
+        var lat = options.lat
+        var fid = this.layerCode + '.' + id
+        //地图上是否已存在
+        var f = this.layer.getSource().getFeatureById(fid)
+        if (!f) {
+            f = new Feature({
+                geometry: new Point([lng, lat]),
+                id: fid,
+                name: options.name
+            })
+            //添加到图层
+            this.layer.getSource().addFeature(f)
+        }
+        //对象类型，根据这个类型，选用不同的样式
+        f.set("gtype", options.gtype)
+        //显示信息窗口
+        // TODO
+    },
+    init: function(parent, options) {
+        this.parent = parent
+        this.map = parent.map
+        this.options = options
+
+        this.layer = mapUtils.getLayerByCode(this.map, this.layerCode)
+        if (!this.layer) {
+            console.error('图层不存在，', this.layerCode)
+        } else {
+            this.layer.setVisible(true)
+        }
+        if (!this.wkt) {
+            this.wkt = new WKT()
+        }
+    },
+    clean: function() {
+        if (!this.map) return
+
+        this.close()
+    },
+    close: function() {
+
+    }
 }

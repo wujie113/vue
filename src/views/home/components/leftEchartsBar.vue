@@ -36,7 +36,9 @@ export default {
     left_chartData: {
       type: Array,
       required: true,
-      default: []
+      default: function() {
+        return []
+      }
     }
   },
   methods: {

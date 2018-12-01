@@ -252,7 +252,7 @@
               class="label label-badge label-info historicalRouteNum"
               data-dojo-attach-point="historicalRouteNum"
               style="background-color: rgb(39, 156, 245); display: inline-block;"
-              >{{ trajectoryCount }}</span
+              >{{ count }}</span
             >
             <span> 条 </span>
             <!--
@@ -317,7 +317,7 @@ export default {
         user: "",
         region: ""
       },
-      trajectoryCount: 0,
+      count: 0,
       workTrajectory: [],
       popoverVisible: false,
       topActiveIndex: "",
@@ -428,9 +428,10 @@ export default {
         //this.map.selectLine({ id: row.id,lng: row.lng,lat: row.lat })
         const maplnglat = response.data.list;
         console.log("maplnglat",maplnglat)
-        maplnglat.map(item => {
-          this.map.selectLine({ id: item.id,lng: item.lng,lat: item.lat }) 
-        })
+        // maplnglat.map(item => {
+        //   this.map.selectLine({ id: item.id,lng: item.lng,lat: item.lat }) 
+        // })
+        this.map.selectLine()
       })
     },
     //查看个人详情
@@ -455,13 +456,13 @@ export default {
 
       gettrajectory({ id: child.id }).then(response => {
         this.isLoading = false
-        this.trajectoryCount = response.data.trajectoryCount
-        if (response.data.workTrajectoryList.length > 0) {
+        this.count = response.data.count
+        if (response.data.list.length > 0) {
           // DateTime()
-          response.data.workTrajectoryList.map(item => {
+          response.data.list.map(item => {
             item.timeZones = this.DateTime(item.startTime, item.endTime)
           })
-          this.workTrajectory = response.data.workTrajectoryList
+          this.workTrajectory = response.data.list
           // 弹窗顶部的title
         }
       }).catch(() => {
@@ -483,20 +484,23 @@ export default {
         }, 1500)
         return
       } else {
-        const querytrajectory = {
-          starttime: this.parems.starttime,
-          endtime: this.parems.endtime
-        };
+        // const querytrajectory = {
+        //   starttime: this.parems.starttime,
+        //   endtime: this.parems.endtime
+        // };
+        const querytrajectory = this.parems
         //时间区间正确选择,调用查询接口
         gettrajectory(querytrajectory).then(response => {
           //轨迹列表显示
-          this.trajectoryCount = response.data.trajectoryCount
-          if (response.data.workTrajectoryList.length > 0) {
+          this.count = response.data.count
+          if (response.data.list.length > 0) {
             // DateTime()
-            response.data.workTrajectoryList.map(item => {
+            response.data.list.map(item => {
               item.timeZones = this.DateTime(item.startTime, item.endTime)
             })
-            this.workTrajectory = response.data.workTrajectoryList
+            this.workTrajectory = response.data.list
+          }else {
+            this.workTrajectory = []
           }
         })
       }
