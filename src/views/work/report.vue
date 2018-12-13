@@ -24,15 +24,23 @@
             上报列表
           </div>
           <div class="filter-container">
+             <div  v-if="marks" style="display: inline-block;">
             <el-input placeholder="请输入标题" v-model="listQuery.title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
             <rm-dict class="filter-item" title="请选择类型" placeholder="请选择类型" type="reportType" v-model="listQuery.type" />
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-         
+            </div>
+              <el-button
+                class="filter-item"
+                type="primary"
+                :icon="isMapShow ? 'el-icon-menu' : 'el-icon-location'"
+                @click="changeMap"
+              >切换到{{ isMapShow ? '列表':'地图' }}视图</el-button>
           </div>
+            
         </el-header>
 
         <el-main>
-          <div class="widget-divBox">
+          <div class="widget-divBox" v-show="!isMapShow">
             <!-- 暂无数据的提示 -->
             <div class="noData-divBox" v-show="list.length <= 0">
               <div>
@@ -40,89 +48,89 @@
                 <p>无数据记录</p>
               </div>
             </div>
-            <div class="widget-div" v-for="(list, index) in list" :key="index">
+            <div class="widget-div" v-for="(report, index) in list" :key="index">
               <div class="widget-divContent clearfix">
                 <div class="widget-divContent-main">
                   <div class="widget-divContent-main-title">
                     <span>
-                        {{ list.title }}
+                        {{ report.title }}
                     </span>
                     <span>
-                      {{ list.reportTime }}
+                      {{ report.reportTime }}
                     </span>
                   </div>
-                  
-                    <span>
-                      {{ list.content }}
+                   <span>
+                      {{ report.content }}                      
                     </span>
                    <div class="widget-divContent-main-imgs clearfix">
                     <ul class="widget-divContent-main-imgsGroup clearfix">
-                      <li class="" v-for="(img, index) in list.pictureUrls" :key="index">
-                        <viewer :images="list.pictureUrls">
+                      <li class="" v-for="(img, index) in report.pictureUrls" :key="index">
+                          <viewer :images="report.pictureUrls">
                           <img :src="img" :key="index">
-                        </viewer>
+                        </viewer>    
                         
                       </li>
                     </ul>
-                  </div>
-
+                  </div> 
                   <el-row :gutter="10">
                     <el-col :xs="12" :sm="12" :md="15" :lg="17" :xl="18" class="hidden-sm-and-down">
-                      <div class="grid-content bg-purple">
-                      
+                      <div class="grid-content bg-purple"> 
                         <span>
                           <a href="javascript:void(0)" title="上报人">
                             <svg-icon icon-class="user1" />
                           </a>
-                          {{ list.userName }}
+                          {{ report.userName }}
                         </span>
                         <span>
                           <a href="javascript:void(0)" title="上报类型">
                             <svg-icon icon-class="user1" />
                           </a>
-                          {{ list.typeLabel }}
+                          {{ report.typeLabel }}
                         </span>
                         <span>
                           <a href="javascript:void(0)" title="所属区划">
                             <svg-icon icon-class="areaColor" />
                           </a>
-                          {{ list.officeName }}
+                          {{ report.officeName }}
                         </span>
                       </div>
                     </el-col>
                     <el-col :xs="12" :sm="12" :md="9" :lg="7" :xl="6">
                       <div class="grid-content bg-purple-light">
-                        <a href="javascript:void(0)" title="生成工单" @click="addOrder(list.id, list.auditStatus)">
-                          <svg-icon :icon-class="list.auditStatus == '未处理' ? 'addColor' : 'addLightColor'" />
+                        <a href="javascript:void(0)" title="生成工单" @click="report.protaskId != null&&report.protaskId!='' ? null : addOrder(report.id)">
+                          <svg-icon :icon-class="report.protaskId != null&&report.protaskId!='' ? 'addLightColor' : 'addColor'" />
                         </a>
-                        <a href="javascript:void(0)" title="定位">
-                          <svg-icon icon-class="locationColor" />
+                        <a href="javascript:void(0)" title="定位" @click="showFeature(report.id,'tousu',report.lng,report.lat)">
+                          <svg-icon icon-class="locationColor" /> 
                         </a>
-                        <a href="javascript:void(0)" title="详情" @click="detailBtn(list.id)">
+                        <a href="javascript:void(0)" title="详情" @click="detailBtn(report.id)">
+
+
                           <svg-icon icon-class="detailColor" />
                         </a><!--
                         <a href="javascript:void(0)" title="修改" @click="edit(list)">
                           <svg-icon icon-class="replayColor" />
                         </a> -->
-                        <a href="javascript:void(0)" title="删除" @click="del(list)">
+                        <a href="javascript:void(0)" title="删除" @click="del(report)">
                           <svg-icon icon-class="deleteColor" />
                         </a>
                       </div>
                     </el-col>
-                  </el-row>
-               
+                  </el-row> 
                 </div>
               </div>
             </div>
+             <pagination  v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
           </div>
-          <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
+          <div class="mapBox" v-if="isMapShow">
+            <rm-map v-model="map" :clientHeight="clientHeight" />
+          </div>
          </el-main>
-
       </el-container>
     </el-container>
     
   <!-- 工单弹窗 -->
-          <el-dialog :visible.sync="visibleOrder" title="生成工单" top="1vh">
+          <el-dialog :visible.sync="visibleOrder" title="生成工单" :modal-append-to-body="false">
                <el-form ref="proTaskFrom" :model="proTaskFrom" abel-width="80px" size="mini">
              
            <!--    <el-form-item prop="area" label="所属区划">
@@ -158,10 +166,10 @@
             <el-button @click="save()" type="primary">确 定</el-button>
           </div>
           </el-dialog>
-
+ <!-- 工单弹窗  end-->
 
   <!-- 详情弹窗 -->
-          <el-dialog :visible.sync="visible" title="上报详情">
+          <el-dialog :visible.sync="visible" title="上报详情" :modal-append-to-body="false">
             <el-form :model="form" abel-width="80px" size="mini">
               <el-form-item label="上报内容">
                 {{form.content}}
@@ -177,20 +185,36 @@
               </el-form-item>
               <el-form-item label="处理状态">
                 <span :class="[ form.auditStatus == '未处理' ? 'unHandle' : 'handling' ]">
-                  {{form.auditStatus}}
-                </span>
-                
+                  {{form.auditStatus}} 
+                </span> 
               </el-form-item>
             </el-form>
-            <viewer :images="slide1">
-              <img :src="img" :key="index" v-for="(img, index) in slide1">
+            <viewer :images="form.pictureUrls" class="clearfix">
+              <img :src="img" :key="index" v-for="(img, index) in form.pictureUrls">
             </viewer>
+           <div class="work-order-details-list-split" v-if="prodetail.list!=null&&prodetail.list.length >0"></div>
+           <div class="splitBox" v-for="(child, wrapindex) in prodetail.list" :key="wrapindex">
+              <div class="work-order-details-list-title">{{child.title}}</div>
+              <el-form :model="form" abel-width="80px" size="mini">
+                <el-form-item
+                  v-for="(filed, index2) in child.list"
+                  :key="index2"
+                  :label="filed.name"
+                >{{filed.value}}</el-form-item>
+              </el-form>
+              <!--图片路径-->
+              <viewer :images="child.prictureUrls" class="clearfix">
+                <img :src="img" :key="index" v-for="(img, index) in child.prictureUrls">
+              </viewer>
+              <!-- 分割线 -->
+              <div class="work-order-details-list-split" v-if="wrapindex !== prodetail.list.length - 1"></div>
+            </div>
+            <div style="border-bottom: 1px solid #ddd;"></div>
             <div slot="footer" class="dialog-footer">
               <el-button @click="visible = false">关 闭</el-button>
             </div>
           </el-dialog>
-  
-  
+       
        </div>
 </template> 
 <script>
@@ -201,11 +225,12 @@ import RmOrgSelect from "@/components/rm/orgselect";
 import RmUserSelect from "@/components/rm/userselect";
 import RmAreaSelect from "@/components/rm/areaselect";
 import { getToken } from '@/utils/auth' 
-import {save} from '@/api/work/proTask.js'
+import {save,acttaskinfo} from '@/api/work/proTask.js'
+import RmMap from "@/components/rm/map";
+import { getorgtrees,getSynergOffice,getLoweroffice,findOfficeUserstree} from '@/api/res/management.js'
 
-import { getorgtrees,getSynergOffice,getLoweroffice} from '@/api/res/management.js'
 export default {
-  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
+  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect,RmMap },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -218,7 +243,11 @@ export default {
   },
   data() {
     return {
+      clientHeight: 0,
       listLoading:true,
+      isMapShow:false,
+      marks:true,
+      map:null,
       visible: false,
       visibleOrder:false,
       checked: false,
@@ -228,8 +257,14 @@ export default {
       proTaskFrom:{
         name : null,
         reportId:null,
-        source : '巡河上报'
+        source : 'report'
       },
+      prodetail: {
+        list:null,
+        handel:{
+          btnlist:null
+        }
+      }, 
       officeData:{},
       defaultProps: {
         children: "children",
@@ -254,7 +289,8 @@ export default {
         reportTime: null,
         auditPerson: null,
         auditDate: null,
-        auditStatus: ''
+        auditStatus: '',
+        pictureUrls : null
       },
       uploaddata: {
         bizId: null,
@@ -281,6 +317,14 @@ export default {
   created() {
     this.loadLeftTree();
   },
+  mounted(){
+    const tempH = this.getHeight(document.getElementsByClassName('app-container')[0]) - 210
+    this.clientHeight = tempH
+    const that = this
+    window.onresize = function temp() {
+      that.clientHeight = that.getHeight(document.getElementsByClassName('app-container')[0]) - 210
+    }
+  },
   methods: {
     loadLeftTree() {
       getorgtrees().then((res) => {
@@ -291,16 +335,41 @@ export default {
         this.unit = data[0].label
         this.companyID = data[0].id
         this.getList()
-     
       }).catch((errorRes) => {
         console.error("errror:::::::",errorRes)
-        this.$message({
-          type: "error",
-          message: "网络错误!"
-        })
+
       })
     },
-
+     // 点击顶部的按钮 切换到地图
+    changeMap() {
+      if (this.isMapShow && this.marks) {
+        this.isMapShow = false;
+        this.marks = true;
+      } else if (this.isMapShow && this.marks == false) {
+        this.isMapShow = false;
+        this.marks = true;
+      } else {
+        this.isMapShow = true;
+        this.marks = true;
+      }
+    },
+    //定位
+    showFeature(id, type, lng, lat) {
+      if (this.isMapShow) {
+        this.isMapShow = false;
+        this.marks = true;
+      } else {
+        this.isMapShow = true;
+        this.marks = false;
+      }
+      var lng = lng;
+      var lat = lat;
+      var self=this;
+       setTimeout(() => {
+        //console.log("self.map",self.map)
+        self.map.showFeature({ id: id, gtype: type, name: '上报', lng: lng, lat: lat })
+      }, 500);
+    },
     getList() {
       this.listLoading = true;
       // console.log("this.listQuery::::",this.listQuery)
@@ -310,11 +379,11 @@ export default {
         this.total = response.data.count;
       });
       //相关部门数据
-      getSynergOffice({id:'35cd0bbf1fe8402897f084f83b3918e2'}).then(response =>{
+      getSynergOffice().then(response => {
         //console.log('相关部门数据：',response.data);
         this.synergOfficeList = response.data.list
       });
-      getLoweroffice().then(response =>{
+      getLoweroffice().then(response => {
        // console.log('接单单位数据：',response.data);
        this.lowerofficeList = response.data.list
       });
@@ -334,9 +403,9 @@ export default {
       save(this.proTaskFrom).then(response => {
           // 上传到服务器
           this.uploaddata.bizId = response.data.id;
+          console.log('response.data.id:',  this.uploaddata.bizId);
           console.log('保存:', this.$refs.upload.uploadFiles.length);
           if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
-            	
            // 上传到服务器
               this.$refs.upload.submit();         
           }  
@@ -349,8 +418,9 @@ export default {
         }).catch(error => {
           this.listLoading = false;
         });
-    },   // 点击生成工单
-      addOrder(id) {/*  */
+    },
+    // 点击生成工单
+      addOrder(id) { /*  */
       this.visibleOrder = true;
        console.log("id", id);
        this.proTaskFrom.reportId = id
@@ -359,11 +429,13 @@ export default {
       this.visible = true;
       console.log("idx", idx);
       get(idx).then(response => {
-        this.form = response.data;
+        this.form = response.data.report;
         const imagelist = this.form.pictureUrls;
-        this.slide1 = imagelist;
-
-        console.log("imagelist",imagelist);
+        this.prodetail = response.data; 
+        this.slide1 = imagelist; 
+        
+        console.log("this.prodetail.list::::",this.prodetail);
+        console.log("this.prodetail.list::::",this.prodetail.list);
         // imagelist.forEach((value, index) => {
         //   this.slide1.push(
         //     {
@@ -385,19 +457,13 @@ export default {
       //选择的是哪个单位
       this.unit = data.label
       this.companyID = data.id
-      if(this.checked){
+      if (this.checked){
           this.listQuery.officeId = data.id
           this.listQuery.areaId = null
-          
-      }else{
+      } else {
         this.listQuery.areaId = data.area.id
         this.listQuery.officeId = null
-          
-      }
-     
-     // console.log('this.form.unit - label,officeId', this.unit,data.area.id)
-
-      //this.listQuery['office.id'] = data.id
+      } 
       this.getList()
     },
     handleSuccess() {
@@ -441,6 +507,9 @@ export default {
 }
 .app-container > .el-container {
   min-height: 86vh;
+  .el-container {
+    width: 80%;
+  }
 }
 .app-container {
   /deep/ .el-form-item--mini.el-form-item {
@@ -569,7 +638,7 @@ export default {
     }
   }
   .noData-divBox {
-    padding: 14px 0 10 0;
+    padding: 14px 0px 10px 0px;
     width: 88%;
     margin: 0 auto;
     text-align: left;
@@ -665,3 +734,94 @@ export default {
 
 </style>
 
+<style lang="scss" scoped>
+/*打印按钮*/
+.printBtn {
+  position: absolute;
+  right: 20px;
+}
+/*layout弹窗里面的自定义按钮*/
+.customerBtn {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translate(-50%);
+}
+.command-user {
+  margin: 5px 8px;
+  height: 34px;
+  min-width: 74px;
+  font-weight: 500;
+  border-radius: 3px;
+  padding: 5px 10px;
+  line-height: 24px;
+  display: inline-block;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  background-color: #279cf5;
+  float: left;
+  i {
+    font-size: 15px;
+    cursor: pointer;
+  }
+  i:hover {
+    color: #d9534f;
+  }
+}
+.command-mian-body-image {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.app-container > .el-container {
+  min-height: 86vh;
+}
+.app-container {
+  /deep/ .el-dialog__body {
+    max-height: 650px;
+  }
+  .city {
+    color: #35acf2;
+  }
+  .country {
+    color: #3dc87e;
+  }
+  /deep/ .el-form-item--mini.el-form-item {
+    margin-bottom: 0px;
+  }
+  .work-order-details-list-title {
+    color: #279cf5;
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 2px solid #279cf5;
+    height: 14px;
+    line-height: 14px;
+  }
+  .work-order-details-list-split {
+    border-top: 10px #f0f3f5 solid;
+    margin: -1px -20px 0 -20px;
+    padding: 0px 20px 0px 20px;
+  }
+  .splitBox:not(:first-of-type) {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  /deep/ .el-dialog__body {
+    img {
+      width: 24%;
+      max-height: 15em;
+      margin: 0.5em 0.2em 0 0;
+      float: left;
+    }
+    video,
+    audio {
+      width: 49%;
+      max-height: 15em;
+      margin: 0.5em 0.2em 0 0;
+      float: left;
+    }
+  }
+}
+</style>

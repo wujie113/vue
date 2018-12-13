@@ -3,10 +3,12 @@
         <el-button icon="el-icon-location" size="mini" @click="centerView()">定位</el-button>
         <el-button icon="el-icon-location" size="mini" @click="drawRiverLine('001','001责任段')">001责任段</el-button>
         <el-button icon="el-icon-location" size="mini" @click="drawRiverLine('002','002责任段')">002责任段</el-button>
+        <el-button icon="el-icon-location" size="mini" @click="selectRiverLine()">选择责任段</el-button>
         <el-button icon="el-icon-location" size="mini" @click="removeRiverLine('002')">清除002责任段</el-button>
         <el-button icon="el-icon-location" size="mini" @click="drawArea('003','003湖(多边形)')">003湖(多边形)</el-button>
-        <el-button icon="el-icon-location" size="mini" @click="showFeature('gd003','order')">展示工单</el-button>
+        <el-button icon="el-icon-location" size="mini" @click="showFeature('gd003','tousu')">展示工单</el-button>
         <el-button icon="el-icon-location" size="mini" @click="showTrail('gj003')">展示轨迹</el-button>
+        <el-button icon="el-icon-location" size="mini" @click="playTrail('gj003')">回放轨迹</el-button>
         <br> <span>{{lineLength}},{{wkt}}</span>
         <rm-map v-model="map"></rm-map>
     </div>
@@ -38,6 +40,11 @@
 
                 this.map.removeLine({ id: id, name: name }, callback)
             },
+            selectRiverLine() {
+                 var lng = null// '113.916'
+                var lat = '27.70'
+                this.map.selectLine({ id: ["001","002"], lng: lng, lat: lat })
+            },
             drawRiverLine(id, name) {
                 // var id = '001'
                 var self = this
@@ -67,14 +74,22 @@
             showFeature(id, type) {
                 var lng = '113.916'
                 var lat = '27.70'
-                this.map.showFeature({ id: id, gtype: type, name: '测试工单',lng: lng,lat: lat })
+                console.log("this.map",this.map)
+                this.map.showFeature({ id: null, gtype: type, name: '测试工单', lng: lng, lat: lat })
             },
             showTrail(id) {
                 var lng = '113.01'
                 var lat = '28.00'
-                 var wkt = 'LINESTRING(113.01 28.00,113.01 27.89)'
+                var wkt = 'LINESTRING(113.01 28.00,113.01 27.99,113.06 27.95,113.08 27.95,113.09 27.95,113.12 27.95)'
                 //var wkt2 = 'POINT(113.916 27.71)'
-                this.map.showTrail({ id: id, wkt: wkt, name: '测试轨迹',lng: lng,lat: lat })
+                this.map.showTrail({ id: id, wkt: wkt, name: '测试轨迹', lng: lng, lat: lat })
+            },
+            playTrail(id) {
+                //var lng = '113.01'
+               // var lat = '28.00'
+               // var wkt = 'LINESTRING(113.01 28.00,113.01 27.99,113.06 27.95,113.08 27.95,113.09 27.95,113.12 27.95)'
+                //var wkt2 = 'POINT(113.916 27.71)'
+                this.map.playTrail({ id: id })
             }
         }
     }

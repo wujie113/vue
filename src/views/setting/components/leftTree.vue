@@ -1,5 +1,5 @@
 <template>
-  <div class="panel">
+  <div class="panel" :style="{ minHeight: panelMinHeight + 'vh' }">
     <div class="panelHeading">
       <div>
         <svg-icon icon-class="tree" />{{titleName}}
@@ -16,8 +16,18 @@
         </button>
       </div>
     </div>
-    <div class="source panel-body">
-      <el-tree :data="dataArray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current></el-tree>
+    <div class="source panel-body" :style="{ height: 'calc(' + panelbodyHeight + 'vh - 41px)' }">
+      <el-tree
+        :data="dataArray"
+        :props="defaultProps"
+        @node-click="handleNodeClick"
+        empty-text="暂无数据"
+        highlight-current
+        node-key="id"
+        ref="tree"
+        :show-checkbox="showCheckbox"
+        @check="checkBoxClick"
+      ></el-tree>
     </div>
   </div>
   <!-- <div>
@@ -40,6 +50,7 @@ export default {
         children: "children",
         label: "label"
       },
+
     }
   },
   props: {
@@ -58,9 +69,26 @@ export default {
     isShowTabbar: {
       type: Boolean,
       required: true
+    },
+    showCheckbox: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    panelMinHeight: {
+      type: Number,
+      required: false,
+      default: 81
+    },
+    panelbodyHeight: {
+      type: Number,
+      required: false,
+      default: 86
     }
   },
-
+  mounted(){
+    this.$emit("input",this.$refs.tree)
+  },
   methods: {
     getMsg() {
       this.$emit("getMsgs", this.msg)
@@ -76,6 +104,9 @@ export default {
     },
     handleNodeClick(data) {
       this.$emit('areaData', data)
+    },
+    checkBoxClick(a, b) {
+      this.$emit('checkBoxBtn', a, b)
     }
   }
 }
@@ -83,7 +114,7 @@ export default {
 <style lang="scss" scoped>
 .panel {
   margin-bottom: 0;
-  min-height: 86vh;
+  /*min-height: 86vh;*/
   overflow: auto;
   background-color: #fff;
   border: 1px solid transparent;
@@ -114,11 +145,11 @@ export default {
     }
   }
   .source {
-    padding: 24px;
+    padding: 10px;
   }
   .panel-body {
     overflow: auto;
-    height: calc(86vh - 41px);
+    /*height: calc(86vh - 41px);*/
   }
 }
 </style>

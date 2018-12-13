@@ -1,6 +1,8 @@
 <template>
   <div class="login-container">
-
+    <div class="systemName">
+      <img src="../../../static/img/zhch_mz.png" alt="智慧河长管理系统">
+    </div>
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
@@ -14,7 +16,7 @@
         </span>
         <el-input
           v-model="loginForm.username"
-          :placeholder="$t('login.username')"
+          placeholder="请输入账号"
           name="username"
           type="text"
           auto-complete="on"
@@ -28,7 +30,7 @@
         <el-input
           :type="passwordType"
           v-model="loginForm.password"
-          :placeholder="$t('login.password')"
+          placeholder="请输入密码"
           name="password"
           auto-complete="on"
           @keyup.enter.native="handleLogin" />
@@ -39,11 +41,11 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
-      <div class="tips">
-        <span>{{ $t('login.username') }} : admin</span>
-        <span>{{ $t('login.password') }} : admin</span>
-        <!-- <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span> -->
-      </div>
+      <!--<div class="tips">-->
+        <!--<span>{{ $t('login.username') }} : admin</span>-->
+        <!--<span>{{ $t('login.password') }} : admin</span>-->
+         <!--<span>{{ $t('login.password') }} : {{ $t('login.any') }}</span> -->
+      <!--</div>-->
       <!-- <div class="tips">
         <span style="margin-right:18px;">{{ $t('login.username') }} : editor</span>
         <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
@@ -81,8 +83,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -211,6 +213,14 @@ $light_gray:#eee;
   height: 100%;
   width: 100%;
   background-color: $bg;
+  background-image: url("../../../static/img/bj.jpg");
+  .systemName {
+    text-align: center;
+    margin-top: 20vh;
+    img {
+      width: 520px;
+    }
+  }
   .login-form {
     position: absolute;
     left: 0;
@@ -218,7 +228,11 @@ $light_gray:#eee;
     width: 520px;
     max-width: 100%;
     padding: 35px 35px 15px 35px;
-    margin: 120px auto;
+    margin: 20px auto 120px;
+    background-color: rgba(45, 58, 75, 0.7);
+    /deep/ .el-form-item__content {
+      background-color: #283443;
+    }
   }
   .tips {
     font-size: 14px;

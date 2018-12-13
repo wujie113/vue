@@ -8,7 +8,7 @@ export function	saveusers(data) {
 		data
 	})
 }	
-	//获取已经选择的人员信息
+//获取已经选择的人员信息
 export function	getmanagerlist(params) {   
 		return request({
 			url: 'api/res/management/managementuserlist',
@@ -16,9 +16,9 @@ export function	getmanagerlist(params) {
 			params
 		})
 	}
-		//删除选择的人员
+//删除选择的人员
 export function	deluser(idx) {  
-	const params={ids:idx}
+	const params = { ids: idx }
 	console.log("params:::",params);
 	return request({
 		url: 'api/res/management/del',
@@ -41,30 +41,44 @@ export function	findOfficeUserstree(params) {
 		params
 	})
 }
-
+// 组织机构树,包含人员
+export function	findOrgtreesandusers(params) {
+  return request({
+    url: '/api/res/management/orgtreesandusers',
+    method: 'get',
+    params
+  })
+}
 export function getorgtrees(params) {
 	return request({
 	  url: "/api/res/management/orgtrees",
 	  method: "get",
 	  params
 	})
-  }
+}
 		
   export function getSynergOffice(params) {
-	return request({
-	  url: "/api/res/management/synerg/office",
-	  method: "get",
-	  params
-	})
+    return request({
+      url: "/api/res/management/synerg/office",
+      method: "get",
+      params
+    })
 	}
 	
-  export function getLoweroffice(params) {
-	return request({
-	  url: "/api/res/management/loweroffice",
-	  method: "get",
-	  params
-	})
-  }
+export function getLoweroffice(params) {
+  return request({
+    url: "/api/res/management/loweroffice",
+    method: "get",
+    params
+  })
+}
+// 曝光保存
+export function saveExposure(params) {
+  return request({
+    url: "/api/sysMsg/saveExposure",
+    method: "post",
+    data: params
+  })
+}
 
 
-	

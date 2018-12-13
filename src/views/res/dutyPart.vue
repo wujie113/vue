@@ -115,6 +115,8 @@ import RmUserSelect from "@/components/rm/userselect";
 import RmAreaSelect from "@/components/rm/areaselect";
 import RmRiverSelect from "@/components/rm/riverselect";
 import { getToken } from "@/utils/auth";
+import { file } from '@/api/imgUplodFile'
+
 export default {
   components: {
     Pagination,
@@ -205,7 +207,7 @@ export default {
       });
     },
     formatterthis(row){
-      return row.lng+","+ row.lat
+      return row.lng + "," + row.lat
     },
     handleFilter() {
       this.listQuery.pageNo = 1;
@@ -241,13 +243,21 @@ export default {
             this.$refs.upload.uploadFiles != undefined &&
             this.$refs.upload.uploadFiles.length > 0
           ) {
-            this.$refs.upload.submit();
+            // this.$refs.upload.submit();
+            // 上传到服务器
+            const imgParams =  '&bizType=' + this.uploaddata.bizType + '&bizId=' + this.uploaddata.bizId
+
+            file(imgParams, this.$refs.upload.uploadFiles).then(res => {
+              // console.log('file----res', res)
+            }).catch((errorRes) => {})
           } else {
             this.getList();
           }
+          this.listLoading = false
+
         })
         .catch(error => {
-          this.listLoading = false;
+          this.listLoading = false
         });
     },
     handleSuccess() {

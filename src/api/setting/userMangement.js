@@ -4,14 +4,14 @@ export function tree(params) {
     url: "api/res/management/areaofficetrees",
     method: "get",
     params
-  });
+  })
 }
 export function tableList(params) {
   return request({
     url: "/api/sys/user/list",
     method: "get",
     params
-  });
+  })
 }
 
 export function Delete(params) {
@@ -19,14 +19,14 @@ export function Delete(params) {
     url: "/api/sys/user/del",
     method: "get",
     params
-  });
+  })
 }
 export function save(params) {
   return request({
     url: "/api/sys/user/save",
     method: "post",
     data: params
-  });
+  })
 }
 
 export function modifyPwd(params) {
@@ -34,7 +34,7 @@ export function modifyPwd(params) {
     url: "/api/sys/user/pwd",
     method: "post",
     data: params
-  });
+  })
 }
 
 export function modifyState(params) {
@@ -42,7 +42,7 @@ export function modifyState(params) {
     url: "/api/sys/user/state",
     method: "post",
     data: params
-  });
+  })
 }
 
 export function getPostState(params) {
@@ -50,7 +50,7 @@ export function getPostState(params) {
     url: "/api/sys/office/dutybyofficeid",
     method: "get",
     params
-  });
+  })
 }
 
 

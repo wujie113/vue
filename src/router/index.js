@@ -7,10 +7,10 @@ Vue.use(Router)
 import Layout from '@/views/layout/Layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+/* import componentsRouter  from './modules/components'
+import chartsRouter   from './modules/charts'
+import tableRouter   from './modules/table'
+import nestedRouter from './modules/nested' */
 
 /** note: Submenu only appear when children.length>=1
  *  detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -30,6 +30,7 @@ import nestedRouter from './modules/nested'
     noCache: true                if true ,the page will no be cached(default is false)
   }
 **/
+
 // constantRouterMap: 代表那些不需要动态判断权限的路由，如登录页、404、等通用页面。
 // asyncRouterMap： 代表那些需求动态判断权限并通过 addRouters 动态添加的页面。
 // 不需要动态判断权限的路由
@@ -84,29 +85,32 @@ export const constantRouterMap = [
     redirect: '/resource/resource',
     name: 'river',
     meta: { title: '资源管理', icon: 'kaohe' },
+    alwaysShow: true,
     children: [
       
+      // {
+      //   path: 'river2',
+      //   name: 'river2',
+      //   component: () => import('@/views/res/river'),
+      //   meta: { title: '河流管理', noCache: true }
+      // }, {
+      //   path: 'drainage',
+      //   name: 'drainage',
+      //   component: () => import('@/views/res/drainage'),
+      //   meta: { title: '水系管理', noCache: true }
+      // } ,
       {
-        path: 'river2',
-        name: 'river2',
-        component: () => import('@/views/res/river'),
-        meta: { title: '河流管理', noCache: true }
-      }, {
-        path: 'drainage',
-        name: 'drainage',
-        component: () => import('@/views/res/drainage'),
-        meta: { title: '水系管理', noCache: true }
-      } , {
         path: 'lakeb',
         name: 'lakeb',
         component: () => import('@/views/res/lakebase'),
         meta: { title: '湖泊区域', noCache: true }
-      } , {
-        path: 'duty',
-        name: 'duty',
-        component: () => import('@/views/res/dutyPart'),
-        meta: { title: '责任段', noCache: true }
-      } 
+      },
+      // {
+      //   path: 'duty',
+      //   name: 'duty',
+      //   component: () => import('@/views/res/dutyPart'),
+      //   meta: { title: '责任段', noCache: true }
+      // }
     ]
   },
   {
@@ -114,25 +118,25 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/work/work',
     name: 'work',
-    meta: { title: '工单管理', icon: 'kaohe' },
+    meta: { title: '工单管理', icon: 'complaint' },
     children: [    
       {
         path: 'complaint',
         name: 'complaint',
         component: () => import('@/views/work/complaint'),
-        meta: { title: '投诉管理', icon: 'complaint' }
+        meta: { title: '投诉管理' }
       },
       {
         path: 'report',
         name: 'report',
         component: () => import('@/views/work/report'),
-        meta: { title: '巡河上报', icon: 'complaint' }
+        meta: { title: '巡河上报' }
       },
       {
         path: 'proTask',
         name: 'proTask',
         component: () => import('@/views/work/proTask'),
-        meta: { title: '任务工单', icon: 'complaint' }
+        meta: { title: '任务工单' }
       }
     ]
   },
@@ -141,7 +145,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/regula/regula',
     name: 'regula',
-    meta: { title: '巡河图监管', icon: 'kaohe' },
+    meta: { title: '巡河一张图', icon: 'kaohe' },
     children: [ 
       {
         path: 'rivergula',
@@ -171,6 +175,22 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/statisticalAnalysis',
+    alwaysShow: true,
+    component: Layout,
+    redirect: '/statisticalAnalysis/statisticalAnalysis',
+    name: 'statisticalAnalysis',
+    meta: { title: '统计分析', icon: 'fenxi' },
+    children: [
+      {
+        path: 'assessmentStatistics',
+        name: 'assessmentStatistics',
+        component: () => import('@/views/statisticalAnalysis/assessmentStatistics'),
+        meta: { title: '考核统计', noCache: false }
+      }
+    ]
+  },
+  {
     path: '/setting',
     component: Layout,
     redirect: '/setting/setting',
@@ -197,7 +217,12 @@ export const constantRouterMap = [
         path: 'addressBook',
         name: 'addressBook',
         component: () => import('@/views/setting/addressBook'),
-        meta: { title: '通讯录' }
+        meta: { title: '通 讯 录' }
+      }, {
+        path: 'msg',
+        name: 'msg',
+        component: () => import('@/views/setting/msg'),
+        meta: { title: '通知公告' }
       },
       {
         path: 'unitRole',
@@ -213,62 +238,7 @@ export const constantRouterMap = [
       // }
     ]
   },
-  {
-    path: '/form',
-    name: 'Form1',
-    component: Layout,
-    hidden: false,
-    meta: {
-      title: 'Form',
-      icon: 'toushu'
-    },
-    children: [
-      {
-        path: 'map',
-        name: 'testMap',
-        component: () => import('@/views/test/map'),
-        meta: { title: '地图' }
-      },
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form' }
-      },
-      {
-        path: 'demo',
-        name: '示例',
-        component: () => import('@/views/form/demo'),
-        meta: { title: '表单示例' }
-      },
-      {
-        path: 'gencode2',
-        name: '代码自动生成',
-        component: () => import('@/views/test/list'),
-        meta: { title: '代码自动生成示例2' }
-      }
-      ,
-      {
-        path: 'layer',
-        name: 'dialog',
-        component: () => import('@/views/form/layer'),
-        meta: { title: 'dialog' }
-      }
-    ]
-  },
-  {
-    path: '/documentation',
-    component: Layout,
-    redirect: '/documentation/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'documentation', icon: 'documentation', noCache: true }
-      }
-    ]
-  },
+
   {
     path: '/guide',
     component: Layout,
@@ -285,11 +255,6 @@ export const constantRouterMap = [
   }
 ]
 
-export default new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
-})
 // 需求动态判断权限并通过 addRouters 动态添加的页面
 export const asyncRouterMap = [
   {
@@ -325,23 +290,10 @@ export const asyncRouterMap = [
     ]
   },
 
-  {
-    path: '/icon',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/svg-icons/index'),
-        name: 'Icons',
-        meta: { title: 'icons', icon: 'icon', noCache: true }
-      }
-    ]
-  },
-
   /** When your routing table is too long, you can split it into small modules**/
   // componentsRouter,
   // chartsRouter,
-  nestedRouter,
+  // nestedRouter,
   // tableRouter,
 
   {
@@ -549,5 +501,88 @@ export const asyncRouterMap = [
     ]
   },
 
+  {
+    path: '/icon',
+    component: Layout,
+    hidden: false,
+    meta: {
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/svg-icons/index'),
+        name: 'Icons',
+        meta: { title: 'icons', icon: 'icon', noCache: true }
+      }
+    ]
+  },
+
+  {
+    path: '/form',
+    name: 'Form1',
+    component: Layout,
+    hidden: false,
+    meta: {
+      title: 'Form',
+      icon: 'toushu',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'map',
+        name: 'testMap',
+        component: () => import('@/views/test/map'),
+        meta: { title: '地图' }
+      },
+      {
+        path: 'index',
+        name: 'Form',
+        component: () => import('@/views/form/index'),
+        meta: { title: 'Form' }
+      },
+      {
+        path: 'demo',
+        name: '示例',
+        component: () => import('@/views/form/demo'),
+        meta: { title: '表单示例' }
+      },
+      {
+        path: 'gencode2',
+        name: '代码自动生成',
+        component: () => import('@/views/test/list'),
+        meta: { title: '代码自动生成示例2' }
+      },
+      {
+        path: 'layer',
+        name: 'dialog',
+        component: () => import('@/views/form/layer'),
+        meta: { title: 'dialog' }
+      }
+    ]
+  },
+  {
+    path: '/documentation',
+    component: Layout,
+    redirect: '/documentation/index',
+    hidden: false,
+    meta: {
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/documentation/index'),
+        name: 'Documentation',
+        meta: { title: 'documentation', icon: 'documentation', noCache: true }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
+export default new Router({
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap,
+  base: 'hzmis'
+})

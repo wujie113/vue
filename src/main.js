@@ -34,7 +34,7 @@ Vue.use(Viewer, {
 // defalut install
 
 Vue.use(Element, {
-  size: Cookies.get('size') || 'medium', // set element-ui default size
+  size: 'mini', // set element-ui default size ----medium
   i18n: (key, value) => i18n.t(key, value)
 })
 import plugin from './components/plugins'

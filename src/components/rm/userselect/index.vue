@@ -13,7 +13,8 @@
   :value-format="format" 
   placeholder="选择用户..." 
   @input="handleInput" 
-  :normalizer="normalizer"/>
+  :normalizer="normalizer"
+  />
 </template> 
 <script>
   // import the component

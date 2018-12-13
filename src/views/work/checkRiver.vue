@@ -31,7 +31,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" /> 
   
   
-  <el-dialog :visible.sync="visible" title="编辑">
+  <el-dialog :visible.sync="visible" title="编辑" :modal-append-to-body="false">
   	<el-form :model="form">
 			<el-form-item label="专员">
 				<el-input v-model="form.专员"/>

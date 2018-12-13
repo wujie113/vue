@@ -12,6 +12,7 @@
     placeholder="选择部门..."
     @input="handleInput"
     :normalizer="normalizer"
+    :defaultExpandLevel="defaultExpand"
   />
 </template> 
 <script>
@@ -41,6 +42,11 @@
         required: false,
         type: Boolean,
         default: false
+      },
+        defaultExpand: {
+        required: false,
+        type: Number,
+        default: 0
       }
     },
     data() {
@@ -77,7 +83,7 @@
         //this.$emit('update:org',node)
       },
       loadAreas({ action, parentNode, callback }) { 
-        console.log(action, parentNode, this.org)
+        console.log(action, parentNode, callback)
         var self = this
         var pid = null
         if (action !== "LOAD_ROOT_OPTIONS") {
@@ -94,6 +100,11 @@
               return
             }
             self.areas = list
+            if(self.areas.children.length>0){
+              areas = open  
+            }else{
+              areas = close
+            }
             callback()
           })
           .catch(error => {

@@ -204,9 +204,10 @@ ul,li,p{
 
 // 这里是我们自定义的通用样式-----start
 .el-dialog__wrapper {
-  position: absolute;
+  //position: absolute;
   .el-dialog {
     .el-dialog__headerbtn {
+      // 设置关闭的 'x' 图形居中
       top: 14px;
     }
     // 改写 ====   把element的dialog组件上下左右居中显示
@@ -280,7 +281,7 @@ ul,li,p{
 
 .el-container {
   .el-aside {
-    width: 20% !important;
+    width: 25% !important;
     margin-right: 1%;
   }
   .el-header,
@@ -293,14 +294,16 @@ ul,li,p{
     width: 100%;
   }
   .el-header {
-    margin-bottom: 1%;
+    margin-bottom: 10px;
+  }
+  .el-header, .el-main {
     .topTitle {
       text-align: left;
       border-bottom: 1px solid #ccc;
       padding: 10px 0;
     }
     .filter-container {
-      padding: 25px 0 !important;
+      padding: 25px 0;
     }
   }
 }

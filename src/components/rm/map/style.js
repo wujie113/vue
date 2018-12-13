@@ -1,16 +1,16 @@
 /**用的的所有样式定义 */
 import { Polygon, MultiPoint } from 'ol/geom.js'
-import { Circle, Fill, Stroke, Style, Text,Icon } from 'ol/style.js'
+import { Circle, Fill, Stroke, Style, Text, Icon } from 'ol/style.js'
 /**vector对象显示样式 */
 export const vectorStyleFunc = function(f, resolution) {
-     var lineStyle = new Style({
+    var lineStyle = new Style({
         stroke: new Stroke({
             color: 'blue',
             width: 2
         }),
         fill: new Fill({
             color: 'rgba(0,0,255,0.2)'
-        }) 
+        })
     })
     //console.log(resolution)
     if (resolution <= 0.0000429) {
@@ -45,7 +45,7 @@ export const vectorStyleFunc = function(f, resolution) {
         }
     })
 
-    return [lineStyle,pointStyle]
+    return [lineStyle, pointStyle]
 }
 
 /**vector对象被选中样式 */
@@ -57,6 +57,16 @@ export const selectedStyleFunc = function(feature, resolution) {
         }),
         fill: new Fill({
             color: 'rgba(255,0,0,0.8)'
+        }),
+        text: new Text({
+            text: feature.get('name'),
+            fill: new Fill({
+                color: '#000000'
+            }),
+            stroke: new Stroke({
+                color: '#ffffff',
+                width: 1
+            })
         })
     })
 }
@@ -124,16 +134,23 @@ export const searchSelectStyleFunc = function(feature, resolution) {
 
 /**查询结果样式 */
 export const searchResultStyleFunc = function(feature, resolution) {
+    //判断不通过的对象类型，构造不同的显示
+    var gtype = feature.get('gtype')
+    if (gtype === 'tousu') {
+        return tousuStyleFunc(feature, resolution)
+    } else if (gtype === 'trail') {
+        return trailStyleFunc(feature, resolution)
+    }
     var style = new Style({
         fill: new Fill({
             color: 'rgba(255, 0, 0, 0.2)'
         }),
         stroke: new Stroke({
             color: '#ff0000',
-            width: 2
+            width: 2.5
         }),
         image: new Circle({
-            radius: 7,
+            radius: 3,
             fill: new Fill({
                 color: '#ff0000'
             })
@@ -152,15 +169,12 @@ export const searchResultStyleFunc = function(feature, resolution) {
     //点样式 
     var style2 = new Style({
         image: new Circle({
-            radius: 5,
+            radius: 3,
             fill: new Fill({
-                color: '#f00'
-            }),
-            stroke: new Stroke({
-                color: '#ffffff',
-                width: 1
+                color: '#ff0000'
             })
-        }), geometry: function(f) {
+        }),
+        geometry: function(f) {
             var coordinates = f.getGeometry().getCoordinates()
             if (f.getGeometry() instanceof Polygon) {
                 coordinates = coordinates[0]
@@ -169,6 +183,128 @@ export const searchResultStyleFunc = function(feature, resolution) {
         }
     })
     return [style, style2]
+}
+
+/** 投诉事件 */
+export const tousuStyleFunc = function(feature, resolution) {
+    var style = new Style({
+        stroke: new Stroke({
+            color: '#ff0000',
+            width: 4
+        }),
+        image: new Icon({
+            anchor: [0.5, 48],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            size: [48, 48],
+            src: '/static/map/icon/tousu.png'
+        }),
+        text: new Text({
+            text: feature.get('name'),
+            fill: new Fill({
+                color: '#000000'
+            }),
+            stroke: new Stroke({
+                color: '#ffffff',
+                width: 1
+            })
+        })
+    })
+
+    return style
+}
+
+export const trailGeoMarkerStyle = new Style({ 
+    image: new Circle({
+        radius: 12,
+        fill: new Fill({
+            color: '#fff'
+        }), 
+        stroke: new Stroke({
+            color: '#00f',
+            width: 3
+        })
+    }),
+    text: new Text({
+        text: 'Go',
+        fill: new Fill({
+            color: '#000000'
+        }) 
+    })
+})
+/** 轨迹事件 */
+export const trailStyleFunc = function(feature, resolution) {
+    var type = feature.get('type')
+    var styles = {
+        "trailMarker1": null,
+        "trailStart": new Style({ 
+            image: new Icon({
+                anchor: [0.5, 48],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                size: [48, 48],
+                src: '/static/map/icon/start.png'
+            }),
+            text: new Text({
+                text: feature.get('name'),
+                fill: new Fill({
+                    color: '#000000'
+                }) 
+            })
+        }),
+        "trailEnd": new Style({ 
+            image: new Icon({
+                anchor: [0.5, 48],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                size: [48, 48],
+                src: '/static/map/icon/end.png'
+            }),
+            text: new Text({
+                text: feature.get('name'),
+                fill: new Fill({
+                    color: '#000000'
+                }) 
+            })
+        }),
+        "trail": [new Style({ 
+            stroke: new Stroke({
+                color: '#0000ff',
+                width: 4,
+                lineCap: 'square',
+                lineDash: [5, 9]
+            }),            
+            text: new Text({
+                text: feature.get('name'),
+                fill: new Fill({
+                    color: '#000000'
+                }),
+                stroke: new Stroke({
+                    color: '#ffffff',
+                    width: 1
+                })
+            })
+        }),new Style({
+            image: new Circle({
+                radius: 4,
+                fill: new Fill({
+                    color: '#fff'
+                }), 
+                stroke: new Stroke({
+                    color: '#00f',
+                    width: 2
+                })
+            }),
+            geometry: function(f) {
+                var coordinates = f.getGeometry().getCoordinates()
+                if (f.getGeometry() instanceof Polygon) {
+                    coordinates = coordinates[0]
+                }
+                return new MultiPoint(coordinates)
+            }
+        })]
+    } 
+    return  styles[type]
 }
 /**个人标注 */
 export const markerStyleFunc = function(feature, resolution) {
@@ -179,14 +315,14 @@ export const markerStyleFunc = function(feature, resolution) {
         }),
         fill: new Fill({
             color: 'rgba(255,0,0,0.2)'
-        }), 
+        }),
         image: new Icon({
             anchor: [0.5, 32],
             anchorXUnits: 'fraction',
-            anchorYUnits: 'pixels', 
-            size: [32,32],
+            anchorYUnits: 'pixels',
+            size: [32, 32],
             src: '/static/map/icon/marker.png'
-          }),
+        }),
         text: new Text({
             text: feature.get('name'),
             offsetY: 12,
@@ -209,14 +345,14 @@ export const dakadianStyleFunc = function(feature, resolution) {
         }),
         fill: new Fill({
             color: 'rgba(255,0,0,0.2)'
-        }), 
+        }),
         image: new Icon({
             anchor: [0.5, 32],
             anchorXUnits: 'fraction',
-            anchorYUnits: 'pixels', 
-            size: [32,32],
+            anchorYUnits: 'pixels',
+            size: [32, 32],
             src: '/static/map/icon/dakadian.png'
-          }),
+        }),
         text: new Text({
             text: feature.get('name'),
             offsetY: 12,
@@ -231,58 +367,16 @@ export const dakadianStyleFunc = function(feature, resolution) {
     })
 }
 export const markerSelectedStyleFunc = function(feature, resolution) {
-    var style = markerStyleFunc(feature,resolution)
-     //点样式 
-     var pointStyle = new Style({
-        image: new Circle({
-            radius: 5,
-            stroke: new Stroke({
-              color: 'rgba(0, 0, 0, 0.7)'
-            }),
-            fill: new Fill({
-              color: 'rgba(255, 255, 255, 0.2)'
-            })
-        }), geometry: function(f) {
-            var coordinates = f.getGeometry().getCoordinates()
-            if (f.getGeometry() instanceof Polygon) {
-                coordinates = coordinates[0]
-            }
-            return new MultiPoint(coordinates)
-        }
-    })
-    return [style,pointStyle]
-}
-
-export const measureStyleFunc = function(feature,resolution) {
-    var style = new Style({
-        fill: new Fill({
-          color: 'rgba(255, 255, 255, 0.2)'
-        }),
-        stroke: new Stroke({
-          color: 'rgba(0, 0, 0, 0.5)',
-          lineDash: [10, 10],
-          width: 2
-        }),
-        image: new Circle({
-          radius: 5,
-          stroke: new Stroke({
-            color: 'rgba(0, 0, 0, 0.7)'
-          }),
-          fill: new Fill({
-            color: 'rgba(255, 255, 255, 0.2)'
-          })
-        })
-      })
-
-      //点样式 
+    var style = markerStyleFunc(feature, resolution)
+    //点样式 
     var pointStyle = new Style({
         image: new Circle({
             radius: 5,
             stroke: new Stroke({
-              color: 'rgba(0, 0, 0, 0.7)'
+                color: 'rgba(0, 0, 0, 0.7)'
             }),
             fill: new Fill({
-              color: 'rgba(255, 255, 255, 0.2)'
+                color: 'rgba(255, 255, 255, 0.2)'
             })
         }), geometry: function(f) {
             var coordinates = f.getGeometry().getCoordinates()
@@ -292,5 +386,47 @@ export const measureStyleFunc = function(feature,resolution) {
             return new MultiPoint(coordinates)
         }
     })
-      return [style,pointStyle]
+    return [style, pointStyle]
+}
+
+export const measureStyleFunc = function(feature, resolution) {
+    var style = new Style({
+        fill: new Fill({
+            color: 'rgba(255, 255, 255, 0.2)'
+        }),
+        stroke: new Stroke({
+            color: 'rgba(0, 0, 0, 0.5)',
+            lineDash: [10, 10],
+            width: 2
+        }),
+        image: new Circle({
+            radius: 5,
+            stroke: new Stroke({
+                color: 'rgba(0, 0, 0, 0.7)'
+            }),
+            fill: new Fill({
+                color: 'rgba(255, 255, 255, 0.2)'
+            })
+        })
+    })
+
+    //点样式 
+    var pointStyle = new Style({
+        image: new Circle({
+            radius: 5,
+            stroke: new Stroke({
+                color: 'rgba(0, 0, 0, 0.7)'
+            }),
+            fill: new Fill({
+                color: 'rgba(255, 255, 255, 0.2)'
+            })
+        }), geometry: function(f) {
+            var coordinates = f.getGeometry().getCoordinates()
+            if (f.getGeometry() instanceof Polygon) {
+                coordinates = coordinates[0]
+            }
+            return new MultiPoint(coordinates)
+        }
+    })
+    return [style, pointStyle]
 }

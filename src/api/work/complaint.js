@@ -35,7 +35,7 @@ export function del(ids) {
 //查看回复详情 以及未回复条数
 export function showstatus(id) {
 	return request({
-		url: '/api/work/complaint/showStatus',
+		url: '/api/work/complaint/showstatus',
 		method: 'post',
 		params: { id: id }
 	})
@@ -44,7 +44,7 @@ export function showstatus(id) {
 //提交回复
 export function addComment(params) {
 	return request({
-		url: '/api/work/complaint/insertANDupdateTOstatus',
+		url: '/api/work/complaint/insertandupdatetostatus',
 		method: 'post',
 		data: params
 	})

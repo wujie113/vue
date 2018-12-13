@@ -34,10 +34,10 @@ export default {
       default: '23em'
     },
     right_chartData: {
-      type: Array,
+      type: Object,
       required: true,
       default: function() {
-        return []
+        return {}
       }
     }
   },
@@ -48,7 +48,7 @@ export default {
     init() {
       const self = this;//因为箭头函数会改变this指向，指向windows。所以先把this保存
       setTimeout(() => {
-        window.onresize = function () {
+        window.onresize = function() {
           self.chart = echarts.init(self.$refs.myChart)
           self.chart.resize()
           console.log('柱形图222')
@@ -74,10 +74,7 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: ['八矿回旋车场', '建许路口', '北汴路南站', '城南三路东站', '科技路南站',
-            '六矿', '沁园小区', '伟太公司', '森林半岛', '凤鸣路站', '河南城建学院',
-            '冬勤路北站', '豫美面粉公司', '平煤中心站', '建东站', '济南站'
-          ],
+          data: this.right_chartData.xAxis,
           name: "单位",
           axisLabel: {
             rotate: 40
@@ -88,7 +85,7 @@ export default {
           name: "数量"
         },
         series: [{
-          data: [8900, 9000, 8000, 8000, 6000, 6000, 6000, 5377, 2000, 1760, 1325, 1200, 1000, 1000, 1000, 5000],
+          data: this.right_chartData.yAxis,
           type: 'bar'
         }]
       })

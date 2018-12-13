@@ -3,7 +3,11 @@
     <el-container>
       <rm-map />
       <!-- 最大化按钮 -->
-      <div class="el-mindiv" v-show="digLogMini" @click="digLogMiniBtn">
+      <div
+        class="el-mindiv"
+        v-show="digLogMini"
+        @click="digLogMiniBtn"
+      >
         <div class="layui-layer-title">资源管理</div>
         <span class="layui-layer-setwin">
           <!-- <svg-icon icon-class="huanyuan" /> -->
@@ -15,68 +19,115 @@
     <el-container>
       <!--弹出窗口-->
       <!-- <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="beforeClose()" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" title="资源管理" top="2vh"> -->
-        <Layer title="资源管理" v-model="dialogVisible"   :dialog="false" class="layer-1" width="5000" :animation="2" :maskLayer="false" :shade= "false"
-        height="600" confirm="确定1" cancel="取消1" > 
-        <span slot="title" class="dialog-title-rm">
+      <Layer
+        title="资源管理"
+        v-model="dialogVisible"
+        :dialog="false"
+        class="layer-1"
+        width="5000"
+        :animation="2"
+        :maskLayer="false"
+        :shade="false"
+        height="600"
+        confirm="确定1"
+        cancel="取消1"
+      >
+        <span
+          slot="title"
+          class="dialog-title-rm"
+        >
           <span>资源管理</span>
           <span @click="digLogMiniBtn">
             <i class="el-icon-minus"></i>
           </span>
         </span>
-        <el-tabs v-model="activeName" type="border-card">
-          <el-tab-pane label="水闸" name="1">
+        <el-tabs
+          v-model="activeName"
+          type="border-card"
+        >
+          <el-tab-pane
+            label="水闸"
+            name="1"
+          >
             <keep-alive>
               <sluice v-if="activeName==1" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="水源地" name="2">
+          <el-tab-pane
+            label="水源地"
+            name="2"
+          >
             <keep-alive>
               <cradle v-if="activeName==2" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="水库" name="3">
+          <el-tab-pane
+            label="水库"
+            name="3"
+          >
             <keep-alive>
               <reservoir v-if="activeName==3" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="水井" name="4">
+          <el-tab-pane
+            label="水井"
+            name="4"
+          >
             <keep-alive>
               <wells v-if="activeName==4" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="农饮工程" name="5">
+          <el-tab-pane
+            label="农饮工程"
+            name="5"
+          >
             <keep-alive>
               <agricultural v-if="activeName==5" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="水电站" name="6">
+          <el-tab-pane
+            label="水电站"
+            name="6"
+          >
             <keep-alive>
               <waterSubstation v-if="activeName==6" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="取水口" name="7">
+          <el-tab-pane
+            label="取水口"
+            name="7"
+          >
             <keep-alive>
               <intake v-if="activeName==7" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="堤防" name="8">
+          <el-tab-pane
+            label="堤防"
+            name="8"
+          >
             <keep-alive>
               <riverWall v-if="activeName==8" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="泵站" name="9">
+          <el-tab-pane
+            label="泵站"
+            name="9"
+          >
             <keep-alive>
               <pump v-if="activeName==9" />
             </keep-alive>
           </el-tab-pane>
-          <el-tab-pane label="排污口" name="10">
+          <el-tab-pane
+            label="排污口"
+            name="10"
+          >
             <keep-alive>
               <sewage v-if="activeName==10" />
             </keep-alive>
           </el-tab-pane>
         </el-tabs>
-      <!-- </el-dialog> -->
- </Layer> 
+        <!-- </el-dialog> -->
+      </Layer>
     </el-container>
     <!-- <div class="wrap">
       111

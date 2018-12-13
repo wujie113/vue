@@ -42,7 +42,7 @@
       </el-col>
     </el-row>
     <!-- 单位编辑弹窗 -->
-    <el-dialog :visible.sync="unitEditDialog" width="30%" :title="dialogTitle" v-loading="dialogLoading">
+    <el-dialog :visible.sync="unitEditDialog" width="30%" :title="dialogTitle" v-loading="dialogLoading" :modal-append-to-body="false">
       <el-form ref="form" :model="form" label-width="80px" status-icon>
         <el-form-item label="所属区划">
           {{ form.area ? form.area : unitObj.label}}
@@ -130,13 +130,9 @@ export default {
         }).catch((errorRes) => {
           this.loading = false
         })
-
       }).catch(errorRes => {
         this.loading = false
-        this.$message({
-          type: "error",
-          message: "网络错误!"
-        })
+        
       })
     },
     getWay(msg) {
@@ -160,7 +156,6 @@ export default {
     },
     inputSelect(data) {
       console.log('数字字典', data)
-
     },
     // 添加单位
     addUnitBtn() {
@@ -170,7 +165,6 @@ export default {
         this.$refs.form.resetFields()
         Object.assign(this.form, this.$options.data().form)
       }
-
     },
     // 点击 单位 编辑按钮
     unitEdit(index, row) {
@@ -230,15 +224,9 @@ export default {
         this.dialogLoading = false
 
         this.unitEditDialog = false
-
-        this.$message({
-          type: "error",
-          message: "网络错误!"
-        })
       })
       console.log('params', params)
       console.log('this.form', this.form)
-
     },
     // 全选,单选
     handleSelectionChange1(val) {
@@ -276,22 +264,13 @@ export default {
             this.tableData = res.data.list
           }).catch((errorRes) => {
             this.loading = false
-            this.$message({
-              type: "error",
-              message: "网络错误!"
-            })
           })
         }).catch((errorRes) => {
           this.loading = false
-          this.$message({
-            type: "error",
-            message: "网络错误!"
-          })
         })
       }).catch(() => {
         // 用户取消删除
       })
-
     }
   }
 }

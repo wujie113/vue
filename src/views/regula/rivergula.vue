@@ -4,25 +4,62 @@
       <el-aside style="margin-right: 0;">
         <div class="panel">
           <div class="source panel-body">
-            <el-tabs v-model="activeName" @tab-click="handleClick">
-              <el-tab-pane label="河流" name="HL">
-                <el-tree :data="dataArray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current>
-                  <span class="custom-tree-node" slot-scope="{ node, data }">                    
+            <el-tabs
+              v-model="activeName"
+              @tab-click="handleClick"
+            >
+              <el-tab-pane
+                label="河流"
+                name="HL"
+              >
+                <el-tree
+                  :data="dataArray"
+                  :props="defaultProps"
+                  @node-click="handleNodeClick"
+                  empty-text="暂无数据"
+                  highlight-current
+                >
+                  <span
+                    class="custom-tree-node"
+                    slot-scope="{ node, data }"
+                  >
                     <span>{{ node.label }}</span>
                     <span>
-                      <el-button type="text" class="el-icon-tickets" size="mini" @click.stop="detailClick(data)"/>  
+                      <el-button
+                        type="text"
+                        class="el-icon-tickets"
+                        size="mini"
+                        @click.stop="detailClick(data)"
+                      />
                     </span>
                   </span>
                 </el-tree>
               </el-tab-pane>
-              <el-tab-pane label="湖泊" name="HP">
-                <el-tree :data="hpdataarray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current>
-                     <span class="custom-tree-node" slot-scope="{ node, data }">
-                        <span>{{ node.label }}</span>
-                        <span>
-                          <el-button type="text" class="el-icon-tickets" size="mini" @click="detailClick(data)"></el-button>
-                        </span>
-                      </span> 
+              <el-tab-pane
+                label="湖泊"
+                name="HP"
+              >
+                <el-tree
+                  :data="hpdataarray"
+                  :props="defaultProps"
+                  @node-click="handleNodeClick"
+                  empty-text="暂无数据"
+                  highlight-current
+                >
+                  <span
+                    class="custom-tree-node"
+                    slot-scope="{ node, data }"
+                  >
+                    <span>{{ node.label }}</span>
+                    <span>
+                      <el-button
+                        type="text"
+                        class="el-icon-tickets"
+                        size="mini"
+                        @click="detailClick(data)"
+                      ></el-button>
+                    </span>
+                  </span>
                 </el-tree>
               </el-tab-pane>
             </el-tabs>
@@ -31,15 +68,34 @@
       </el-aside>
       <el-container>
         <!--插入地图-->
-        <rm-map   v-model="map"/>
+        <rm-map v-model="map" />
       </el-container>
-    </el-container> 
-     <Layer :title="dialogtitle" v-model="showLayer2"   :dialog="false" class="layer-1" width="800" :animation="2" :maskLayer="false" :shade= "false"
-        height="600" confirm="确定" cancel="取消"> 
-       <el-tabs v-model="activeNamedetail" type="border-card" @tab-click="detailhandleClick">
+    </el-container>
+    <Layer
+      :title="dialogtitle"
+      v-model="showLayer2"
+      :dialog="false"
+      class="layer-1"
+      width="800"
+      :animation="2"
+      :maskLayer="false"
+      :shade="false"
+      height="600"
+      confirm="确定"
+      cancel="取消"
+    >
+      <el-tabs
+        v-model="activeNamedetail"
+        type="border-card"
+        @tab-click="detailhandleClick"
+      >
         <el-tab-pane name="1">
           <span slot="label"><i class="el-icon-date"></i> 基本信息</span>
-          <el-form :model="form" abel-width="80px" size="mini">
+          <el-form
+            :model="form"
+            abel-width="80px"
+            size="mini"
+          >
             <el-form-item label="河流名称">
               {{form.name}}
             </el-form-item>
@@ -55,57 +111,165 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane name="2">
-            <span slot="label"><i class="el-icon-date"></i> 周边资源</span> 
-            <keep-alive>
-                <div>
-                      <div class="filter-container duty" >  
-                          <el-select v-model="geo.listQuery.distance" clearable placeholder="查询半径"  style="width: 90px" class="filter-item">
-                          <el-option v-for="item in geo.options" :key="item.key" :label="item.label" :value="item.key" />
-                          </el-select>
-                           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="geohandleFilter">查询</el-button> 
-                        </div>
-                        <el-table v-loading="geo.geoListLoading" :data="geo.geometryList" border fit highlight-current-row row-key="id" stripe style="width: 100%">
-                          <el-table-column type="index" label="序号" width="80" />
-                          <el-table-column prop="name" label="资源类型名称" />
-                          <el-table-column prop="num" label="数量" width="100"/>  
-                        </el-table>
-                </div> 
-            </keep-alive>  
+          <span slot="label"><i class="el-icon-date"></i> 周边资源</span>
+          <keep-alive>
+            <div>
+              <div class="filter-container duty">
+                <el-select
+                  v-model="geo.listQuery.distance"
+                  clearable
+                  placeholder="查询半径"
+                  style="width: 90px"
+                  class="filter-item"
+                >
+                  <el-option
+                    v-for="item in geo.options"
+                    :key="item.key"
+                    :label="item.label"
+                    :value="item.key"
+                  />
+                </el-select>
+                <el-button
+                  class="filter-item"
+                  type="primary"
+                  icon="el-icon-search"
+                  @click="geohandleFilter"
+                >查询</el-button>
+              </div>
+              <el-table
+                v-loading="geo.geoListLoading"
+                :data="geo.geometryList"
+                border
+                fit
+                highlight-current-row
+                row-key="id"
+                stripe
+                style="width: 100%"
+              >
+                <el-table-column
+                  type="index"
+                  label="序号"
+                  width="80"
+                />
+                <el-table-column
+                  prop="name"
+                  label="资源类型名称"
+                />
+                <el-table-column
+                  prop="num"
+                  label="数量"
+                  width="100"
+                />
+              </el-table>
+            </div>
+          </keep-alive>
         </el-tab-pane>
         <el-tab-pane name="3">
           <span slot="label"><i class="el-icon-date"></i> 一河一档、一河一策</span>
-          <el-upload :action="fileup.uploadaction" :show-file-list="false" :limit="1" accept=".pdf" class="upload-demo" :before-upload="beforeUpload" :data="fileup.uploaddata" :on-success="handleSuccess" :on-error="handlError">
-            <el-button class="filter-item" type="primary">点击上传</el-button>
+          <el-upload
+            :action="fileup.uploadaction"
+            :show-file-list="false"
+            :limit="1"
+            accept=".pdf"
+            class="upload-demo"
+            :before-upload="beforeUpload"
+            :data="fileup.uploaddata"
+            :on-success="handleSuccess"
+            :on-error="handlError"
+          >
+            <el-button
+              class="filter-item"
+              type="primary"
+            >点击上传</el-button>
           </el-upload>
-          <el-table v-loading="fileup.fileListLoading" :data="fileList" border fit highlight-current-row row-key="id" stripe style="width: 100%">
-            <el-table-column type="index" label="序号" width="80" />
-            <el-table-column prop="name" label="名称" />
-            <el-table-column prop="id" label="操作" width="100">
+          <el-table
+            v-loading="fileup.fileListLoading"
+            :data="fileList"
+            border
+            fit
+            highlight-current-row
+            row-key="id"
+            stripe
+            style="width: 100%"
+          >
+            <el-table-column
+              type="index"
+              label="序号"
+              width="80"
+            />
+            <el-table-column
+              prop="name"
+              label="名称"
+            />
+            <el-table-column
+              prop="id"
+              label="操作"
+              width="100"
+            >
               <template slot-scope="scope">
-                <el-button @click="see(scope.row)" type="text" size="mini" icon="el-icon-edit" />
-                <el-button @click="delfile(scope.row)" type="text" size="mini" icon="el-icon-delete" />
+                <el-button
+                  @click="see(scope.row)"
+                  type="text"
+                  size="mini"
+                  icon="el-icon-edit"
+                />
+                <el-button
+                  @click="delfile(scope.row)"
+                  type="text"
+                  size="mini"
+                  icon="el-icon-delete"
+                />
               </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane name="4">
           <span slot="label"><i class="el-icon-date"></i> 管理人员</span>
-          <el-table v-loading="areauser.userloadinged" :data="areauser.userlisted" v-show="areauser.tbshow" border fit highlight-current-row row-key="id" stripe style="width: 100%">
-            <el-table-column type="index" label="序号" width="100px" />
-            <el-table-column prop="userName" label="姓名" />
-            <el-table-column prop="post" label="职属" />
-            <el-table-column prop="mobile" label="电话" />
+          <el-table
+            v-loading="areauser.userloadinged"
+            :data="areauser.userlisted"
+            v-show="areauser.tbshow"
+            border
+            fit
+            highlight-current-row
+            row-key="id"
+            stripe
+            style="width: 100%"
+          >
+            <el-table-column
+              type="index"
+              label="序号"
+              width="100px"
+            />
+            <el-table-column
+              prop="userName"
+              label="姓名"
+            />
+            <el-table-column
+              prop="post"
+              label="职属"
+            />
+            <el-table-column
+              prop="mobile"
+              label="电话"
+            />
           </el-table>
-        </el-tab-pane> 
-      </el-tabs>  
-    </Layer>  
-    <el-dialog :visible.sync="detailvisible" :title="dialogtitle">
-      
+        </el-tab-pane>
+      </el-tabs>
+    </Layer>
+    <el-dialog
+      :visible.sync="detailvisible"
+      :title="dialogtitle"
+    >
+
       <!-- <vue-preview :slides="slide1" @close="handleClose"></vue-preview> -->
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="detailvisible = false">关 闭</el-button>
       </div>
-    </el-dialog> 
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -125,7 +289,7 @@ export default {
   components: { Pagination, RmMap },
   data() {
     return {
-      map:null,
+      map: null,
       activeName: "HL",
       loading: true,
       tableLoading: false,
@@ -135,7 +299,7 @@ export default {
       activeNamedetail: "1",
       dialogtitle: "",
       detailvisible: false,
-      showLayer2:false,
+      showLayer2: false,
       defaultProps: {
         children: "children",
         label: "label"
@@ -153,15 +317,15 @@ export default {
         tbshow: true,
         checkeduser: null,
       },
-      geo:{
-         geometryList:null,
-         geoListLoading:false,
-         listQuery:{
-           distance:'200',
-           lat:1,
-           lng:2
-         },
-         options: [{ label: '200米', key: '200' }, { label: '500米', key: '500' }, { label: '1千米', key: '1000' }, { label: '2千米', key: '2000' }, { label: '5千米', key: '5000' }],
+      geo: {
+        geometryList: null,
+        geoListLoading: false,
+        listQuery: {
+          distance: '200',
+          lat: 1,
+          lng: 2
+        },
+        options: [{ label: '200米', key: '200' }, { label: '500米', key: '500' }, { label: '1千米', key: '1000' }, { label: '2千米', key: '2000' }, { label: '5千米', key: '5000' }],
       },
       fileList: null,
       fileup: {
@@ -202,9 +366,9 @@ export default {
   methods: {
     /***map相关方法 */
     centerView(data) {
-        // console.log(data);
-        if(data.lng==undefined ||data.lng==undefined)return;
-        this.map.centerView([data.lng, data.lat],16)
+      // console.log(data);
+      if (data.lng == undefined || data.lng == undefined) return;
+      this.map.centerView([data.lng, data.lat], 16)
     },
     /***map相关方法 end */
     loadLeftTree() {
@@ -227,7 +391,7 @@ export default {
         this.loading = false
       })
     },
-    showline(data){
+    showline(data) {
       console.log(data);
     },
     getfilesLists() {
@@ -242,7 +406,7 @@ export default {
         this.activeNamedetail = "1";
         this.form = response.data;
         //this.detailvisible = true;
-        this.showLayer2=true;
+        this.showLayer2 = true;
       });
       this.getfilesLists();
     },
@@ -250,19 +414,19 @@ export default {
       console.log(tab);
     },
     handleNodeClick(data) {
-       this.centerView(data);
+      this.centerView(data);
     },
-    
+
     detailClick(node) {
-      console.log("node::::", node); 
+      console.log("node::::", node);
       this.dialogtitle = node.label + "详情";
       this.getriver(node.id)
     },
     detailClick2(node) {
-      console.log("node::::", node); 
+      console.log("node::::", node);
       this.dialogtitle = node.label + "详情";
       this.getriver(node.id)
-    }, 
+    },
     see(row) {
       window.open(row.url);
     },
@@ -294,17 +458,17 @@ export default {
     beforeUpload() {
       this.fileup.fileListLoading = true
     },
-    geohandleFilter(){
-        console.log(this.geo.listQuery);
-        this.geo.listQuery.lat=this.form.lat;
-        this.geo.listQuery.lng=this.form.lng;
-         this.geo.geoListLoading=true;
-         console.log("33::",this.geo.listQuery)
-        getgeometryList(this.geo.listQuery).then(response => {
-        this.geo.geometryList=response.data.list;
-        this.geo.geoListLoading=false;
+    geohandleFilter() {
+      console.log(this.geo.listQuery);
+      this.geo.listQuery.lat = this.form.lat;
+      this.geo.listQuery.lng = this.form.lng;
+      this.geo.geoListLoading = true;
+      console.log("33::", this.geo.listQuery)
+      getgeometryList(this.geo.listQuery).then(response => {
+        this.geo.geometryList = response.data.list;
+        this.geo.geoListLoading = false;
       })
-    }, 
+    },
     findmanagerlist(id) {
       this.areauser.userloadinged = true;
       getmanagerlist({ type: this.activeName, bizid: id }).then(response => {

@@ -7,3 +7,10 @@ export function userinfo(id) {
     params:{userid:id}
   })
 }
+export function officeuserlist(id) {  
+  return request({
+    url: '/api/sys/office/user',
+    method: 'get',
+    params:{id:id}
+  })
+}

@@ -19,7 +19,7 @@ Mock.setup({
   timeout: '350-6000'
 })
 
-// // 登录相关
+// // // 登录相关
 Mock.mock(/\/login\/login/, 'post', loginAPI.loginByUsername)
 Mock.mock(/\/login\/logout/, 'post', loginAPI.logout)
 

@@ -34,10 +34,10 @@ export default {
       default: '23em'
     },
     left_chartData: {
-      type: Array,
+      type: Object,
       required: true,
       default: function() {
-        return []
+        return {}
       }
     }
   },
@@ -49,7 +49,6 @@ export default {
           self.chart = echarts.init(self.$refs.myChart)
           self.chart.resize()
           console.log('柱形图1111')
-
         }
       }, 20)
     },
@@ -74,7 +73,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            data: this.left_chartData.xAxis,
             axisTick: {
               alignWithLabel: true
             },
@@ -89,10 +88,10 @@ export default {
         ],
         series: [
           {
-            name: '直接访问',
+            name: '',
             type: 'bar',
             barWidth: '60%',
-            data: [80, 52, 200, 334, 390, 330, 220]
+            data: this.left_chartData.yAxis
           }
         ]
       })

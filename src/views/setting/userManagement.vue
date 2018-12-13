@@ -1,6 +1,7 @@
 <template>
   <div class="app-container userM">
     <el-container v-loading="loading">
+
       <el-aside>
         <div class="panel">
           <div class="panelHeading">
@@ -16,13 +17,14 @@
           </div>
         </div>
       </el-aside>
+
       <el-container>
         <el-header height="125px">
           <div style="" class="topTitle">
             用户列表
           </div>
           <div class="filter-container" style="">
-            <el-input placeholder="输入姓名、帐号或角色搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="searchBtn" v-model="listQuery.name" />
+            <el-input placeholder="输入姓名、帐号或电话搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="searchBtn" v-model="listQuery.name" />
             状态：
             <el-select placeholder="请选择状态" clearable style="width: 140px" class="filter-item" v-model="listQuery.state">
               <el-option v-for="item in states" :key="item" :label="item" :value="item" />
@@ -37,7 +39,7 @@
           </div>
         </el-header>
         <el-main>
-          <div class=" filter-container">
+          <div class="filter-container" style="padding-top: 0;">
             <el-button class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="addBtn">新增用户</el-button>
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="deleteBtn">删除</el-button>
           </div>
@@ -216,43 +218,43 @@ import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
 
 export default {
-  name: 'userManagement',
+  name: 'UserManagement',
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   data() {
     // 自定义校验规则
     var validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入密码'));
+        callback(new Error('请输入密码'))
       } else {
         if (this.form.checkPass !== '') {
-          this.$refs.form.validateField('checkPass');
+          this.$refs.form.validateField('checkPass')
         }
-        callback();
+        callback()
       }
       if (value) {
         if (value.lemgth < 6) {
-          callback(new Error('密码小于6个字符'));
+          callback(new Error('密码小于6个字符'))
         }
       }
-    };
+    }
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'));
+        callback(new Error('请再次输入密码'))
       } else if (value !== this.form.password) {
-        callback(new Error('两次输入密码不一致!'));
+        callback(new Error('两次输入密码不一致!'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     var validatePass3 = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'));
+        callback(new Error('请再次输入密码'))
       } else if (value !== this.form2.newPassword) {
-        callback(new Error('两次输入密码不一致!'));
+        callback(new Error('两次输入密码不一致!'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       postArray: [],
       loading: true,
@@ -289,7 +291,7 @@ export default {
         state: null,
         post: null,
         email: null,
-        id:null
+        id: null
       },
       rules: {
         post: [{ required: true, message: "请选择岗位", trigger: "change" }],
@@ -366,7 +368,7 @@ export default {
 
       this.listQuery['office.id'] = data.id
       const deptObj = {
-        id : data.id
+        id: data.id
       }
       this.deptObj = deptObj
       this.getList()
@@ -381,10 +383,7 @@ export default {
       getPostState({ id: this.listQuery['office.id'] }).then(res => {
         this.postArray = res.data.list
       }).catch(errorRes => {
-        this.$message({
-          type: "error",
-          message: "网络错误!"
-        })
+
       })
       this.form = row
       this.dialogVisible1 = true
@@ -429,10 +428,7 @@ export default {
         })
         this.getList()
       }).catch(errorRes => {
-        this.$message({
-          type: "error",
-          message: "网络错误!"
-        })
+
       })
     },
     getList() {
@@ -444,10 +440,6 @@ export default {
         this.tableLoading = false
       }).catch(errorRes => {
         this.tableLoading = false
-        this.$message({
-          type: "error",
-          message: "网络错误!"
-        })
       })
     },
     searchBtn() {
@@ -459,10 +451,7 @@ export default {
       getPostState({ id: this.listQuery['office.id'] }).then(res => {
         this.postArray = res.data.list
       }).catch(errorRes => {
-        this.$message({
-          type: "error",
-          message: "网络错误!"
-        })
+
       })
       console.log('添加的---之前', this.unit)
 
@@ -477,7 +466,7 @@ export default {
     },
     deleteBtn() {
       if (this.multipleSelection.length > 0) {
-        let idArray = []
+        const idArray = []
         this.multipleSelection.map(item => {
           idArray.push(item.id)
         })
@@ -488,17 +477,14 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
-          Delete(ids).then(res => {
+          Delete(idStr).then(res => {
             this.AreaTree()
             this.$message({
               type: "success",
               message: "删除成功!"
             })
           }).catch(errorRes => {
-            this.$message({
-              type: "error",
-              message: "网络错误!"
-            })
+
           })
         }).catch(() => {
           // 用户点击取消按钮
@@ -506,16 +492,15 @@ export default {
       } else {
         this.$message({
           type: "warn",
-          message: "请先勾选要删除的用户!"
+          message: "请先勾选!"
         })
       }
-
     },
     // 新增用户  保存
     save(e) {
       this.dialogVisible = false
       console.log(this.form)
-      let params = {
+      const params = {
         "company.id": 'system',
         "office.id": this.form.dept.id
       }
@@ -554,15 +539,8 @@ export default {
       save(params).then(res => {
         this.getList()
         this.dialogVisible1 = false
-
       }).catch(errorRes => {
-
-        this.$message({
-          type: "error",
-          message: "网络错误!"
-        })
         this.dialogVisible1 = false
-
       })
     },
 
@@ -576,7 +554,6 @@ export default {
       }
     },
     handleSelectionChange(val) {
-      console.log("全选,多选", val)
       this.multipleSelection = val
     }
   }

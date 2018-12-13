@@ -1,6 +1,6 @@
 <template>
     <div class="mapContainer">
-        <div id="map" class="map"></div>
+        <div id="map" class="map" :style="{height: ClientHeigth + 'px'}"></div>
         <div id="mapctrl" class="map-ctrl-panel">
             <el-popover popper-class="map-ctrl-tool" width="460" placement="left" visible-arrow="false" trigger="manual" v-model="v.tool">
                 <el-button-group>
@@ -59,11 +59,27 @@
             <div id="markpopup" slot="reference"></div>
         </el-popover>
 
+        <!-- 资源属性编辑框 -->
+        <el-popover placement="right" offset="30" title="资源属性" width="550" height="500px" trigger="manual" v-model="propanel.show">
+            <el-table :data="propanel.list" stripe :show-header="false" style="width: 100%;" max-height="350">
+                <el-table-column type="index">
+                </el-table-column>
+                <el-table-column prop="label" label="属性" width="150" align="left">
+                </el-table-column>
+                <el-table-column prop="value" label="值" align="left">
+                </el-table-column>
+            </el-table>
+            <div style="text-align: right; margin: 10px">
+                <el-button size="mini" type="info" @click="propanel.show = false">关闭</el-button>
+            </div>
+            <div id="propopup" slot="reference"></div>
+        </el-popover>
     </div>
 </template> 
 <script> 
     import 'ol/ol.css'
     import { Map, View } from 'ol'
+    import request from '@/utils/request'
     // import { Group as LayerGroup, Tile as TileLayer } from 'ol/layer.js'
     // import { fromLonLat } from 'ol/proj.js'
     import { defaults as defaultControls } from 'ol/control.js'
@@ -73,9 +89,10 @@
     //import Feature from 'ol/Feature.js'
     import Point from 'ol/geom/Point.js'
     //import XYZ from 'ol/source/XYZ.js'
+    import Overlay from 'ol/Overlay.js'
     import { cfg as mapCfg } from "@/components/rm/map/config.js"
     import { utils as mapUtils } from "@/components/rm/map/utils.js"
-    import { drawGeom, drawMark, drawMeasure,showUtil } from "@/components/rm/map/draw.js"
+    import { drawGeom, drawMark, drawMeasure, showUtil } from "@/components/rm/map/draw.js"
 
     import * as Driver from 'driver.js' // import driver.js
     import 'driver.js/dist/driver.min.css' // import driver.js css
@@ -86,6 +103,11 @@
         props: {
             value: {
                 required: false
+            },
+            clientHeight: {
+              required: false,
+              type: Number,
+              default: 0
             }
         },
         data() {
@@ -99,10 +121,55 @@
                     show: false,
                     name: ''
                 },
+                propanel: {
+                    show: false,
+                    list: []
+                },
                 driver: null
             }
         },
+        // 计算属性
+        computed: {
+          ClientHeigth() {
+            let aa
+            if (this.clientHeight) {
+              aa = this.clientHeight
+            } else {
+              aa = this.getHeight(window) - 84
+              // 监听window的resize事件．
+              const that = this
+              window.onresize = function temp() {
+                // that.clientHeight = `${document.documentElement.clientHeight}px`
+                console.log('this.getHeight()::::after', that.getHeight(window))
+                aa = that.getHeight(window) - 84
+              }
+            }
+            console.log('aaaaa',aa)
+            return aa
+            // return this.clientHeight ? this.clientHeight : this.getHeight(window) - 84
+          }
+        },
+        watch: {
+
+        },
         mounted() {
+            // const test = `${document.documentElement.clientHeight}px`
+            // console.log('test', this.clientHeight)
+            // if (this.clientHeight) {
+            //   console.log('有值传递过来')
+            // } else {
+            //   console.log('没有----有值传递过来',this.clientHeight)
+            //
+            //   this.clientHeight = this.getHeight(window) - 84
+            //   // 监听window的resize事件．
+            //   const that = this
+            //   window.onresize = function temp() {
+            //     // that.clientHeight = `${document.documentElement.clientHeight}px`
+            //     console.log('this.getHeight()::::after', that.getHeight(window))
+            //     that.clientHeight = that.getHeight(window) - 84
+            //   }
+            // }
+
             this.initMap()
             this.driver = new Driver({
                 doneBtnText: '完成', // Text on the final button
@@ -116,7 +183,7 @@
             showFeature(options) {
                 this.resetAction()
                 //放大
-                this.centerView([options.lng,options.lat],15)
+                this.centerView([options.lng, options.lat], 15)
                 showUtil.showFeature(this, options)
             },
             /**展示轨迹*/
@@ -124,36 +191,54 @@
                 this.resetAction()
                 //放大
                 if (options.lng) {
-                    this.centerView([options.lng,options.lat],15)
+                    this.centerView([options.lng, options.lat], 15)
                 }
                 showUtil.showTrail(this, options)
+            },
+            /**回访轨迹*/
+            playTrail(options) {
+                this.resetAction()
+                //放大
+              //  if (options.lng) {
+                 //   this.centerView([options.lng, options.lat], 12)
+               // }
+                showUtil.playTrail(this, options)
+            },
+            /**选中线段*/
+            selectLine(options) {
+                this.resetAction()
+                //放大
+                if (options.lng) {
+                    this.centerView([options.lng, options.lat], 16)
+                }
+                drawGeom.selectGeom(this.map, 'zerenduan', options)
             },
             /**绘制责任段 */
             drawLine(options, callbackFunc) {
                 this.resetAction()
-                drawGeom.draw(this.map, 'LineString','zerenduan', options, callbackFunc)
+                drawGeom.draw(this.map, 'LineString', 'zerenduan', options, callbackFunc)
             },
             /**删除责任段绘制内容 */
-            removeLine(options,callbackFunc) {
-                drawGeom.removeGeom(this.map,'zerenduan', options, callbackFunc)
+            removeLine(options, callbackFunc) {
+                drawGeom.removeGeom(this.map, 'zerenduan', options, callbackFunc)
             },
             /**绘制胡泊 */
             drawArea(options, callbackFunc) {
                 this.resetAction()
-                drawGeom.draw(this.map, 'Polygon','hupo', options, callbackFunc)
+                drawGeom.draw(this.map, 'Polygon', 'hupo', options, callbackFunc)
             },
             /**删除湖泊绘制内容 */
-            removeHupo(options,callbackFunc) {
-                drawGeom.removeGeom(this.map,'hupo', options, callbackFunc)
+            removeHupo(options, callbackFunc) {
+                drawGeom.removeGeom(this.map, 'hupo', options, callbackFunc)
             },
-             /**打卡点 */
+            /**打卡点 */
             drawDakadian(options, callbackFunc) {
                 this.resetAction()
-                drawGeom.draw(this.map, 'Point','dakadian', options, callbackFunc)
+                drawGeom.draw(this.map, 'Point', 'dakadian', options, callbackFunc)
             },
             /**删除打卡点绘制内容 */
-            removeDakadian(options,callbackFunc) {
-                drawGeom.removeGeom(this.map,'dakadian', options, callbackFunc)
+            removeDakadian(options, callbackFunc) {
+                drawGeom.removeGeom(this.map, 'dakadian', options, callbackFunc)
             },
             resetAction() {
                 /**还原操作，比如之前是做测距操作，接着想做标注操作，在每个操作之前，都应该清空之前的设置 */
@@ -206,6 +291,7 @@
             },
             centerView(coord, zoom) {
                 zoom = zoom === undefined ? 16 : zoom
+                if (!coord[0] || !coord[1]) return
                 //console.log(zoom, coord)
                 var geo = (new Point(coord))
 
@@ -225,6 +311,17 @@
             },
             showProperties(id, type) {
                 console.log('显示对象属性：', id, type)
+                this.propanel.show = false
+                request({
+                    url: '/api/res/river/sourcecomment',
+                    method: 'get',
+                    params: { id: id, type: type }
+                }).then(response => {
+                    console.log('对象属性：', response)
+                    this.propanel.list = response.data.list
+                    //显示窗口
+                    this.propanel.show = true
+                })
             },
             switchDatalayer(layer) {
                 layer.visible = !layer.visible
@@ -269,6 +366,15 @@
                 //初始化地图操作控件
                 this.bglayers = mapCfg.bglayers
                 this.datalayers = mapCfg.datalayers
+
+                //属性框
+                if (!this.proOverlay) {
+                    this.proOverlay = new Overlay({
+                        element: document.getElementById('propopup')
+                    })
+                    this.map.addOverlay(this.proOverlay)
+                }
+
                 var self = this
                 this.map.on('singleclick', function(evt) {
                     var pixel = self.map.getEventPixel(evt.originalEvent)
@@ -288,6 +394,8 @@
                                     var f = response.features[0]
                                     console.log(f.properties.id, f.properties.name)
                                     self.showProperties(f.properties.id, f.properties.gtype)
+                                    //设置显示位置 
+                                    self.proOverlay.setPosition(evt.coordinate)
                                 }
                             })
                         }
@@ -336,11 +444,12 @@
 </script>
 <style>
     .mapContainer {
+      position: relative;
       width: 100%;
       height: 100%;
     }
     .map {
-      height: 91vh;
+      height: calc(100vh - 84px);
     }
     .ol-mouse-position {
       top: auto;
@@ -428,5 +537,9 @@
     .map-c-layer-box.active img {
       border: 2px solid #3280fc;
       box-shadow: 0px 0px 7px #3280fc;
+    }
+
+    .pro-label {
+      min-width: 150px;
     }
 </style>

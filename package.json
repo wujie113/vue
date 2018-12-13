@@ -53,6 +53,7 @@
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "ol": "^5.2.0",
+    "print-js": "^1.0.54",
     "screenfull": "3.3.3",
     "showdown": "1.8.6",
     "simplemde": "1.11.2",

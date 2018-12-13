@@ -249,9 +249,10 @@
               </div>
             </div>
             <span
+              :class="{ showLoad: isShowLoad, showLoading: !isLoading }"
               class="label label-badge label-info historicalRouteNum"
               data-dojo-attach-point="historicalRouteNum"
-              style="background-color: rgb(39, 156, 245); display: inline-block;"
+              style="background-color: rgb(39, 156, 245);"
               >{{ count }}</span
             >
             <span> 条 </span>
@@ -278,7 +279,7 @@
                       </p>
                       <p class="routeItemNameInfo">
                         <span class="spanWithBorder" title="开始时间" >{{ item.startTime }}</span>
-                        <span class="spanWithBorder" title="轨迹路程">{{ item.mileage }}</span>
+                        <span class="spanWithBorder" title="轨迹路程">{{ item.mileage }}<span>公里</span></span>
                         <span class="" title="总耗时">{{ item.timeZones }}</span>
                       </p>
                     </div>
@@ -317,7 +318,7 @@ export default {
         user: "",
         region: ""
       },
-      count: 0,
+      count: "",
       workTrajectory: [],
       popoverVisible: false,
       topActiveIndex: "",
@@ -425,14 +426,13 @@ export default {
     showresponsibility(child) {
       getusermanagentriver({ id: child.id }).then(response => {
         //绑定责任段数据
-        //this.map.selectLine({ id: row.id,lng: row.lng,lat: row.lat })
         const maplnglat = response.data.list;
         console.log("maplnglat",maplnglat)
-        // maplnglat.map(item => {
-        //   this.map.selectLine({ id: item.id,lng: item.lng,lat: item.lat }) 
-        // })
-        this.map.selectLine()
-      })
+          var maplist = maplnglat.map((item, index) => {
+            return maplnglat[index].id
+          })
+          this.map.selectLine({ id: maplist,lng:maplnglat[0].lng,lat: maplnglat[0].lat })
+       })
     },
     //查看个人详情
     showdetails(child) {

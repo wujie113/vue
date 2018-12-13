@@ -20,7 +20,7 @@
             </div>
           </div>
           <div class="source panel-body">
-            <el-tree :data="dataArray" node-key="id" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current></el-tree>
+            <el-tree :data="dataArray" node-key="id" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current ref="tree"></el-tree>
           </div>
         </div>
       </el-col>
@@ -198,10 +198,7 @@ export default {
             message: "删除成功!"
           })
         }).catch(errorRes => {
-          this.$message({
-            type: "error",
-            message: "网络错误!"
-          })
+
         })
       }).catch(() => {
 

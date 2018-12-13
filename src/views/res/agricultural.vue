@@ -272,7 +272,7 @@ export default {
       this.v.formhistory = true;
       this.listLoadingHistory = true;
       getfiles(this.uploaddata).then(response => {
-        this.listDate = response.data;
+        this.listDate = response.data.list;
         this.listLoadingHistory = false;
       });
     },

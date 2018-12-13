@@ -13,23 +13,31 @@
             <div class="topTitle">
               <div class="left">
                 <img src="../../../static/img/youxiu.svg" alt="巡和专管员优秀榜">
-                <span>巡和专管员优秀榜</span>
+                <span>巡河专管员优秀榜</span>
               </div>
               <div class="right">
-                <span>本月专管员巡河</span>
+                <span :class="{ spanActive : spanActiveIndex === 0 }" @click="spanBtn(0)" data-index = '0'>本月专管员巡河</span>
                 <span>|</span>
-                <span>本月巡河</span>
+                <span :class="{ spanActive : spanActiveIndex === 1 }" @click="spanBtn(1)" data-index = '1'>本月巡河</span>
               </div>
             </div>
             <div class="tableBox">
-              <el-table :data="tableData3" height="270" border style="width: 100%" size="mini">
+              <el-table :data="tableData3" height="270" border style="width: 100%" size="mini" v-show="spanActiveIndex === 0">
                 <el-table-column type="index" width="50" label="排名">
                 </el-table-column>
-                <el-table-column prop="date" label="姓名">
+                <el-table-column prop="name" label="姓名">
                 </el-table-column>
-                <el-table-column prop="name" label="所属单位" width="180" show-overflow-tooltip="">
+                <el-table-column prop="officeName" label="所属单位" width="180" show-overflow-tooltip="">
                 </el-table-column>
-                <el-table-column prop="address" label="巡河次数">
+                <el-table-column prop="total" label="巡河次数">
+                </el-table-column>
+              </el-table>
+              <el-table :data="tableData3" height="270" border style="width: 100%" size="mini" v-show="spanActiveIndex === 1">
+                <el-table-column type="index" width="50" label="排名">
+                </el-table-column>
+                <el-table-column prop="name" label="姓名">
+                </el-table-column>
+                <el-table-column prop="total" label="巡河次数">
                 </el-table-column>
               </el-table>
             </div>
@@ -43,13 +51,13 @@
                 <!-- <span>入库河流统计</span> -->
                 <span>{{ riverMap.msg }}</span>
               </div>
-              <div class="right">
+        <!--       <div class="right">
                 <el-select v-model="value" placeholder="请选择" size="mini">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
                 <span>市级筛选</span>
-              </div>
+              </div> -->
             </div>
             <div class="flexBox">
               <ul class="clearfix">
@@ -136,12 +144,12 @@
                 <img src="../../../static/img/gdgl.svg" alt="工单处理统计">
                 <span>工单处理统计</span>
               </div>
-              <div class="right">
+             <!--  <div class="right">
                 <el-select v-model="value" placeholder="请选择" size="mini">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
-              </div>
+              </div> -->
             </div>
             <div class="canvasBox">
               <!-- <div id="myChart" :style="{width: '100%', height: '290px'}" ref="myChart"></div> -->
@@ -160,13 +168,13 @@
                 <img src="../../../static/img/fenxi.svg" alt="河长管理分析">
                 <span>河长管理分析</span>
               </div>
-              <div class="right">
+         <!--      <div class="right">
                 <el-select v-model="value" placeholder="请选择" size="mini">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
                 <span>筛选</span>
-              </div>
+              </div> -->
             </div>
             <div class="tableBox">
               <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -192,7 +200,11 @@
                 <span>通知公告</span>
               </div>
               <div class="right" style="cursor: pointer;">
-                更多<i class="el-icon-d-arrow-right"></i>
+                <!--更多,跳转到通知公告-->
+                <router-link to="/setting/msg">
+                  更多
+                </router-link>
+                <i class="el-icon-d-arrow-right"></i>
               </div>
             </div>
             <div class="NewsBox">
@@ -214,7 +226,7 @@
       </el-row>
     </div>
     <!-- 通知公告弹窗 -->
-    <el-dialog title="通知公告详情" :visible.sync="dialogVisible" width="60%" top="5vh">
+    <el-dialog title="通知公告详情" :visible.sync="dialogVisible" width="60%">
       <div class="NotificationDetailContent clearfix">
         <div class="subContent clearfix">
           <h1 class="ContentHeader">
@@ -250,10 +262,11 @@ export default {
   name: 'Home',
   data() {
     return {
+      spanActiveIndex: 0,
       chartData: [],
-      leftData: [],
-      rightData: [],
-      activeName: 'first',
+      leftData: {},
+      rightData: {},
+      activeName: '',
       dialogVisible: false,
       msgMap: [],
       riverMap: [],
@@ -265,36 +278,8 @@ export default {
       otherWrap: {},
       msgDeatail: {},
       tableData3: [],
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }],
-      value: '选项2',
-      images1: [
-        {
-          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          name: "1111"
-        },
-        {
-          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          name: "22222"
-        },
-        {
-          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          name: "222"
-        },
-        {
-          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          name: "2"
-        },
-        {
-          url: "http://117.40.230.32:10101/file/20181103/154122821368920157eaa041d4397a6c117f5025bc984_thumb.png",
-          name: "222122"
-        }
-      ],
+      images1:[]
+
     }
   },
   components: {
@@ -326,7 +311,9 @@ export default {
         background: 'rgba(0, 0, 0, 0.6)'
       })
       getList({}).then((res) => {
-        // 只取前五个
+        //关闭加载中
+        loading.close()
+        // 通知广告 --- 只取前五个
         this.msgMap = res.data.msgMap.msgList.slice(0, 5)
         this.riverMap = res.data.riverMap
         // 河流
@@ -341,27 +328,75 @@ export default {
         this.ditchWrap = res.data.riverMap.ditchWrap
         // 其他
         this.otherWrap = res.data.riverMap.otherWrap
+        this.riverPersonMap = res.data.riverPersonMap
+        // 进来默认显示 专管员巡河
+        this.tableData3 = res.data.riverPersonMap.reportPersonWrap.data.list
         // 工单饼状图
-        let reportMap = res.data.reportMap
-        let reportMapArray = []
+        const reportMap = res.data.reportMap
+        const reportMapArray = []
         reportMapArray.push(reportMap.complaintWrap)
         reportMapArray.push(reportMap.reportWrap)
         reportMapArray.map(item => {
-          let obj = {}
+          const obj = {}
           obj.name = item.msg
           obj.value = item.data
           this.chartData.push(obj)
         })
-        loading.close()
+        const statisticalMap = res.data.statisticalMap
+        //本月投诉统计
+        const tempComplaints = statisticalMap.statisticalComplaintsWrap.data.list
 
+        this.leftData = this.echartsDataTran(tempComplaints,true)
+        // 解决第一次进来页面不显示 '本月投诉统计'的问题
+        this.activeName = 'first'
+        //本月工单统计
+        const tempReport = statisticalMap.statisticalReportWrap.data.list
+        this.rightData = this.echartsDataTran(tempReport)
       }).catch(erroRes => {
-        console.log('11网络错误')
+        loading.close()
       })
     },
+    /**
+     *
+     * @param originData 后台原始数据
+     * @param isReverse 数组是否需要反转
+     * @returns {*}
+     */
+    // 格式化 '本月投诉统计' 和 '本月工单统计'的后台数据
+    echartsDataTran(originData, isReverse){
+      const xAxis = []
+      const yAxis = []
+      for (const key in originData) {
+        xAxis.push(originData[key].xAxis)
+        yAxis.push(originData[key].yAxis)
+      }
+      if (isReverse) {
+        return {
+          'xAxis': xAxis.reverse(),
+          'yAxis': yAxis.reverse()
+        }
+      } else {
+        return {
+          'xAxis': xAxis,
+          'yAxis': yAxis
+        }
+      }
+    },
+    spanBtn(e) {
+      // console.log('e', e)
+      this.spanActiveIndex = e
+      if (e === 0) {
+        // 本月专管员巡河
+        this.tableData3 = this.riverPersonMap.reportPersonWrap.data.list
+      } else if (e === 1) {
+        // 本月巡河
+        this.tableData3 = this.riverPersonMap.riverPersonWrap.data.list
+      }
+    },
     init() {
-      const self = this;
+      const self = this
       setTimeout(() => {
-        window.onresize = function () {
+        window.onresize = function() {
           self.chart = echarts.init(document.getElementById('pieID'))
           // self.chart1 = echarts.init(self.$refs.myChart1)
           // self.chart2 = echarts.init(self.$refs.myChart2)
@@ -417,7 +452,7 @@ export default {
             ]
           }
         ]
-      });
+      })
     },
     drawBar() {
       // 基于准备好的dom，初始化echarts实例
@@ -494,7 +529,7 @@ export default {
           name: "单位",
           axisLabel: {
             rotate: 40
-          },
+          }
         },
         yAxis: {
           type: 'value',
@@ -519,7 +554,7 @@ export default {
       //   }, 100);
       // }
     }
-  },
+  }
 
 
 }
@@ -616,10 +651,16 @@ export default {
       font-size: 14px;
       span:first-of-type {
         padding-right: 5px;
+        cursor: pointer;
+        color: #333;
+      }
+      .spanActive {
+        color: #fff!important;
       }
       span:last-of-type {
         color: #333;
         padding-left: 5px;
+        cursor: pointer;
       }
     }
   }
@@ -792,7 +833,7 @@ export default {
         cursor: pointer;
         .home-page-top-notice-list-top {
           height: 50%;
-          font-size: 16px;
+          font-size: 15px;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -802,13 +843,20 @@ export default {
             background-color: #fd3431;
             border-radius: 5px;
           }
+          span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
         }
         .home-page-top-notice-list-bottom {
           height: 50%;
           font-size: 14px;
           display: flex;
           justify-content: flex-start;
-          // align-items: center;
+          align-items: center;
           i {
             margin-right: 10px;
           }
@@ -825,9 +873,9 @@ export default {
 .homeIndex
   .tableBox
   .el-table__body
-  .el-table__row:first-child
-  .el-table_1_column_1
-  .cell
+  tr.el-table__row:nth-of-type(1)
+  td:nth-of-type(1)
+.cell
   div {
   background-image: url(../../../static/img/one.png);
   background-position: center center;
@@ -837,9 +885,9 @@ export default {
 .homeIndex
   .tableBox
   .el-table__body
-  .el-table__row:nth-of-type(2)
-  .el-table_1_column_1
-  .cell
+  tr.el-table__row:nth-of-type(2)
+  td:nth-of-type(1)
+.cell
   div {
   background-image: url(../../../static/img/two.png);
   background-position: center center;
@@ -849,8 +897,8 @@ export default {
 .homeIndex
   .tableBox
   .el-table__body
-  .el-table__row:nth-of-type(3)
-  .el-table_1_column_1
+  tr.el-table__row:nth-of-type(3)
+  td:nth-of-type(1)
   .cell
   div {
   background-image: url(../../../static/img/three.png);
@@ -858,7 +906,7 @@ export default {
   background-repeat: no-repeat;
   color: #fff;
 }
-.homeIndex .tableBox .el-table__body .el-table__row .el-table_1_column_1 .cell {
+.homeIndex .tableBox .el-table__body tr.el-table__row td:nth-of-type(1) .cell {
   position: relative;
   z-index: 3;
 }

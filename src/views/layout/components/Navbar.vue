@@ -1,7 +1,9 @@
 <template>
   <div class="navbar">
     <a class="logo" href="/">
-      <img src="../../../../static/img/logo.png" alt="logo">
+      <!--<img src="../../../../static/img/logo.png" alt="logo">-->
+      <img src="../../../../static/img/apd.png" alt="logo" style="width: 70px;">
+
     </a>
     <span class="breadcrumb"> | </span>
     <span class="systemName">智慧河长管理系统</span>
@@ -13,29 +15,29 @@
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
 
-        <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
-          <screenfull class="screenfull right-menu-item"/>
-        </el-tooltip>
+        <!--<el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">-->
+          <!--<screenfull class="screenfull right-menu-item"/>-->
+        <!--</el-tooltip>-->
 
-        <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
-          <size-select class="international right-menu-item"/>
-        </el-tooltip>
+        <!--<el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">-->
+          <!--<size-select class="international right-menu-item"/>-->
+        <!--</el-tooltip>-->
 
         <!-- <lang-select class="international right-menu-item"/> -->
 
-        <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
-          <theme-picker class="theme-switch right-menu-item"/>
-        </el-tooltip>
+        <!--<el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">-->
+          <!--<theme-picker class="theme-switch right-menu-item"/>-->
+        <!--</el-tooltip>-->
       </template>
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img :src="avatar" class="user-avatar">
           <span>你好，{{ name }}</span>
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/">
+          <router-link to="/setting/msg">
             <el-dropdown-item>
               个人中心
             </el-dropdown-item>
