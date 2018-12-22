@@ -84,23 +84,22 @@ var tiandiS = new LayerGroup({
 // })
 
 //定义基本配置
-export const cfg = {
-    wmsServerUrl2: 'http://117.40.230.32:10103/geoserver/zhhz/wms',
-    wmsServerUrl: "http://47.107.32.58:8888/geoserver/zhhz/wms",
-    wfsServerUrl: 'http://47.107.32.58:8888/geoserver/zhhz/ows',
-    wmtsServerUrl: 'http://117.40.230.32:10103/geoserver/gwc/service/wmts',
+export const cfg = { 
+    wmsServerUrl: process.env.GEOSERVER + "zhhz/wms",
+    wfsServerUrl: process.env.GEOSERVER + "zhhz/ows",
+    wmtsServerUrl: process.env.GEOSERVER + "gwc/service/wmts",
     projection: 'EPSG:4326',//'EPSG:4326',3857
-    center: [113.88, 27.67],//默认中心位置
+    center: process.env.MAP_CENTER ,//默认中心位置,在config/dev.env.js中配置
     minZoom: 6,
-    zoom: 9,
+    zoom: process.env.MAP_ZOOM,
     bglayers: [
-        { id: 'googleS', name: 'google卫星', layer: googleS, visible: false },
+        { id: 'googleS', name: 'google卫星', layer: googleS, visible: true },
         { id: 'google', name: 'google电子', layer: google, visible: false },
         { id: 'tiandi', name: '天地图电子', layer: tiandi, visible: false },
         { id: 'tiandiS', name: '天地图卫星', layer: tiandiS, visible: false }],
     datalayers: [
-        { id: 'quyu', name: '行政区域', code: "zhhz:getRegion", type: 'wmts', layer: {}, zindex: 2, visible: true },
-        { id: 'heliu', name: '河流', code: "zhhz:getRiverAll", type: 'wmts', layer: {}, zindex: 3, visible: true },
+        { id: 'quyu', name: '行政区域', code: "zhhz:region", type: 'wmts', layer: {}, zindex: 2, visible: true },
+        { id: 'heliu', name: '河流', code: "zhhz:river", type: 'wmts', layer: {}, zindex: 3, visible: true },
         { id: 'shuizha', name: '水闸', code: "zhhz:shuizha", layer: {}, zindex: 10, visible: false },
         { id: 'shuiyuandi', name: '水源地', code: "zhhz:shuiyuandi", layer: {}, zindex: 11, visible: false },
         { id: 'shuiku', name: '水库', code: "zhhz:shuiku", layer: {}, zindex: 12, visible: false },

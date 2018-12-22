@@ -12,24 +12,29 @@
               class="filter-item"
               @keyup.enter.native="handleFilter"
             />
-            <el-select  v-model="listQuery.status" placeholder="请选择列别"  clearable style="width: 120px" class="filter-item">
+            <el-select  v-model="listQuery.status" placeholder="请选择列别"  @change="selectChang" clearable style="width: 120px" class="filter-item">
               <el-option  v-for="item in importanceOptions" :key="item.key" :label="item.label"    :value="item.key"/>
             </el-select>
-            <el-button type="primary" icon="el-icon-plus" @click="create">新增</el-button>
             <el-button
               class="filter-item"
               type="primary"
               icon="el-icon-search"
               @click="handleFilter"
             >查询</el-button>
+            <el-button type="primary" icon="el-icon-plus" @click="create">新增</el-button>
           </div>
         </el-header>
         <el-main>
           <el-table :data="list" row-key="id" stripe border style="width: 100%">
             <el-table-column label width="80">
               <template slot-scope="scope">
-                <span :title="scope.row.grade" class="city" >{{scope.row.grade}}</span>
-                <span :title="scope.row.isSupervise" style="color: #ffa727;cursor: pointer;" @click="governor(scope.row)">{{scope.row.isSupervise}}</span>
+                <span title="时时事事11111" class="city">市</span> 
+                <!-- <span title="督查" style="color: #ffa727;" @change="governor">督</span> -->
+                <el-button
+                  title="督办记录"
+                  style="color: #ffa727;border:none ;"
+                  @click="governor(scope.row)"
+                >督</el-button>
               </template>
             </el-table-column> 
             <el-table-column type="index" label="序号" width="50"/>
@@ -55,7 +60,7 @@
               </template>
             </el-table-column>
           </el-table>
-          
+          <!---->
           <pagination
             v-show="total>0"
             :total="total"
@@ -63,10 +68,10 @@
             :limit.sync="listQuery.pageSize"
             @pagination="getList"
           />
-       
+          
         </el-main>
 
-        <Layer
+         <Layer
           title="工单详情"
           v-model="workflowdetail.visible"
           :dialog="false"
@@ -216,7 +221,7 @@
     </el-container>
 
     <!-- 工单弹窗 -->
-          <el-dialog :visible.sync="visibleOrder" title="新增工单" :modal-append-to-body="false">
+          <el-dialog :visible.sync="visibleOrder" title="生成工单" :modal-append-to-body="false">
                <el-form ref="proTaskFrom" :model="proTaskFrom" abel-width="80px" size="mini">
              
            <!--    <el-form-item prop="area" label="所属区划">
@@ -355,20 +360,16 @@
           <el-form-item label="发 起 人">{{items.username}}</el-form-item>
           <el-form-item label="督办时间">{{items.date | formatDate}}</el-form-item>
           <!-- 分割线 -->
-          <div class="work-order-details-list-split" v-show="index !== dblist.length - 1"></div>
-          <div style="border-bottom: 1px solid #ddd;"></div>
-
+          <div class="work-order-details-list-split"></div>
         </el-form>
       </div>
-      
     </el-dialog>
   </div>
-  
 </template> 
 <script> 
 
 import Pagination from '@/components/Pagination'
-import { getList, del, get,subcontent,save,urgelist} from '@/api/work/proTask.js'
+import { getList, del, get ,sav,subcontent,save,urgelist} from '@/api/work/proTask.js'
 import RmDict from '@/components/rm/dict'
 
 import { getToken } from '@/utils/auth' 
@@ -536,8 +537,7 @@ export default {
         title:null,
         placeholder:null,
         label:null,
-        confirm:null,
-        isworknotofficeopetion:false
+        confirm:null
       },
       importanceOptions: [{ label: "待处理", key: "TODO" }, { label: "处理中", key: "DOING" }, { label: "复核中", key: "AUDIT" }, { label: "已完结", key: "DONE" }] 
     }
@@ -559,17 +559,12 @@ export default {
 
     //督
     governor(row) {
+      console.log("row::::", row);
+      this.dbwindows = true;
       urgelist(row.id).then(response => {
-        this.dblist = response.data.list
-        if (response.data.list.length > 0) {
-          this.dbwindows = true
-        } else {
-          this.$message({
-            type: "warn",
-            message: "暂无督办记录"
-          })
-        }
-      })
+        this.dblist = response.data.list;
+        console.log("this.dblist", this.dblist);
+      });
     },
     //---------------------------------------------------事件处理---------------------------------------------------------------------
     //督办弹窗
@@ -612,7 +607,7 @@ export default {
       console.log('点击树形data',data)
     },
     save() { 
-        save(this.proTaskFrom).then(response => {
+          save(this.proTaskFrom).then(response => {
           if (this.$refs.upload.uploadFiles !== undefined && this.$refs.upload.uploadFiles.length > 0) {
             // 附件上传到服务器
             const imgParams =  "&bizType=" +  this.uploaddata.bizType +  "&bizId=" + response.data.id;
@@ -631,7 +626,7 @@ export default {
         }).catch(errorRes => {
             this.visibleOrder = false;
             this.getList();   
-        }); 
+        });  
     },
     handleSuccess() {
       this.fileList = [];
@@ -644,7 +639,12 @@ export default {
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
-
+    selectChang(data){
+      console.log('data,',data)
+      this.listQuery.status = data
+      this.listQuery.pageNo = 1
+      this.getList()
+    },
     gdhandlePictureCardPreview(){
       this.gd.dialogImageUrl = file.url;
       this.gd.dialogVisibleImg = true;
@@ -679,24 +679,30 @@ export default {
         title: this.exposureForm.title,
         content: this.exposureForm.content,
         bizId: this.exposureForm.bizId
-      }
-      saveExposure(saveParams).then(res => {
-          this.uploadParams.bizId = res.data.id
-          if (this.$refs.upload.uploadFiles !== undefined && this.$refs.upload.uploadFiles.length > 0) {
-            // 附件上传到服务器
-            const imgParams = "&bizType=" + this.uploadParams.bizType + "&bizId=" + this.uploadParams.bizId
-            file(imgParams, this.$refs.upload.uploadFiles).then(res => {
-              this.exposureVisible = false
-            }).catch(errorRes => {
-              this.exposureVisible = false
+      };
+      console.log("saveParams", saveParams);
+      saveExposure(saveParams)
+        .then(res => {
+          this.uploadParams.bizId = res.data.id;
+          // 附件上传到服务器
+          const imgParams =
+            "&bizType=" +
+            this.uploadParams.bizType +
+            "&bizId=" +
+            this.uploadParams.bizId;
+          file(imgParams, this.$refs.upload.uploadFiles)
+            .then(res => {
+              console.log("file----res", res);
+              this.exposureVisible = false;
             })
-          }
-
-          // 关闭曝光的弹窗
-          this.exposureVisible = false
-      }).catch(errorRes => {
-          this.exposureVisible = false
+            .catch(errorRes => {
+              this.exposureVisible = false;
+            });
+          // file()
         })
+        .catch(errorRes => {
+          this.exposureVisible = false;
+        });
     },
     // 打印指定区域
     printBtn() {
@@ -709,14 +715,11 @@ export default {
     },
     getList() {
       this.listLoading = true
-      this.worknotofficeopetion.isworknotofficeopetion=false;
       console.log("this.listQuery::::", this.listQuery)
       getList(this.listQuery).then(response => {
         this.listLoading = false
-        console.log("response:::",response);
         this.list = response.data.list
         this.total = response.data.count
-         console.log(" this.total:::", this.total);
       })
 
       
@@ -734,11 +737,10 @@ export default {
       this.listQuery.pageNo = 1
       this.getList()
     },
-    showdetail(row) { 
-    
+    showdetail(row) {  
       if(row!=undefined&&row!=null)
       this.workflowdetail.row=row;  
-     this.gdid.id =this.workflowdetail.row.id
+      this.gdid.id =  this.workflowdetail.row.id
      //  this.workflowdetail.visible = ""
      // this.workflowsend.form = ""
       get(this.workflowdetail.row.id).then(response => {
@@ -751,7 +753,7 @@ export default {
         }
       })
     }, 
-    closelayer() { 
+     closelayer() { 
       this.workflowdetail.visible=false;
       if(this.worknotofficeopetion.isworknotofficeopetion)this.getList(); 
     },
@@ -838,7 +840,7 @@ export default {
          if(btn.id=='unpass'){
            this.doauditandel();
          }  
-        this.worknotofficeopetion.visible=false; 
+        this.worknotofficeopetion.visible=false;  
         this.worknotofficeopetion.isworknotofficeopetion=true;
     },
     send(btn){
@@ -878,8 +880,8 @@ export default {
             this.visibleOrder = false
             this.showdetail();
              this.$message({
-                type: "success",
-                message: "派单成功!"
+              type: "success",
+              message: "派单成功!"
             }) 
           } 
         })  
@@ -996,7 +998,7 @@ export default {
     max-height: 650px;
   }
   .city {
-    color: #3dc87e;
+    color: #35acf2;
   }
   .country {
     color: #3dc87e;

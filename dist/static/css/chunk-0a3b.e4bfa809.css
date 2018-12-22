@@ -1,0 +1,136 @@
+
+.panel[data-v-646fce6a] {
+  margin-bottom: 0;
+  /*min-height: 86vh;*/
+  overflow: auto;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-color: #ddd;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.panel .panelHeading[data-v-646fce6a] {
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    font-size: 14px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    height: 39px;
+    padding: 8px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.panel .panelHeading .svg-icon[data-v-646fce6a] {
+      margin: 0 5px;
+}
+.panel .panelHeading .btn-group[data-v-646fce6a] {
+      position: relative;
+      vertical-align: middle;
+      float: right;
+}
+.panel .source[data-v-646fce6a] {
+    padding: 10px;
+}
+.panel .panel-body[data-v-646fce6a] {
+    overflow: auto;
+    /*height: calc(86vh - 41px);*/
+}
+
+
+@charset "UTF-8";
+/*打印按钮*/
+.printBtn[data-v-2842f27e] {
+  position: absolute;
+  right: 20px;
+}
+/*layout弹窗里面的自定义按钮*/
+.customerBtn[data-v-2842f27e] {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+}
+.command-user[data-v-2842f27e] {
+  margin: 5px 8px;
+  height: 34px;
+  min-width: 74px;
+  font-weight: 500;
+  border-radius: 3px;
+  padding: 5px 10px;
+  line-height: 24px;
+  display: inline-block;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  background-color: #279cf5;
+  float: left;
+}
+.command-user i[data-v-2842f27e] {
+    font-size: 15px;
+    cursor: pointer;
+}
+.command-user i[data-v-2842f27e]:hover {
+    color: #d9534f;
+}
+.command-mian-body-image[data-v-2842f27e] {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+.app-container > .el-container[data-v-2842f27e] {
+  min-height: 86vh;
+}
+.app-container[data-v-2842f27e] .el-dialog__body {
+  max-height: 650px;
+}
+.app-container .city[data-v-2842f27e] {
+  color: #35acf2;
+}
+.app-container .country[data-v-2842f27e] {
+  color: #3dc87e;
+}
+.app-container[data-v-2842f27e] .el-form-item--mini.el-form-item {
+  margin-bottom: 0px;
+}
+.app-container .work-order-details-list-title[data-v-2842f27e] {
+  color: #279cf5;
+  margin-bottom: 15px;
+  padding-left: 10px;
+  border-left: 2px solid #279cf5;
+  height: 14px;
+  line-height: 14px;
+}
+.app-container .work-order-details-list-split[data-v-2842f27e] {
+  border-top: 10px #f0f3f5 solid;
+  margin: -1px -20px 0 -20px;
+  padding: 0px 20px 0px 20px;
+}
+.app-container .splitBox[data-v-2842f27e]:not(:first-of-type) {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.app-container[data-v-2842f27e] .el-dialog__body img {
+  width: 24%;
+  max-height: 15em;
+  margin: 0.5em 0.2em 0 0;
+  float: left;
+}
+.app-container[data-v-2842f27e] .el-dialog__body video,
+.app-container[data-v-2842f27e] .el-dialog__body audio {
+  width: 49%;
+  max-height: 15em;
+  margin: 0.5em 0.2em 0 0;
+  float: left;
+}
+

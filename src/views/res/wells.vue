@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="filter-container">
-      <el-input placeholder="检索水井名称、名称" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input placeholder="检索水井名称、编码" v-model="listQuery.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button icon="el-icon-download" type="primary" @click="downloadExcel">下载水井数据模板</el-button>
       <el-button icon="el-icon-refresh" type="primary" @click="updateData">更新水井数据</el-button>

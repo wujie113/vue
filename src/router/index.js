@@ -7,10 +7,10 @@ Vue.use(Router)
 import Layout from '@/views/layout/Layout'
 
 /* Router Modules */
-/* import componentsRouter  from './modules/components'
-import chartsRouter   from './modules/charts'
-import tableRouter   from './modules/table'
-import nestedRouter from './modules/nested' */
+import componentsRouter  from './modules/components'
+// import chartsRouter   from './modules/charts'
+// import tableRouter   from './modules/table'
+// import nestedRouter from './modules/nested'
 
 /** note: Submenu only appear when children.length>=1
  *  detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -80,40 +80,6 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/resource',
-    component: Layout,
-    redirect: '/resource/resource',
-    name: 'river',
-    meta: { title: '资源管理', icon: 'kaohe' },
-    alwaysShow: true,
-    children: [
-      
-      // {
-      //   path: 'river2',
-      //   name: 'river2',
-      //   component: () => import('@/views/res/river'),
-      //   meta: { title: '河流管理', noCache: true }
-      // }, {
-      //   path: 'drainage',
-      //   name: 'drainage',
-      //   component: () => import('@/views/res/drainage'),
-      //   meta: { title: '水系管理', noCache: true }
-      // } ,
-      {
-        path: 'lakeb',
-        name: 'lakeb',
-        component: () => import('@/views/res/lakebase'),
-        meta: { title: '湖泊区域', noCache: true }
-      },
-      // {
-      //   path: 'duty',
-      //   name: 'duty',
-      //   component: () => import('@/views/res/dutyPart'),
-      //   meta: { title: '责任段', noCache: true }
-      // }
-    ]
-  },
-  {
     path: '/work',
     component: Layout,
     redirect: '/work/work',
@@ -175,6 +141,27 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/assessmentmanagement',
+    component: Layout,
+    redirect: '/assessmentmanagement/assessmentmanagement',
+    name: 'assessmentmanagement',
+    meta: { title: ' 考核管理', icon: 'kaohe' },
+      children: [ 
+       {
+        path: 'assessment',
+        name: 'assessment',
+        component: () => import('@/views/administration/assessment'),
+        meta: { title: '考核管理', noCache: false }
+      },
+      {
+        path: 'exposurestage',
+        name: 'exposurestage',
+        component: () => import('@/views/administration/exposurestage'),
+        meta: { title: '曝光台', noCache: false }
+      }
+      ]
+  },
+  {
     path: '/statisticalAnalysis',
     alwaysShow: true,
     component: Layout,
@@ -190,6 +177,7 @@ export const constantRouterMap = [
       }
     ]
   },
+  
   {
     path: '/setting',
     component: Layout,
@@ -252,11 +240,62 @@ export const constantRouterMap = [
         meta: { title: 'guide', icon: 'guide', noCache: true }
       }
     ]
+  },
+  // { path: '/personal', redirect: '/personal/personal' }
+  {
+    path: '/personal',
+    component: Layout,
+    redirect: '/personal/personalCenter',
+    name: 'personal',
+    meta: { title: '个人中心', icon: 'kaohe' },
+    hidden: true,
+    children: [
+      {
+        path: 'personalCenter',
+        name: 'personalCenter',
+        component: () => import('@/views/personal/personalCenter'),
+        meta: { title: '个人中心', noCache: false }
+      }
+    ]
   }
 ]
 
 // 需求动态判断权限并通过 addRouters 动态添加的页面
 export const asyncRouterMap = [
+  {
+    path: '/resource',
+    component: Layout,
+    redirect: '/resource/resource',
+    name: 'river',
+    meta: { title: '资源管理', icon: 'kaohe', roles: ['admin']},
+    alwaysShow: true,
+    children: [
+
+      // {
+      //   path: 'river2',
+      //   name: 'river2',
+      //   component: () => import('@/views/res/river'),
+      //   meta: { title: '河流管理', noCache: true }
+      // }, {
+      //   path: 'drainage',
+      //   name: 'drainage',
+      //   component: () => import('@/views/res/drainage'),
+      //   meta: { title: '水系管理', noCache: true }
+      // } ,
+      {
+        path: 'lakeb',
+        name: 'lakeb',
+        component: () => import('@/views/res/lakebase'),
+        meta: { title: '湖泊区域', noCache: true }
+      },
+      // {
+      //   path: 'duty',
+      //   name: 'duty',
+      //   component: () => import('@/views/res/dutyPart'),
+      //   meta: { title: '责任段', noCache: true }
+      // }
+    ]
+  },
   {
     path: '/permission',
     component: Layout,

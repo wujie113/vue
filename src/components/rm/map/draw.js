@@ -573,6 +573,7 @@ export const drawMeasure = {
                 }
             }
 
+            self.helpTooltipElement.className = 'tooltip tooltip-measure'
             self.helpTooltipElement.innerHTML = helpMsg
             self.helpTooltip.setPosition(evt.coordinate)
 
@@ -649,7 +650,7 @@ export const drawMeasure = {
 
         this.draw.on('drawend',
             function() {
-                self.measureTooltipElement.className = 'tooltip tooltip-static'
+                self.measureTooltipElement.className = 'tooltip tooltip-measure'
                 self.measureTooltip.setOffset([0, -7])
 
                 // unset sketch
@@ -698,7 +699,7 @@ export const drawMeasure = {
      * Creates a new measure tooltip
      */
     createMeasureTooltip: function() {
-        console.log('new  MeasureTooltip')
+        //console.log('new  MeasureTooltip')
         if (this.measureTooltipElement) {
             this.measureTooltipElement.parentNode.removeChild(this.measureTooltipElement)
         }
@@ -860,7 +861,7 @@ export const showUtil = {
         if (!f) {
             f = new Feature({
                 geometry: new Point([lng, lat]),
-                id: fid,
+                id: id,
                 name: options.name
             })
             f.setId(fid)

@@ -17,7 +17,7 @@
                     </div>
                     <div class="layer-footer" v-if="confirm||cancel">
                         <el-button type="primary" v-text="confirm" v-if="confirm" icon="el-icon-plus" @click="_confirm" size="mini">确认</el-button>
-                        <el-button type="primary" v-text="cancel" v-if="cancel" icon="el-icon-plus" @click="_cancel" size="mini">关闭</el-button>
+                        <el-button v-text="cancel" v-if="cancel" icon="el-icon-plus" @click="_cancel" size="mini">取消</el-button>
                     </div>
                 </div>
             </div>
@@ -327,4 +327,3 @@ export default {
   position: relative !important;
 }
 </style>
- 

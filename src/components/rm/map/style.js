@@ -138,6 +138,8 @@ export const searchResultStyleFunc = function(feature, resolution) {
     var gtype = feature.get('gtype')
     if (gtype === 'tousu') {
         return tousuStyleFunc(feature, resolution)
+    } else if (gtype === 'shangbao') {
+        return shangbaoStyleFunc(feature, resolution)
     } else if (gtype === 'trail') {
         return trailStyleFunc(feature, resolution)
     }
@@ -197,7 +199,36 @@ export const tousuStyleFunc = function(feature, resolution) {
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
             size: [48, 48],
-            src: '/static/map/icon/tousu.png'
+            src: require('@/../static/map/icon/tousu.png')
+        }),
+        text: new Text({
+            text: feature.get('name'),
+            fill: new Fill({
+                color: '#000000'
+            }),
+            stroke: new Stroke({
+                color: '#ffffff',
+                width: 1
+            })
+        })
+    })
+
+    return style
+}
+
+/** 上报事件 */
+export const shangbaoStyleFunc = function(feature, resolution) {
+    var style = new Style({
+        stroke: new Stroke({
+            color: '#ff0000',
+            width: 4
+        }),
+        image: new Icon({
+            anchor: [0.5, 48],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            size: [48, 48],
+            src: require('@/../static/map/icon/shangbao.png')
         }),
         text: new Text({
             text: feature.get('name'),
@@ -221,7 +252,7 @@ export const trailGeoMarkerStyle = new Style({
             color: '#fff'
         }), 
         stroke: new Stroke({
-            color: '#00f',
+            color: '#409EFF',
             width: 3
         })
     }),
@@ -243,7 +274,7 @@ export const trailStyleFunc = function(feature, resolution) {
                 anchorXUnits: 'fraction',
                 anchorYUnits: 'pixels',
                 size: [48, 48],
-                src: '/static/map/icon/start.png'
+                src: require('@/../static/map/icon/start.png')
             }),
             text: new Text({
                 text: feature.get('name'),
@@ -258,7 +289,7 @@ export const trailStyleFunc = function(feature, resolution) {
                 anchorXUnits: 'fraction',
                 anchorYUnits: 'pixels',
                 size: [48, 48],
-                src: '/static/map/icon/end.png'
+                src: require('@/../static/map/icon/end.png')
             }),
             text: new Text({
                 text: feature.get('name'),
@@ -269,15 +300,16 @@ export const trailStyleFunc = function(feature, resolution) {
         }),
         "trail": [new Style({ 
             stroke: new Stroke({
-                color: '#0000ff',
+                color: '#409EFF',
                 width: 4,
                 lineCap: 'square',
                 lineDash: [5, 9]
             }),            
             text: new Text({
+                font: '14px Microsoft YaHei',
                 text: feature.get('name'),
                 fill: new Fill({
-                    color: '#000000'
+                    color: '#409EFF'
                 }),
                 stroke: new Stroke({
                     color: '#ffffff',
@@ -291,7 +323,7 @@ export const trailStyleFunc = function(feature, resolution) {
                     color: '#fff'
                 }), 
                 stroke: new Stroke({
-                    color: '#00f',
+                    color: '#409EFF',
                     width: 2
                 })
             }),
@@ -321,7 +353,7 @@ export const markerStyleFunc = function(feature, resolution) {
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
             size: [32, 32],
-            src: '/static/map/icon/marker.png'
+            src: require('@/../static/map/icon/marker.png')
         }),
         text: new Text({
             text: feature.get('name'),
@@ -351,7 +383,7 @@ export const dakadianStyleFunc = function(feature, resolution) {
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
             size: [32, 32],
-            src: '/static/map/icon/dakadian.png'
+            src: require('@/../static/map/icon/dakadian.png')
         }),
         text: new Text({
             text: feature.get('name'),
@@ -395,9 +427,9 @@ export const measureStyleFunc = function(feature, resolution) {
             color: 'rgba(255, 255, 255, 0.2)'
         }),
         stroke: new Stroke({
-            color: 'rgba(0, 0, 0, 0.5)',
+            color: '#E6A23C',
             lineDash: [10, 10],
-            width: 2
+            width: 3.5
         }),
         image: new Circle({
             radius: 5,
@@ -415,10 +447,10 @@ export const measureStyleFunc = function(feature, resolution) {
         image: new Circle({
             radius: 5,
             stroke: new Stroke({
-                color: 'rgba(0, 0, 0, 0.7)'
+                color: '#E6A23C'
             }),
             fill: new Fill({
-                color: 'rgba(255, 255, 255, 0.2)'
+                color: 'rgba(255, 255, 255, 0.5)'
             })
         }), geometry: function(f) {
             var coordinates = f.getGeometry().getCoordinates()

@@ -40,7 +40,7 @@
         </el-header>
         <el-main>
           <div class="filter-container" style="padding-top: 0;">
-            <el-button class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="addBtn">新增用户</el-button>
+            <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="addBtn">新增用户</el-button>
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="deleteBtn">删除</el-button>
           </div>
           <div>

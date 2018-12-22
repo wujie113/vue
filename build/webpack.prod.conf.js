@@ -117,6 +117,11 @@ const webpackConfig = merge(baseWebpackConfig, {
           priority: 20, // 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
           test: /[\\/]node_modules[\\/]element-ui[\\/]/
         },
+        elementOL: {
+          name: 'chunk-ol', // 单独将 ol 拆包
+          priority: 21, // 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
+          test: /[\\/]node_modules[\\/]ol[\\/]/
+        },
         commons: {
           name: 'chunk-commons',
           test: resolve('src/components'), // 可自定义拓展你的规则

@@ -1,7 +1,8 @@
 <template>
   <div class="login-container">
     <div class="systemName">
-      <img src="../../../static/img/zhch_mz.png" alt="智慧河长管理系统">
+      <!--<img src="../../../static/img/zhch_mz.png" alt="智慧河长管理系统">-->
+      <img src="../../../static/img/jiaocheng.png" alt="蕉城区智慧河长管理系统">
     </div>
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 

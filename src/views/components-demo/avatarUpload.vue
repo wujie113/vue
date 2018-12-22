@@ -15,8 +15,7 @@
       :width="300"
       :height="300"
       :key="imagecropperKey"
-      url="https://httpbin.org/post"
-      lang-type="en"
+      url="http://localhost:8080/hzmis/c/common/fileRecord/uploadFile/"
       @close="close"
       @crop-upload-success="cropSuccess"/>
   </div>

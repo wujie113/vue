@@ -100,7 +100,7 @@
                         <a href="javascript:void(0)" title="生成工单" @click="report.protaskId != null&&report.protaskId!='' ? null : addOrder(report.id)">
                           <svg-icon :icon-class="report.protaskId != null&&report.protaskId!='' ? 'addLightColor' : 'addColor'" />
                         </a>
-                        <a href="javascript:void(0)" title="定位" @click="showFeature(report.id,'tousu',report.lng,report.lat)">
+                        <a href="javascript:void(0)" title="定位" @click="showFeature(report.id,'shangbao',report.lng,report.lat)">
                           <svg-icon icon-class="locationColor" /> 
                         </a>
                         <a href="javascript:void(0)" title="详情" @click="detailBtn(report.id)">

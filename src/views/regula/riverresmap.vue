@@ -25,8 +25,6 @@
       :maskLayer="false"
       :shade="false"
       height="600"
-      confirm="确定"
-      cancel="取消"
     >
       <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
         <el-tab-pane name="HL">

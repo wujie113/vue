@@ -753,6 +753,7 @@ export default {
             justify-content: space-between;
             align-items: center;
             min-height: 122px;
+            height: 122px;
             .home-page-bottom-Survey-img {
               background-repeat: no-repeat;
               background-size: cover;

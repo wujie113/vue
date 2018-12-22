@@ -46,7 +46,7 @@
             <el-button
               class="filter-item"
               type="primary"
-              icon="el-icon-circle-plus-outline"
+              icon="el-icon-plus"
               @click="create"
             >新增</el-button>
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>

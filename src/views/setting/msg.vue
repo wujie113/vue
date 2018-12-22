@@ -5,13 +5,53 @@
         <el-header height="125px">
           <div style="" class="topTitle">通知公告列表</div>
           <div class="filter-container" style="">
-            <el-input placeholder="输入内容搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="handleFilter" v-model="query.title" />
-            <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+            <template>
+            <div class="block">
+              <el-input placeholder="输入内容搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="handleFilter" v-model="query.title" />
+              <span>时间段</span>
+              <el-date-picker
+                v-model="value1"
+                type="date"
+                value-format="timestamp"
+                @change="start"
+                size="mini"
+                placeholder="开始日期"
+              >
+              </el-date-picker>
+              <span> — </span>
+              <el-date-picker
+                v-model="value2"
+                type="date"
+                value-format="timestamp"
+                @change="end"
+                size="mini"
+                placeholder="结束日期"
+              >
+              </el-date-picker>
+              <el-popover
+                placement="right-start"
+                title=""
+                width="200"
+                trigger="manual"
+                content="结束时间需大于开始时间。"
+                v-model="popoverVisible"
+              >
+                <el-button
+                type="primary"
+                  slot="reference"
+                  icon="el-icon-search"
+                  @click="handleFilter"
+                  size="mini"
+                  >查询</el-button
+                >
+              </el-popover>
+            </div>
+          </template>
           </div>
         </el-header>
         <el-main>
           <div class="filter-container" style="padding-top: 0;">
-            <el-button class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="create">新增用户</el-button>
+            <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="create">新增公告</el-button>
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>
           </div>
           <div>
@@ -103,12 +143,17 @@ export default {
       list: null,
       fileList: [],
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
+      value1: "",
+      value2: "",
+      popoverVisible: false,
       query: {
         total: 0,
         pageNo: 1,
         pageSize: 10,
         search: undefined,
-        type: undefined
+        type: undefined,
+        starttime: null,
+        endtime: null
       },
       uploaddata: {
         bizId: null,
@@ -135,14 +180,27 @@ export default {
     this.getList()
   },
   methods: {
-    getList() {
-      this.v.loading = true;
-      console.log("this.query::::", this.query);
-      getList(this.query).then(response => {
-        this.v.loading = false;
-        this.list = response.data.list;
-        this.query.total = response.data.count;
-      });
+   getList() {
+      if (this.query.starttime > this.query.endtime) {
+        this.popoverVisible = true
+        setTimeout(() => {
+          this.popoverVisible = false
+        }, 1500)
+        return
+      } else {
+        this.v.loading = true;
+        getList(this.query).then(response => {
+          this.v.loading = false;
+          this.list = response.data.list;
+          this.query.total = response.data.count;
+        });
+     }
+    },
+    start(start) {
+      this.query.starttime = start
+    },
+    end(end) {
+      this.query.endtime = end
     },
     handleFilter() {
       this.query.pageNo = 1;
@@ -270,3 +328,16 @@ export default {
   }
 };
 </script>
+<style scoped lang="scss">
+  .app-container {
+     .filter-container {
+       span {
+         color: #636363;
+         font-size: 12px;
+       }
+    }
+    > .el-container {
+      min-height: 86vh;
+    }
+  }
+</style>

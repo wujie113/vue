@@ -6,7 +6,7 @@
 
     </a>
     <span class="breadcrumb"> | </span>
-    <span class="systemName">智慧河长管理系统</span>
+    <span class="systemName">蕉城区智慧河长管理系统</span>
     <!-- <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/> -->
     <!-- 快捷导航(标签栏导航) -->
     <!-- <breadcrumb class="breadcrumb-container"/> -->
@@ -37,7 +37,7 @@
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/setting/msg">
+          <router-link to="/personal/personalCenter">
             <el-dropdown-item>
               个人中心
             </el-dropdown-item>

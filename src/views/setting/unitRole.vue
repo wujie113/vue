@@ -19,7 +19,7 @@
           </div>
           <div class="source panel-body">
             <div class="filter-container">
-              <el-button class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="addUnitBtn" size="mini">添加单位</el-button>
+              <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="addUnitBtn" size="mini">添加单位</el-button>
               <el-button class="filter-item" type="info" icon="el-icon-delete" @click="deleteBtn" size="mini">删除</el-button>
             </div>
             <el-table :data="tableData" stripe style="width: 100%" @selection-change="handleSelectionChange1" border>

@@ -10,6 +10,7 @@
                 :model="formInline"
                 class="demo-form-inline"
                 size="mini"
+                style="white-space: nowrap;"
               >
                 <el-form-item>
                   <el-input
@@ -18,11 +19,12 @@
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary">查询</el-button>
+                  <el-button type="primary" icon="el-icon-search">查询</el-button>
                 </el-form-item>
               </el-form>
               <el-collapse
                 @change="handleChange"
+                accordion
                 :data="myofficeusertreelist"
                 v-for="(menu, index) in myofficeusertreelist"
                 :key="index + '1'"
@@ -61,21 +63,19 @@
               </el-collapse>
               <span class="nextDeptName">下级部门</span>
               <el-collapse
-                @change="handleChange"
-                :data="lowerofficeusertreelist"
+                accordion
+                @change="handleChange2"
                 v-for="(menu, index) in lowerofficeusertreelist"
                 :key="index"
+                v-model="activeName"
               >
-                <el-collapse-item :title="menu.label" name="1">
+                <el-collapse-item :title="menu.label" :name="index">
                   <div
                     v-for="(child, index2) in menu.children"
                     class="wrapBoxDiv"
                     :key="index2"
                     @click="bottomSelected(index, index2);"
-                    :class="{
-                      showThePerson:
-                        firstIndex === index && bottomActiveIndex === index2
-                    }"
+                    :class="{ showThePerson: firstIndex === index && bottomActiveIndex === index2 }"
                   >
                     <div class="divPatrol">
                       <img src="../../../static/img/offline.png" alt="离线" />
@@ -229,6 +229,7 @@
                   icon="el-icon-search"
                   @click="searchBtn"
                   size="mini"
+                  type="primary"
                   >查询</el-button
                 >
               </el-popover>
@@ -311,6 +312,7 @@ export default {
   components: { Pagination, RmMap },
   data() {
     return {
+      activeName: [],
       isLoading: false,
       isShowLoad: true,
       titleName: "",
@@ -412,6 +414,17 @@ export default {
     },
     handleChange(val) {
     },
+    handleChange2(v) {
+      console.log('vvv',v)
+      // let bb = parseInt(this.activeName.join())
+      // console.log(v.indexOf(bb))
+      //
+      // if (v.indexOf(bb) > -1 && this.activeName.length > 1) {
+      //   v.splice(v.indexOf(bb),1)
+      //   console.log('vvv:after',v)
+      //   this.activeName = v
+      // }
+    },
     loadOfficeTree() {
       this.loading = true
       findOfficeUserstree(this.query).then(response => {
@@ -426,12 +439,12 @@ export default {
     showresponsibility(child) {
       getusermanagentriver({ id: child.id }).then(response => {
         //绑定责任段数据
-        const maplnglat = response.data.list;
+        const maplnglat = response.data.list
         console.log("maplnglat",maplnglat)
           var maplist = maplnglat.map((item, index) => {
             return maplnglat[index].id
           })
-          this.map.selectLine({ id: maplist,lng:maplnglat[0].lng,lat: maplnglat[0].lat })
+          this.map.selectLine({ id: maplist,lng: maplnglat[0].lng,lat: maplnglat[0].lat })
        })
     },
     //查看个人详情
@@ -499,7 +512,7 @@ export default {
               item.timeZones = this.DateTime(item.startTime, item.endTime)
             })
             this.workTrajectory = response.data.list
-          }else {
+          } else {
             this.workTrajectory = []
           }
         })
@@ -762,9 +775,29 @@ export default {
     padding-left: 10px;
     padding-right: 10px;
   }
+  /*滚动条样式*/
+  .panel-body::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 4px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+  }
+  .panel-body::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .panel-body::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.1);
+  }
   .panel-body {
-    overflow: auto;
-    height: calc(86vh - 41px);
+    overflow-y: auto;
+    height: 90.5vh;
+    overflow-x: hidden;
     p {
       margin: 0;
       padding: 0;

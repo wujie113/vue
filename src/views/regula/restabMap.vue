@@ -5,8 +5,8 @@
       <!-- 最大化按钮 -->
       <div
         class="el-mindiv"
-        v-show="digLogMini"
-        @click="digLogMiniBtn"
+        v-show="!dialogVisible"
+        @click="dialogVisible = !dialogVisible"
       >
         <div class="layui-layer-title">资源管理</div>
         <span class="layui-layer-setwin">
@@ -28,9 +28,7 @@
         :animation="2"
         :maskLayer="false"
         :shade="false"
-        height="600"
-        confirm="确定1"
-        cancel="取消1"
+        height="650"
       >
         <span
           slot="title"
@@ -176,7 +174,7 @@ export default {
       checked: false,
       dataArray: [],
       hpdataarray: [],
-      dialogVisible: true,
+      dialogVisible: false,
       digLogMini: false,
       defaultProps: {
         children: "children",
@@ -185,6 +183,9 @@ export default {
     }
   },
   created() {
+  },
+  mounted(){
+    this.dialogVisible = true
   },
   methods: {
     digLogMiniBtn() {

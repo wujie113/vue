@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="filter-container">
-      <el-input placeholder="检索农饮工程编码、名称" v-model="query.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input placeholder="检索农饮工程名称、编码" v-model="query.search" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button icon="el-icon-download" type="primary" @click="downloadExcel">下载农饮工程数据模板</el-button>
       <el-button icon="el-icon-refresh" type="primary" @click="updateData">更新农饮工程数据</el-button>
     </div>
     <el-table v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%" fit>
-      <el-table-column prop="name" label="工程名称" ::show-overflow-tooltip="true" min-width="200px" />
+      <el-table-column prop="name" label="工程名称" :show-overflow-tooltip="true" min-width="200px" />
       <el-table-column prop="code" label="工程编码" :show-overflow-tooltip="true" min-width="150px" />
       <el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" min-width="100px" />
       <el-table-column prop="lat" label="纬度" :show-overflow-tooltip="true" min-width="100px" />

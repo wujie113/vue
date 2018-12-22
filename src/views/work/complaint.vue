@@ -225,9 +225,9 @@
             style="width: 100%;"
           />
         </el-form-item>
-         <el-form-item label="问题描述">
+        <el-form-item label="问题描述">
                 <el-input type="textarea" v-model="proTaskFrom.description" placeholder="请输入问题描述" rows="5"></el-input>
-              </el-form-item>
+       </el-form-item>
               <el-form-item label="任务描述">
                 <el-input type="textarea" v-model="proTaskFrom.taskcontent" placeholder="请输入任务描述" rows="5"></el-input>
               </el-form-item>

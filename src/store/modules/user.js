@@ -13,7 +13,13 @@ const user = {
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    postlabel: '',
+    gender: '',
+    email: '',
+    phone: '',
+    id: '',
+    nickname: '',
   },
 
   mutations: {
@@ -40,6 +46,24 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_POSTLABEL: (state, postlabel) => {
+      state.postlabel = postlabel
+    },
+    SET_GENDER: (state, gender) => {
+      state.gender = gender
+    },
+    SET_EMAIL: (state, email) => {
+      state.email = email
+    },
+    SET_PHONE: (state, phone) => {
+      state.phone = phone
+    },
+    SET_ID: (state, id) => {
+      state.id = id
+    },
+    SET_NICKNAME: (state, nickname) => {
+      state.nickname = nickname
     }
   },
 
@@ -80,15 +104,23 @@ const user = {
             reject('getInfo: roles must be a non-null array !')
           }
           commit('SET_NAME', data.name || data.nickname)
-          commit('SET_AVATAR', data.certificateImage[0] || '/static/img/user-male.png')
+          commit('SET_AVATAR', data.avatar || '/static/img/user-male.png')
           commit('SET_INTRODUCTION', data.introduction)
+          commit('SET_POSTLABEL', data.postLabel)
+          commit('SET_GENDER', data.gender)
+          commit('SET_EMAIL', data.email)
+          commit('SET_PHONE', data.phone)
+          commit('SET_ID', data.id)
+          commit('SET_NICKNAME', data.nickname)
           resolve(response)
         }).catch(error => {
           reject(error)
         })
       })
     },
-
+    changeAvatar({ commit }, stateImg) {
+      commit('SET_AVATAR', stateImg)
+    },
     // 第三方验证登录
     // LoginByThirdparty({ commit, state }, code) {
     //   return new Promise((resolve, reject) => {

@@ -11,7 +11,7 @@ import WMTSTileGrid from 'ol/tilegrid/WMTS.js'
 import WMTSCapabilities from 'ol/format/WMTSCapabilities.js'
 import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS.js'
 import { bbox as bboxStrategy } from 'ol/loadingstrategy.js'
-import { vectorStyleFunc, searchResultStyleFunc, searchSelectStyleFunc, drawingStyleFunc, markerStyleFunc,measureStyleFunc } from "@/components/rm/map/style.js"
+import { vectorStyleFunc, searchResultStyleFunc, searchSelectStyleFunc, drawingStyleFunc, markerStyleFunc, measureStyleFunc } from "@/components/rm/map/style.js"
 import { getArea, getLength } from 'ol/sphere.js'
 import WKT from 'ol/format/WKT.js'
 
@@ -58,7 +58,7 @@ export const utils = {
                     layer: layerCode //'zhhz:getRiverAll'//zhhz:getRegion，只取指定图层的数据
                     //matrixSet: 'EPSG:3857'
                 })
-                console.log('WMTS options2222：', options)
+                //console.log('WMTS options2222：', options)
                 resolve(options)
             } else {
                 request({
@@ -79,7 +79,7 @@ export const utils = {
                         layer: layerCode//'zhhz:getRiverAll'//zhhz:getRegion，只取指定图层的数据
                         //matrixSet: 'EPSG:3857'
                     })
-                    console.log('WMTS options', options)
+                    //console.log('WMTS options', options)
                     resolve(options)
                 })
             }
@@ -171,7 +171,9 @@ export const utils = {
             if (k.layer instanceof Layer) {
                 k.layer.set('code', k.id)
                 k.layer.set('name', k.name)
-                k.layer.set('ltype', k.type)
+                if (!k.layer.get('ltype')) {
+                    k.layer.set('ltype', k.type || 'wms')
+                }
                 k.layer.setVisible(k.visible)
                 map.addLayer(k.layer)
             } else {
