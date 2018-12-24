@@ -42,13 +42,16 @@ export default {
     }
   },
   methods: {
-    init() {
+    init() {      
       const self = this;//因为箭头函数会改变this指向，指向windows。所以先把this保存
       setTimeout(() => {
         window.onresize = function () {
-          self.chart = echarts.init(self.$refs.myChart)
-          self.chart.resize()
-          console.log('柱形图1111')
+          if(self.$refs.myChart) {
+            self.chart = echarts.init(self.$refs.myChart)
+            self.chart.resize()
+            console.log('柱形图1111')
+          }
+
         }
       }, 20)
     },

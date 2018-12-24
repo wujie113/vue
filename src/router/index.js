@@ -167,7 +167,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/statisticalAnalysis/statisticalAnalysis',
     name: 'statisticalAnalysis',
-    meta: { title: '统计分析', icon: 'fenxi' },
+    meta: { title: '统计报表', icon: 'fenxi' },
     children: [
       {
         path: 'assessmentStatistics',

@@ -5,7 +5,6 @@
         <el-header height="125px">
           <div style="" class="topTitle">通知公告列表</div>
           <div class="filter-container" style="">
-            <template>
             <div class="block">
               <el-input placeholder="输入内容搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="handleFilter" v-model="query.title" />
               <span>时间段</span>
@@ -46,7 +45,6 @@
                 >
               </el-popover>
             </div>
-          </template>
           </div>
         </el-header>
         <el-main>

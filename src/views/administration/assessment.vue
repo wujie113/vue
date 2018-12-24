@@ -90,12 +90,12 @@
                 </template>
               </el-table-column>
             </el-table>
-            <pagination
+            <!-- <pagination
               v-show="query.total>0"
               :total="query.total"
               :page.sync="query.pageNo"
               :limit.sync="query.pageSize"
-            />
+            />-->
           </div>
           <el-button type="primary" size="mini">提交</el-button>
         </el-main>
@@ -203,7 +203,7 @@
                       size="small"
                       id="index"
                       type="text"
-                      @change="inputChange(scope.$index,scope.en,scope.row)"
+                      @change="inputChange(scope.$index,scope.numberscore,scope.row)"
                       v-model="scope.numberscore"
                       placeholder="请打分"
                       style="width: 80px;"
@@ -293,7 +293,7 @@ export default {
         loading: false
       },
       list: null,
-      scorelist:null,
+      scorelist: null,
       addVisible: false,
       editVisible: false,
       settingVisible: false,
@@ -320,10 +320,17 @@ export default {
         score: null,
         standard: null
       },
-      condition: {
-        year: null,
-        month: null
-      },
+      condition: [
+        {
+          item_id: null,
+          score: null
+        }
+      ],
+      // idvalue:{
+      //     item_id:null,
+      //     score:null
+      // },
+      idvalue: [],
       selectionitems: null,
       options: []
     };
@@ -335,7 +342,6 @@ export default {
     getarealist() {
       getarealist().then(Response => {
         this.options = Response.data.list;
-        console.log("this.options", this.options);
       });
     },
     edit(row) {
@@ -416,7 +422,7 @@ export default {
     },
     monthselection2(monthselection2) {
       var date = new Date();
-      var month = date.getMonth()+1;
+      var month = date.getMonth() + 1;
       if (this.monthvalue2 > month) {
         this.yearvalue2 = null;
         this.monthvalue2 = null;
@@ -542,16 +548,43 @@ export default {
       }
     },
     handleCurrentChange(row) {
-      this.selectionitems = row;
-      this.proTaskFrom.id = row.id;
+      if (row) {
+        this.selectionitems = row;
+        this.proTaskFrom.id = row.id;
+      }
+
+    },
+    //
+    inputChange(index, value, row) {
+      this.scorelist[index].fraction = value
+      let temp = {
+        item_id: row.id,
+        score: value
+      }
+      if (this.idvalue.length > 0) {
+        let isSame = false
+        for (let key in this.idvalue) {
+          if (this.idvalue[key].item_id == row.id && this.idvalue[key].score !== value) {
+            this.idvalue[key].score = value
+            isSame = true
+          }
+        }
+        if (!isSame) {
+          this.idvalue.push(temp)
+          isSame = false
+        }
+      } else {
+        this.idvalue.push(temp)
+      }
     },
     //评分提交
     scoreBtn() {
       var condition = {
         officeid: this.value3,
-        //year: this.condition.year,
-      // month: this.condition.month
+        year: this.condition.year,
+        month: this.condition.month
       };
+      console.log("this.idvalue", this.idvalue);
       if (condition.officeid != null && condition.officeid != "") {
         console.log("condition", condition);
       } else {
@@ -561,20 +594,12 @@ export default {
         });
       }
     },
-    //
-   inputChange(index, value,row){
-     console.log("row.id",row.id)
-     console.log(this.scorelist)
-     console.log("aaaa",this.scorelist[index].fraction)
-        //this.scorelist[index].fraction = value
-      },
+
     //合计
     getCount(param) {
-      console.log("param", param);
       const { columns, data } = param;
       const sums = [];
       let values = [];
-      console.log("columns", columns);
       columns.forEach((column, index) => {
         if (index === 0) {
           sums[index] = "合计";
@@ -582,11 +607,8 @@ export default {
         }
         if (column.property == "score") {
           values = data.map(item => Number(item.score));
-          console.log("--------121212", values);
         } else if (column.property === "fraction") {
-          console.log("column.property", column.property);
           values = data.map(item => Number(item.fraction));
-          console.log("values", values);
         }
         if (column.property == "score" || column.property == "fraction") {
           sums[index] = values.reduce((prev, curr) => {
@@ -602,7 +624,6 @@ export default {
           sums[index] = "N/A";
         }
       });
-      console.log(sums);
       return sums;
     }
   }
