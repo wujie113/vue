@@ -1,7 +1,7 @@
 <template>
   <div class="">
-    <el-container>
-      <rm-map v-model="map"></rm-map>
+    <el-container> 
+      <rm-map v-model="map"></rm-map> 
       <div
         class="el-mindiv"
         v-show="!dialogVisible"
@@ -427,8 +427,11 @@
         <el-form-item prop="area" label="责任主体">
           <rm-area-select v-model="river.form.area" />
         </el-form-item>
+        <el-form-item prop="code" label="编码">
+          <el-input v-model="river.form.code"  />
+        </el-form-item>
         <el-form-item prop="sort" label="排序">
-          <el-input v-model="river.form.sort" />
+          <el-input v-model.number="river.form.sort" />
         </el-form-item>
         <el-form-item prop="description" label="河流描述">
           <el-input
@@ -436,9 +439,25 @@
             :rows="4"
             type="textarea"
           />
-        </el-form-item>
+        </el-form-item>   
       </el-form>
-     
+       <el-upload
+            :action="river.doUpload"
+            list-type="picture-card"
+            :auto-upload="false"
+            multiple
+            :on-preview="riverhandlePictureCardPreview"
+            accept=".jpg,.jpeg,.png,.gif"
+            ref="riverupload"
+            :file-list="river.fileList"
+            :before-remove="riverremovefile"
+            :data="river.uploaddata"
+            :on-success="riverhandleSuccess"
+            :on-remove="riverhandleRemove"
+            :on-error="riverfileerror"
+          > 
+       <i class="el-icon-plus"></i>
+      </el-upload>
     </Layer>
     <!-- 湖泊form -->
     <Layer
@@ -664,7 +683,7 @@ import { delBtn, addspot, getspot } from "@/api/res/dutyPart.js";
 import { file } from "@/api/imgUplodFile";
 
 export default {
-  name: "Rivermap",
+  name: "rivermap",
   components: {
     Pagination,
     RmMap,
@@ -726,6 +745,7 @@ export default {
           description: null,
           area: null,
           sort: null,
+          code:null,
           river: {
             id: null
           }

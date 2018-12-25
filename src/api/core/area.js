@@ -1,12 +1,14 @@
 import request from '@/utils/request'
 
 //区域树
-export function tree(pid) {
+export function tree(pid,iscontains) {
+  if(iscontains==undefined)iscontains=null;
   return request({
-    url: '/api/sys/area/tree',
+    url: 'api/res/management/tree',
     method: 'get',
     params: {
-      pid: pid
+      pid: pid,
+      iscontains:iscontains
     }
   })
 }

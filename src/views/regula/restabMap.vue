@@ -28,7 +28,7 @@
         :animation="2"
         :maskLayer="false"
         :shade="false"
-        height="650"
+        height="680"
       >
         <span
           slot="title"

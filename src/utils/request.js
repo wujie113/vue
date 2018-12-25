@@ -2,16 +2,19 @@ import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
 import store from '../store'
 import { getToken } from '@/utils/auth'
-import qs from 'qs'
+import qs from 'qs' 
 
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
   timeout: 1000 * 1000 // 请求超时时间
-})
+})  
 // request拦截器
 service.interceptors.request.use(
   config => {
+
+    
+    console.log("输出。。。。。。。。",process.env.BASE_API)
     if (store.getters.token) { 
       if (config.params === undefined) {
         config.params = { 'token': getToken() }
@@ -76,7 +79,7 @@ service.interceptors.response.use(
   error => {
     console.log('err' + error) // for debug
     Message({
-      message: error.msg,
+      message: '服务器开小差,请稍后再试',
       type: 'error',
       duration: 5 * 1000
     })

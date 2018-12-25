@@ -9,7 +9,7 @@
     no-children-text="空记录"
     retry-text="重试"
     :value-format="format"
-    placeholder="选择部门..."
+    placeholder="选择区域..."
     @input="handleInput"
     :normalizer="normalizer"
     :defaultExpandLevel="defaultExpand"
@@ -47,6 +47,9 @@
         required: false,
         type: Number,
         default: 0
+      },
+      iscontains:{
+          required: false
       }
     },
     data() {
@@ -81,9 +84,10 @@
           this.$emit("input", node)
         }
         //this.$emit('update:org',node)
-      },
+      }, 
       loadAreas({ action, parentNode, callback }) { 
-        console.log(action, parentNode, callback)
+        console.log(action, parentNode, callback);
+        console.log("this.iscontains:::",this.iscontains);
         var self = this
         var pid = null
         if (action !== "LOAD_ROOT_OPTIONS") {

@@ -150,13 +150,13 @@ export const constantRouterMap = [
        {
         path: 'assessment',
         name: 'assessment',
-        component: () => import('@/views/administration/assessment'),
+        component: () => import('@/views/ass/assessment'),
         meta: { title: '考核管理', noCache: false }
       },
       {
         path: 'exposurestage',
         name: 'exposurestage',
-        component: () => import('@/views/administration/exposurestage'),
+        component: () => import('@/views/ass/exposurestage'),
         meta: { title: '曝光台', noCache: false }
       }
       ]
@@ -174,6 +174,12 @@ export const constantRouterMap = [
         name: 'assessmentStatistics',
         component: () => import('@/views/statisticalAnalysis/assessmentStatistics'),
         meta: { title: '考核统计', noCache: false }
+      },
+      {
+        path: 'complaintstatistics',
+        name: 'complaintstatistics',
+        component: () => import('@/views/statisticalAnalysis/complaintstatistics'),
+        meta: { title: '投诉统计', noCache: false }
       }
     ]
   },
@@ -276,12 +282,13 @@ export const asyncRouterMap = [
       //   name: 'river2',
       //   component: () => import('@/views/res/river'),
       //   meta: { title: '河流管理', noCache: true }
-      // }, {
-      //   path: 'drainage',
-      //   name: 'drainage',
-      //   component: () => import('@/views/res/drainage'),
-      //   meta: { title: '水系管理', noCache: true }
-      // } ,
+      // },
+       {
+        path: 'drainage',
+        name: 'drainage',
+        component: () => import('@/views/res/drainage'),
+        meta: { title: '水系管理', noCache: true }
+      } ,
       {
         path: 'lakeb',
         name: 'lakeb',

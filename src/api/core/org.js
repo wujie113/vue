@@ -20,3 +20,11 @@ export function findOrgUsers(pid) {
     }
   })
 } 
+//查询第二级河长办(不包含人员)
+export function getLoweroffice(params) {
+  return request({
+    url: "/api/res/management/loweroffice",
+    method: "get",
+    params
+  })
+}

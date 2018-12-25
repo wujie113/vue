@@ -68,7 +68,9 @@
       </el-aside>
       <el-container>
         <!--插入地图-->
-        <rm-map v-model="map" />
+        <keep-alive>
+          <rm-map v-model="map" />
+        </keep-alive>
       </el-container>
     </el-container>
     <Layer

@@ -3,10 +3,16 @@
     <el-container v-loading="v.loading">
       <el-container>
         <el-header height="125px">
-          <div style="" class="topTitle">通知公告列表</div>
-          <div class="filter-container" style="">
+          <div style class="topTitle">通知公告列表</div>
+          <div class="filter-container" style>
             <div class="block">
-              <el-input placeholder="输入内容搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="handleFilter" v-model="query.title" />
+              <el-input
+                placeholder="输入内容搜索..."
+                style="width: 210px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter"
+                v-model="query.title"
+              />
               <span>时间段</span>
               <el-date-picker
                 v-model="value1"
@@ -15,9 +21,8 @@
                 @change="start"
                 size="mini"
                 placeholder="开始日期"
-              >
-              </el-date-picker>
-              <span> — </span>
+              ></el-date-picker>
+              <span>—</span>
               <el-date-picker
                 v-model="value2"
                 type="date"
@@ -25,24 +30,22 @@
                 @change="end"
                 size="mini"
                 placeholder="结束日期"
-              >
-              </el-date-picker>
+              ></el-date-picker>
               <el-popover
                 placement="right-start"
-                title=""
+                title
                 width="200"
                 trigger="manual"
                 content="结束时间需大于开始时间。"
                 v-model="popoverVisible"
               >
                 <el-button
-                type="primary"
+                  type="primary"
                   slot="reference"
                   icon="el-icon-search"
                   @click="handleFilter"
                   size="mini"
-                  >查询</el-button
-                >
+                >查询</el-button>
               </el-popover>
             </div>
           </div>
@@ -53,11 +56,16 @@
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>
           </div>
           <div>
-            <el-table :data="list" row-key="id" stripe style="width: 100%" border @selection-change="handleSelectionChange">
-              <el-table-column type="selection" width="55" align="center">
-              </el-table-column>
-              <el-table-column type="index" width="50" align="center" label="序号">
-              </el-table-column>
+            <el-table
+              :data="list"
+              row-key="id"
+              stripe
+              style="width: 100%"
+              border
+              @selection-change="handleSelectionChange"
+            >
+              <el-table-column type="selection" width="55" align="center"></el-table-column>
+              <el-table-column type="index" width="50" align="center" label="序号"></el-table-column>
               <el-table-column prop="title" label="标题"/>
               <el-table-column prop="createByName" label="发起人"/>
 
@@ -69,10 +77,15 @@
                 </template>
               </el-table-column>
             </el-table>
-            <pagination v-show="query.total>0" :total="query.total" :page.sync="query.pageNo" :limit.sync="query.pageSize" @pagination="getList" />
+            <pagination
+              v-show="query.total>0"
+              :total="query.total"
+              :page.sync="query.pageNo"
+              :limit.sync="query.pageSize"
+              @pagination="getList"
+            />
           </div>
         </el-main>
-
       </el-container>
     </el-container>
     <!--添加编辑弹窗-->
@@ -107,7 +120,6 @@
         <el-button @click="save()" type="primary">确 定</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template> 
 <script>
@@ -116,7 +128,7 @@ import { getList, get, save, del } from "@/api/setting/msg.js"
 import RmDict from "@/components/rm/dict"
 import RmOrgSelect from "@/components/rm/orgselect"
 import { getToken } from "@/utils/auth"
-import { getfiles,  delfiles } from "@/api/res/river.js"
+import { getfiles, delfiles } from "@/api/res/river.js"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
 import { file } from "@/api/imgUplodFile"
@@ -178,7 +190,7 @@ export default {
     this.getList()
   },
   methods: {
-   getList() {
+    getList() {
       if (this.query.starttime > this.query.endtime) {
         this.popoverVisible = true
         setTimeout(() => {
@@ -192,7 +204,7 @@ export default {
           this.list = response.data.list;
           this.query.total = response.data.count;
         });
-     }
+      }
     },
     start(start) {
       this.query.starttime = start
@@ -213,8 +225,8 @@ export default {
       //console.log(JSON.stringify(row));
       this.v.form = true;
       this.form = row;
-      
-      getfiles({ bizId: this.form.id}).then(response => {
+
+      getfiles({ bizId: this.form.id }).then(response => {
         this.fileList = response.data;
       });
 
@@ -242,10 +254,10 @@ export default {
         this.uploaddata.bizId = response.data.id
         if (this.$refs.upload.uploadFiles !== undefined && this.$refs.upload.uploadFiles.length > 0) {
           // 上传到服务器
-          const imgParams =  "&bizType=" +   this.uploaddata.bizType +  "&bizId=" + this.uploaddata.bizId;
+          const imgParams = "&bizType=" + this.uploaddata.bizType + "&bizId=" + this.uploaddata.bizId;
           file(imgParams, this.$refs.upload.uploadFiles).then(res => {
-              console.log("file----res", res)
-            }).catch(errorRes => {})
+            console.log("file----res", res)
+          }).catch(errorRes => { })
         } else {
           this.getList()
         }
@@ -320,22 +332,22 @@ export default {
       //   }
       // });
     },
-    deleteBtn(){
+    deleteBtn() {
 
     }
   }
 };
 </script>
 <style scoped lang="scss">
-  .app-container {
-     .filter-container {
-       span {
-         color: #636363;
-         font-size: 12px;
-       }
-    }
-    > .el-container {
-      min-height: 86vh;
+.app-container {
+  .filter-container {
+    span {
+      color: #636363;
+      font-size: 12px;
     }
   }
+  > .el-container {
+    min-height: 86vh;
+  }
+}
 </style>

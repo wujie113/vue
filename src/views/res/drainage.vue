@@ -28,7 +28,7 @@
           <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item prop="area" label="责任主体">
-          <rm-area-select v-model="form.area" />
+          <rm-area-select v-model="form.area"  iscontains="yes"/>
         </el-form-item>
           <el-form-item   prop="sort"  label="排序">
            <el-input v-model="form.sort"/>
@@ -50,7 +50,6 @@
         :data="uploaddata"
         :before-upload="beforeUpload"
         :on-success="handleSuccess"
-        multiple="true"
         :on-remove="handleRemove">
         <i class="el-icon-plus"></i>
         </el-upload>  
