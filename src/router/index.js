@@ -173,13 +173,25 @@ export const constantRouterMap = [
         path: 'assessmentStatistics',
         name: 'assessmentStatistics',
         component: () => import('@/views/statisticalAnalysis/assessmentStatistics'),
-        meta: { title: '考核统计', noCache: false }
+        meta: { title: '考核统计', noCache: true }
       },
       {
         path: 'complaintstatistics',
         name: 'complaintstatistics',
         component: () => import('@/views/statisticalAnalysis/complaintstatistics'),
-        meta: { title: '投诉统计', noCache: false }
+        meta: { title: '投诉统计', noCache: true }
+      },
+      {
+        path: 'OrderStatistics',
+        name: 'OrderStatistics',
+        component: () => import('@/views/statisticalAnalysis/OrderStatistics'),
+        meta: { title: '工单统计', noCache: true }
+      },
+      {
+        path: 'SignChart',
+        name: 'SignChart',
+        component: () => import('@/views/statisticalAnalysis/SignChart'),
+        meta: { title: '打卡报表', noCache: true }
       }
     ]
   },

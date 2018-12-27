@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-24 17:28:23 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-25 15:23:29
+ * @Last Modified time: 2018-12-26 16:52:46
  */
 //  考核统计
 <template>
@@ -31,9 +31,16 @@
                   <el-date-picker
                     v-model="value2"
                     type="month"
-                    placeholder="选择月"
+                    placeholder="选择年月"
                     @change="tabMonthChange"
                   ></el-date-picker>
+                  <el-button
+                    :loading="downloadLoading"
+                    style="margin:0 0 20px 20px;"
+                    type="primary"
+                    icon="document"
+                    @click="handleDownload"
+                  >下载Excel</el-button>
                 </div>
               </div>
             </el-tab-pane>
@@ -44,7 +51,22 @@
             <div id="myChart" :style="{width: '100%', height: clientHeight + 'px'}" ref="myChart"></div>
           </div>
           <div class="canvasBox" v-if="activeName === 'second'">
-            <h2>我的tab2</h2>
+            <h6
+              style="font-size: 20px;margin: 0px 0 20px 0;text-align: center;font-weight: normal;"
+            >{{ aeesssTableParams.tab2Year }}年{{ aeesssTableParams.tab2Month }}月{{ officeName }}下级单位考核评分表</h6>
+            <el-table
+              :data="assessTable.tableData"
+              style="width: 100%"
+              border
+              :header-cell-style="{'color': '#333333'}"
+            >
+              <el-table-column
+                :prop="item.prop"
+                :label="item.label"
+                v-for="(item, index) in assessTable.tableCoulmn"
+                :key="index"
+              ></el-table-column>
+            </el-table>
           </div>
         </el-main>
       </el-container>
@@ -54,7 +76,8 @@
 
 <script>
 import echarts from 'echarts'
-import { getChartsList } from '@/api/statisticalAnalysis/assessmentStatistics.js'
+import { mapGetters } from 'vuex'
+import { getChartsList, getAssessTable } from '@/api/statisticalAnalysis/assessmentStatistics.js'
 export default {
   name: "assessmentStatistics",
   data() {
@@ -63,8 +86,16 @@ export default {
       echartsData: {},
       clientHeight: '',
       loading: false,
+      downloadLoading: false,
       year: '',
-      yearMonth: '',
+      aeesssTableParams: {
+        tab2Month: '',
+        tab2Year: ''
+      },
+      assessTable: {
+        tableCoulmn: [],
+        tableData: [],
+      },
       value1: '',
       value2: '',
       activeName: 'first'
@@ -73,18 +104,19 @@ export default {
   created() {
     this.loading = true
     this.year = new Date().getFullYear()
+    this.aeesssTableParams.tab2Year = new Date().getFullYear()
+    this.aeesssTableParams.tab2Month = new Date().getMonth() + 1
+    this.filename = this.aeesssTableParams.tab2Year + '年' + this.aeesssTableParams.tab2Month + '月' + this.officeName + '下级单位考核评分表'
     this.getChartsList()
   },
   mounted() {
     const tempH = this.getHeight(document.getElementsByClassName('app-container')[0]) - 217
-    console.log('--mounted周期', tempH)
     this.clientHeight = tempH
     const that = this
     window.onresize = function temp() {
       // that.clientHeight = `${document.documentElement.clientHeight}px`
       that.clientHeight = that.getHeight(document.getElementsByClassName('app-container')[0]) - 217
       // that.clientHeight = that.getHeight(window) - 84
-      console.log('window.onresize', that.clientHeight)
     }
     // setTimeout(() => {
     //   this.drawBar()      
@@ -92,12 +124,17 @@ export default {
     //让echarts窗口自适应
     this.init()
   },
+  computed: {
+    ...mapGetters([
+      'officeName',
+    ])
+  },
   methods: {
     init() {
       const self = this
       setTimeout(() => {
         window.onresize = function () {
-          if(self.$refs.myChart) {
+          if (self.$refs.myChart) {
             self.chart = echarts.init(self.$refs.myChart)
             self.chart.resize()
           }
@@ -115,7 +152,25 @@ export default {
         this.legendDataArray = res.data.series.map(item => item.name)
         this.drawBar()
         this.loading = false
-      }).catch((errorRes) => { 
+      }).catch((errorRes) => {
+        this.loading = false
+      })
+    },
+    // 获取tab2选项卡table数据接口
+    getAssessTable() {
+      const params = {
+        "year": this.aeesssTableParams.tab2Year,
+        "month": this.aeesssTableParams.tab2Month
+      }
+      getAssessTable(params).then((res) => {
+        this.loading = false
+        // res.data.tableCoulmn.push({"prop":"sum","label":"总分"})
+        // res.data.tableData.map((item, index) => {
+        //   item.sum = 10
+        // })
+        this.assessTable.tableCoulmn = res.data.tableCoulmn
+        this.assessTable.tableData = res.data.tableData
+      }).catch((errorRes) => {
         this.loading = false
       })
     },
@@ -125,6 +180,9 @@ export default {
         setTimeout(() => {
           this.drawBar()
         }, 100);
+      } else if (tab.paneName == 'second') {
+        this.loading = true
+        this.getAssessTable()
       }
     },
     tabYearChange(v) {
@@ -135,6 +193,45 @@ export default {
     tabMonthChange(v) {
       let tab2Year = new Date(v).getFullYear()
       let tab2Month = new Date(v).getMonth() + 1
+      this.aeesssTableParams.tab2Year = tab2Year
+      this.aeesssTableParams.tab2Month = tab2Month
+      this.assessTable.tableCoulmn = []
+      this.assessTable.tableData = []
+      this.filename = this.aeesssTableParams.tab2Year + '年' + this.aeesssTableParams.tab2Month + '月' + this.officeName + '下级单位考核评分表'      
+      this.getAssessTable()
+    },
+    // 下载导出Excel表格
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        let tHeaderTemp = []
+        let filterValTemp = []
+        this.assessTable.tableCoulmn.map(item => {
+          tHeaderTemp.push(item.label)
+          filterValTemp.push(item.prop)
+        })
+        const tHeader = tHeaderTemp
+        const filterVal = filterValTemp
+        const list = this.assessTable.tableData
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
     },
     // 画图表
     drawBar() {
@@ -180,7 +277,7 @@ export default {
           type: 'value',
           name: '总分',
           nameTextStyle: {
-            color:'#008acd'
+            color: '#008acd'
           },
           axisLine: {
             lineStyle: {
@@ -215,6 +312,10 @@ export default {
   }
   > .el-container {
     min-height: 86vh;
+    > .el-container {
+      // 兼容IE浏览器
+      min-height: 86vh;
+    }
   }
 }
 </style>

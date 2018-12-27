@@ -67,6 +67,7 @@ export default {
           trigger: 'item',
           formatter: "{b}: {c} ({d}%)"
         },
+        color: ["#52b4ff", "#ffc552"],
         legend: {
           orient: 'horizontal',
           y: 'bottom',

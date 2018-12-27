@@ -6,50 +6,50 @@
           <div style class="topTitle">考核评分表</div>
 
           <div class="filter-container" style>
-            <template>
-              <div class="block">单位名称
-                <el-select v-model="value2" :clearable="true" placeholder="请选择">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.id"
-                    :label="item.label"
-                    :value="item.id"
-                  ></el-option>
-                </el-select>日期选择
-                <el-date-picker
-                  v-model="yearvalue"
-                  type="year"
-                  format="yyyy年"
-                  value-format="yyyy"
-                  placeholder="选择年"
-                  @change="yearselection"
-                  :clearable="false"
-                ></el-date-picker>
-                <el-date-picker
-                  v-model="monthvalue"
-                  type="month"
-                  format="M月"
-                  value-format="M"
-                  placeholder="选择月"
-                  @change="monthselection"
-                  :clearable="false"
-                ></el-date-picker>
-                <el-button
-                  type="primary"
-                  slot="reference"
-                  icon="el-icon-search"
-                  size="mini"
-                  @click="handleFilter"
-                >查询</el-button>
-                <el-button
-                  type="primary"
-                  slot="reference"
-                  icon="el-icon-setting"
-                  size="mini"
-                  @click="getasslist"
-                >考核设置</el-button>
-              </div>
-            </template>
+            <div class="block">
+              <span>单位名称</span>
+              <el-select v-model="value2" :clearable="true" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+              <span>日期选择</span>
+              <el-date-picker
+                v-model="yearvalue"
+                type="year"
+                format="yyyy年"
+                value-format="yyyy"
+                placeholder="选择年"
+                @change="yearselection"
+                :clearable="false"
+              ></el-date-picker>
+              <el-date-picker
+                v-model="monthvalue"
+                type="month"
+                format="M月"
+                value-format="M"
+                placeholder="选择月"
+                @change="monthselection"
+                :clearable="false"
+              ></el-date-picker>
+              <el-button
+                type="primary"
+                slot="reference"
+                icon="el-icon-search"
+                size="mini"
+                @click="handleFilter"
+              >查询</el-button>
+              <el-button
+                type="primary"
+                slot="reference"
+                icon="el-icon-setting"
+                size="mini"
+                @click="getasslist"
+              >考核设置</el-button>
+            </div>
           </div>
         </el-header>
 
@@ -65,39 +65,13 @@
           </div>
 
           <div>
-            <el-table
-              row-key="id"
-              stripe
-              style="width: 100%"
-              border
-              @selection-change="assessmentchange"
-            >
-              <el-table-column type="selection" width="55" align="center"></el-table-column>
-              <el-table-column type="index" width="50" border align="center" label="序号"></el-table-column>
-              <el-table-column prop label="单位名称"/>
-              <el-table-column prop label="日常巡查"/>
-              <el-table-column prop label="公众投诉"/>
-              <el-table-column prop label="宣传教育工作"/>
-              <el-table-column prop label="奖励分"/>
-              <el-table-column prop label="时间处理率"/>
-              <el-table-column prop label="水质变化"/>
-              <el-table-column prop label="领导综合评估"/>
-              <el-table-column prop label="其他"/>
-              <el-table-column prop label="总分"/>
-              <el-table-column prop label="操作  " width="100">
-                <template slot-scope="scope">
-                  <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
-                </template>
-              </el-table-column>
+             <el-table :data="officescorelist.tableData" style="width: 100%" border :header-cell-style="{'color': '#333333'}">
+              <el-table-column :prop="item.prop" :label="item.label" v-for="(item, index) in officescorelist.tableCoulmn" :key="index">
+               
+              </el-table-column>      
             </el-table>
-            <!-- <pagination
-              v-show="query.total>0"
-              :total="query.total"
-              :page.sync="query.pageNo"
-              :limit.sync="query.pageSize"
-            />-->
           </div>
-          <el-button type="primary" size="mini">提交</el-button>
+          <!-- <el-button type="primary" size="mini">提交</el-button> -->
         </el-main>
 
         <!-- 考核设置 -->
@@ -107,38 +81,33 @@
           :modal-append-to-body="false"
           width="60%"
         >
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="editassBtn">编辑考核项</el-button>
-          <el-button type="primary" size="mini" icon="el-icon-delete" @click="delassBtn">删除考核项</el-button>
-          <el-button
-            type="primary"
-            size="mini"
-            icon="el-icon-circle-plus-outline"
-            @click="addassBtn"
-          >新增考核项</el-button>
+          <div class="filter-container">
+            <el-button type="primary" size="mini" icon="el-icon-edit" @click="editassBtn">编辑考核项</el-button>
+            <el-button type="info" size="mini" icon="el-icon-delete" @click="delassBtn">删除考核项</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="addassBtn">新增考核项</el-button>
+          </div>
           <div>
-            <template>
-              <el-table
-                ref="singleTable"
-                :data="list"
-                style="width: 100%"
-                highlight-current-row
-                :border="true"
-                @current-change="handleCurrentChange"
-                :summary-method="getCount"
-                show-summary
-              >
-                <el-table-column prop="name" label="考核项目" width="120"></el-table-column>
-                <el-table-column prop="content" label="考评内容" width="400"></el-table-column>
-                <el-table-column prop="score" label="基本分" width="120"></el-table-column>
-                <el-table-column prop="standard" label="考核标准" width="400"></el-table-column>
-              </el-table>
-              <div>
-                <!-- 总计  总分 -->
-              </div>
-              <!-- <div style="margin-top: 20px">
+            <el-table
+              ref="singleTable"
+              :data="list"
+              style="width: 100%"
+              highlight-current-row
+              :border="true"
+              @current-change="handleCurrentChange"
+              :summary-method="getCount"
+              show-summary
+            >
+              <el-table-column prop="name" label="考核项目" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="content" label="考评内容" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="score" label="基本分"></el-table-column>
+              <el-table-column prop="standard" label="考核标准" width="500" show-overflow-tooltip></el-table-column>
+            </el-table>
+            <!-- <div> -->
+              <!-- 总计  总分 -->
+            <!-- </div> -->
+            <!-- <div style="margin-top: 20px">
                 <el-button type="primary">提交</el-button>
-              </div>-->
-            </template>
+            </div>-->
           </div>
         </el-dialog>
 
@@ -149,8 +118,8 @@
           :modal-append-to-body="false"
           width="66%"
         >
-          <template>
-            <div>
+          <div class="filter-container">
+            <div class="block">
               <span>日期选择</span>
               <el-date-picker
                 v-model="yearvalue2"
@@ -181,42 +150,43 @@
                 ></el-option>
               </el-select>
             </div>
-
-            <div>
-              <el-table
-                :data="scorelist"
-                style="width: 100%"
-                highlight-current-row
-                :border="true"
-                @current-change="handleCurrentChange"
-                :summary-method="getCount"
-                show-summary
-                v-loading="scoreloading"
-              >
-                <el-table-column prop="name" label="考核项目" width="120"></el-table-column>
-                <el-table-column prop="content" label="考评内容" width="400"></el-table-column>
-                <el-table-column prop="score" label="基本分" width="120"></el-table-column>
-                <el-table-column prop="standard" label="考核标准" width="400"></el-table-column>
-                <el-table-column prop="fraction" label="得分" width="150" align="center">
-                  <template slot-scope="scope">
-                    <el-input
-                      size="small"
-                      id="index"
-                      type="number"
-                      @change="inputChange(scope.$index,scope.numberscore,scope.row)"
-                      v-model="scope.numberscore"
-                      placeholder="请打分"
-                      style="width: 80px;"
-                    ></el-input>
-                    <span>分</span>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <div style="margin-top: 20px">
-                <el-button type="primary" @click="scoreBtn">提交</el-button>
-              </div>
+          </div>
+          <div>
+            <el-table
+              :data="scorelist"
+              style="width: 100%"
+              highlight-current-row
+              :border="true"
+              @current-change="handleCurrentChange"
+              :summary-method="getCount"
+              show-summary
+              v-loading="scoreloading"
+            >
+              <el-table-column prop="name" label="考核项目" width="120"></el-table-column>
+              <el-table-column prop="content" label="考评内容" width="400"></el-table-column>
+              <el-table-column prop="score" label="基本分" width="120"></el-table-column>
+              <el-table-column prop="standard" label="考核标准" width="400"></el-table-column>
+              <el-table-column prop="fraction" label="得分" width="150" align="center">
+                <template slot-scope="scope">
+                  <el-input
+                    size="small"
+                    id="index"
+                    type="number"
+                    @change="inputChange(scope.$index,scope.numberscore,scope.row)"
+                    v-model="scope.numberscore"
+                    placeholder="请打分"
+                    style="width: 80px;"
+                    onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
+                    :min="1"
+                  ></el-input>
+                  <span>分</span>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div style="margin-top: 20px">
+              <el-button type="primary" @click="scoreBtn">提交</el-button>
             </div>
-          </template>
+          </div>
         </el-dialog>
 
         <!-- 新增考核项弹窗 -->
@@ -277,15 +247,8 @@
 
 
 <script>
-import { 
-  save,
-  findsettemplateItemlist,
-  del,
-  getscorelist,
-  savescore
-} from "@/api/ass/assessment.js";
-
-import {getLoweroffice} from "@/api/core/org.js";
+import { save, findsettemplateItemlist, del, getscorelist, savescore, officelist,getlist } from "@/api/ass/assessment.js";
+import { getLoweroffice } from "@/api/core/org.js";
 export default {
   components: {},
   data() {
@@ -308,7 +271,7 @@ export default {
       monthvalue2: "",
       scoreVisible: false,
       scoreloading: null,
-      totalscore:[],
+      totalscore: [],
       query: {
         total: 0,
         pageNo: 1,
@@ -323,16 +286,15 @@ export default {
         score: null,
         standard: null
       },
-      condition: 
-        {
-          office:null,
+      condition: {
+          office: null,
           year: null,
           month: null
         },
-      // idvalue:{
-      //     item_id:null,
-      //     score:null
-      // },
+    officescorelist: {
+        tableCoulmn: [],
+        tableData:[],
+      },
       idvalue: [],
       selectionitems: null,
       options: []
@@ -366,7 +328,7 @@ export default {
         var month = date.getMonth() + 1;
         this.monthvalue = month + "月";
         this.condition.month = month.toString();
-        findsettemplateItemlist(this.condition).then(response => {
+        officelist(this.condition).then(response => {
           this.list = response.data.list;
           this.$message({
             message: "查询成功",
@@ -389,7 +351,7 @@ export default {
         this.condition.month = monthselection;
         var year = date.getFullYear();
         this.yearvalue = year + "年";
-        findsettemplateItemlist(this.condition).then(response => {
+        officelist(this.condition).then(response => {
           this.list = response.data.list;
           this.$message({
             message: "查询成功",
@@ -462,7 +424,7 @@ export default {
       getscorelist({ year: year, month: month }).then(response => {
         this.scoreloading = false
         this.scorelist = response.data.list
-        console.log("this.scorelist",this.scorelist)
+        console.log("this.scorelist", this.scorelist)
         //  this.$message({
         //     message:"查询成功",
         //     type: "success"
@@ -479,13 +441,13 @@ export default {
     //新增考核项
     addassBtn() {
       var str = this.totalscore[2]
-      str = str.slice(0,3);
-      if(str == 100){
-          this.$message({
+      str = str.slice(0, 3);
+      if (str == 100) {
+        this.$message({
           message: "当前总分达到100分,无法继续添加",
           type: "warning"
         });
-      }else{
+      } else {
         this.addVisible = true;
         this.proTaskFrom = [];
       }
@@ -497,8 +459,8 @@ export default {
           message: "请选择编辑项",
           type: "error"
         });
-      }else {
-        console.log("this.proTaskFrom:::",this.selectionitems);
+      } else {
+        console.log("this.proTaskFrom:::", this.selectionitems);
         this.editVisible = true;
         this.proTaskFrom = this.selectionitems;
       }
@@ -517,8 +479,8 @@ export default {
             message: response.msg,
             type: "success"
           });
-        }).catch((erroe) =>{
-            this.getasslist();
+        }).catch((erroe) => {
+          this.getasslist();
         })
       }
     },
@@ -529,7 +491,22 @@ export default {
         year: this.condition.year,
         month: this.condition.month
       };
-      console.log("condition", condition);
+      if(this.value2!=null && this.value2 != ''
+        &&  this.condition.year && this.condition.year != ''
+        &&  this.condition.month && this.condition.month != ''
+        ) {
+            console.log("condition",condition)
+      officelist(condition).then(response =>{
+           this.officescorelist.tableCoulmn = response.data.tableCoulmn
+           this.officescorelist.tableData = response.data.tableData        
+      })
+      }else{
+        this.$message({
+              message: "请选择单位和日期",
+              type: "warning"
+            });
+      }
+      
     },
     //提交
     submitBtn() {
@@ -539,24 +516,24 @@ export default {
         content: this.proTaskFrom.content,
         score: this.proTaskFrom.score,
         standard: this.proTaskFrom.standard,
-        
+
       };
-      if (proTaskFrom.name != null && proTaskFrom.content != null &&  proTaskFrom.score != null &&  proTaskFrom.standard != null  ) {
+      if (proTaskFrom.name != null && proTaskFrom.content != null && proTaskFrom.score != null && proTaskFrom.standard != null) {
         save(proTaskFrom).then(Response => {
-          if(response.success == true){
-              this.$message({
-                message: response.msg,
-                type: "success"
-              });
+          if (response.success == true) {
+            this.$message({
+              message: response.msg,
+              type: "success"
+            });
           }
           this.addVisible = false;
-            this.editVisible = false;
-            this.getasslist();
-        }).catch((error) => { 
-             this.addVisible = false;
-            this.editVisible = false;
-            this.getasslist();
-      })
+          this.editVisible = false;
+          this.getasslist();
+        }).catch((error) => {
+          this.addVisible = false;
+          this.editVisible = false;
+          this.getasslist();
+        })
       } else {
         this.$message({
           message: "输入不能为空",
@@ -573,6 +550,7 @@ export default {
     },
     //请输入
     inputChange(index, value, row) {
+      console.log(index, value, row);
       this.scorelist[index].fraction = value
       let temp = {
         "item_id": row.id,
@@ -600,17 +578,17 @@ export default {
         office: this.value3,
         year: this.condition.year,
         month: this.condition.month,
-        idvalues:JSON.stringify(this.idvalue) 
+        idvalues: JSON.stringify(this.idvalue)
       };
       //{idvalues:JSON.stringify(this.idvalue) 
       if (condition.office != null && condition.office != "") {
-          savescore(condition).then(response =>{
-               this.scoreVisible = false;
-               this.$message({
-                message: "评分成功",
-                type: "success"
-              });
-         })
+        savescore(condition).then(response => {
+          this.scoreVisible = false;
+          this.$message({
+            message: "评分成功",
+            type: "success"
+          });
+        })
       } else {
         this.$message({
           message: "请选择单位",
@@ -631,8 +609,11 @@ export default {
         }
         if (column.property == "score") {
           values = data.map(item => Number(item.score));
-        } 
-        if (column.property == "score") {
+        }
+        if (column.property == "fraction") {
+          values = data.map(item => Number(item.fraction));
+        }
+        if (column.property == "score" || column.property == "fraction") {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);
             if (!isNaN(value)) {
@@ -643,7 +624,7 @@ export default {
           }, 0);
           sums[index] += "分";
         } else {
-          sums[index] = "";
+          sums[index] = "N/A";
         }
       });
       this.totalscore = sums
@@ -652,5 +633,38 @@ export default {
   }
 };
 </script>
+<style scoped lang="scss">
+.app-container {
+  /deep/ .el-dialog__body {
+    max-height: 50em;
+  }
+  /deep/ .el-tabs__header {
+    margin: 0 0 0px;
+  }
+  .filter-container {
+    span {
+      color: #636363;
+      font-size: 12px;
+    }
+  }
+  > .el-container {
+    min-height: 86vh;
+    > .el-container {
+      // 兼容IE浏览器
+      min-height: 86vh;
+    }
+  }
+}
+</style>
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>
+
 
 

@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-container v-loading="listLoading">
-     <el-aside>
-        <div class="panel">
+      <el-aside>
+        <!-- <div class="panel">
           <div class="panelHeading">
             <div>
               单位
@@ -14,29 +14,48 @@
           <div class="source panel-body">
             <el-tree :data="dataArray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current></el-tree>
           </div>
-        </div>
+        </div>-->
+        <left-tree
+          titleName="单位"
+          :dataArray="dataArray"
+          @areaData="handleNodeClick"
+          :isShowTabbar="isShowTabbar"
+        />
       </el-aside>
-
 
       <el-container>
         <el-header height="125px">
-          <div style="" class="topTitle">
-            上报列表
-          </div>
+          <div style class="topTitle">上报列表</div>
           <div class="filter-container">
-             <div  v-if="marks" style="display: inline-block;">
-            <el-input placeholder="请输入标题" v-model="listQuery.title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-            <rm-dict class="filter-item" title="请选择类型" placeholder="请选择类型" type="reportType" v-model="listQuery.type" />
-            <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-            </div>
+            <div v-if="marks" style="display: inline-block;">
+              <el-input
+                placeholder="请输入标题"
+                v-model="listQuery.title"
+                style="width: 200px;"
+                class="filter-item"
+                @keyup.enter.native="handleFilter"
+              />
+              <rm-dict
+                class="filter-item"
+                title="请选择类型"
+                placeholder="请选择类型"
+                type="reportType"
+                v-model="listQuery.type"
+              />
               <el-button
                 class="filter-item"
                 type="primary"
-                :icon="isMapShow ? 'el-icon-menu' : 'el-icon-location'"
-                @click="changeMap"
-              >切换到{{ isMapShow ? '列表':'地图' }}视图</el-button>
+                icon="el-icon-search"
+                @click="handleFilter"
+              >查询</el-button>
+            </div>
+            <el-button
+              class="filter-item"
+              type="primary"
+              :icon="isMapShow ? 'el-icon-menu' : 'el-icon-location'"
+              @click="changeMap"
+            >切换到{{ isMapShow ? '列表':'地图' }}视图</el-button>
           </div>
-            
         </el-header>
 
         <el-main>
@@ -52,44 +71,37 @@
               <div class="widget-divContent clearfix">
                 <div class="widget-divContent-main">
                   <div class="widget-divContent-main-title">
-                    <span>
-                        {{ report.title }}
-                    </span>
-                    <span>
-                      {{ report.reportTime }}
-                    </span>
+                    <span>{{ report.title }}</span>
+                    <span>{{ report.reportTime }}</span>
                   </div>
-                   <span>
-                      {{ report.content }}                      
-                    </span>
-                   <div class="widget-divContent-main-imgs clearfix">
+                  <span>{{ report.content }}</span>
+                  <div class="widget-divContent-main-imgs clearfix">
                     <ul class="widget-divContent-main-imgsGroup clearfix">
-                      <li class="" v-for="(img, index) in report.pictureUrls" :key="index">
-                          <viewer :images="report.pictureUrls">
+                      <li class v-for="(img, index) in report.pictureUrls" :key="index">
+                        <viewer :images="report.pictureUrls">
                           <img :src="img" :key="index">
-                        </viewer>    
-                        
+                        </viewer>
                       </li>
                     </ul>
-                  </div> 
+                  </div>
                   <el-row :gutter="10">
                     <el-col :xs="12" :sm="12" :md="15" :lg="17" :xl="18" class="hidden-sm-and-down">
-                      <div class="grid-content bg-purple"> 
+                      <div class="grid-content bg-purple">
                         <span>
                           <a href="javascript:void(0)" title="上报人">
-                            <svg-icon icon-class="user1" />
+                            <svg-icon icon-class="user1"/>
                           </a>
                           {{ report.userName }}
                         </span>
                         <span>
                           <a href="javascript:void(0)" title="上报类型">
-                            <svg-icon icon-class="user1" />
+                            <svg-icon icon-class="user1"/>
                           </a>
                           {{ report.typeLabel }}
                         </span>
                         <span>
                           <a href="javascript:void(0)" title="所属区划">
-                            <svg-icon icon-class="areaColor" />
+                            <svg-icon icon-class="areaColor"/>
                           </a>
                           {{ report.officeName }}
                         </span>
@@ -97,140 +109,176 @@
                     </el-col>
                     <el-col :xs="12" :sm="12" :md="9" :lg="7" :xl="6">
                       <div class="grid-content bg-purple-light">
-                        <a href="javascript:void(0)" title="生成工单" @click="report.protaskId != null&&report.protaskId!='' ? null : addOrder(report.id)">
-                          <svg-icon :icon-class="report.protaskId != null&&report.protaskId!='' ? 'addLightColor' : 'addColor'" />
+                        <a
+                          href="javascript:void(0)"
+                          title="生成工单"
+                          @click="report.protaskId != null&&report.protaskId!='' ? null : addOrder(report.id)"
+                        >
+                          <svg-icon
+                            :icon-class="report.protaskId != null&&report.protaskId!='' ? 'addLightColor' : 'addColor'"
+                          />
                         </a>
-                        <a href="javascript:void(0)" title="定位" @click="showFeature(report.id,'shangbao',report.lng,report.lat)">
-                          <svg-icon icon-class="locationColor" /> 
+                        <a
+                          href="javascript:void(0)"
+                          title="定位"
+                          @click="showFeature(report.id,'shangbao',report.lng,report.lat)"
+                        >
+                          <svg-icon icon-class="locationColor"/>
                         </a>
                         <a href="javascript:void(0)" title="详情" @click="detailBtn(report.id)">
-
-
-                          <svg-icon icon-class="detailColor" />
-                        </a><!--
+                          <svg-icon icon-class="detailColor"/>
+                        </a>
+                        <!--
                         <a href="javascript:void(0)" title="修改" @click="edit(list)">
                           <svg-icon icon-class="replayColor" />
-                        </a> -->
+                        </a>-->
                         <a href="javascript:void(0)" title="删除" @click="del(report)">
-                          <svg-icon icon-class="deleteColor" />
+                          <svg-icon icon-class="deleteColor"/>
                         </a>
                       </div>
                     </el-col>
-                  </el-row> 
+                  </el-row>
                 </div>
               </div>
             </div>
-             <pagination  v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
+            <pagination
+              v-show="total>0"
+              :total="total"
+              :page.sync="listQuery.pageNo"
+              :limit.sync="listQuery.pageSize"
+              @pagination="getList"
+            />
           </div>
           <div class="mapBox" v-if="isMapShow">
-            <rm-map v-model="map" :clientHeight="clientHeight" />
+            <rm-map v-model="map" :clientHeight="clientHeight"/>
           </div>
-         </el-main>
+        </el-main>
       </el-container>
     </el-container>
-    
-  <!-- 工单弹窗 -->
-          <el-dialog :visible.sync="visibleOrder" title="生成工单" :modal-append-to-body="false">
-               <el-form ref="proTaskFrom" :model="proTaskFrom" abel-width="80px" size="mini">
-             
-           <!--    <el-form-item prop="area" label="所属区划">
+
+    <!-- 工单弹窗 -->
+    <el-dialog :visible.sync="visibleOrder" title="生成工单" :modal-append-to-body="false">
+      <el-form ref="proTaskFrom" :model="proTaskFrom" abel-width="80px" size="mini">
+        <!--    <el-form-item prop="area" label="所属区划">
                 <rm-area-select v-model="proTaskFrom.area" />
-              </el-form-item> -->
-              <el-form-item label="接单单位">                                
-                   <el-select v-model="proTaskFrom.dept" placeholder="请选择单位" clearable class="filter-item">
-                      <el-option v-for="item in lowerofficeList" :key="item.id" :label="item.label" :value="item.id" />
-                  </el-select>
-              </el-form-item>
-              
-              <el-form-item label="相关部门">
-                  <el-select v-model="proTaskFrom.unit" placeholder="请选择部门" clearable class="filter-item">
-                      <el-option v-for="item in synergOfficeList" :key="item.id" :label="item.name" :value="item.id" />
-                  </el-select>
-              </el-form-item>
+        </el-form-item>-->
+        <el-form-item label="接单单位">
+          <el-select v-model="proTaskFrom.dept" placeholder="请选择单位" clearable class="filter-item">
+            <el-option
+              v-for="item in lowerofficeList"
+              :key="item.id"
+              :label="item.label"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
 
-              <el-form-item label="办结时间">
-                 <el-date-picker v-model="proTaskFrom.handleTime" type="date" placeholder="Pick a date" style="width: 100%;"/>
-              </el-form-item>
-              <el-form-item label="问题描述">
-                 <el-input v-model="proTaskFrom.description" />
-              </el-form-item>
-              <el-form-item label="任务描述">
-                 <el-input v-model="proTaskFrom.taskcontent" />
-              </el-form-item>
-            </el-form> 
-             <el-upload :action="doUpload" list-type="picture-card" :auto-upload="false" :on-preview="handlePictureCardPreview" accept="" ref="upload" :file-list="fileList" :before-remove="removefile" :data="uploaddata" :on-success="handleSuccess" :on-remove="handleRemove" class="elUpload">
-            <i class="el-icon-plus"></i>
-          </el-upload>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="visibleOrder = false">取 消</el-button>
-            <el-button @click="save()" type="primary">确 定</el-button>
-          </div>
-          </el-dialog>
- <!-- 工单弹窗  end-->
+        <el-form-item label="相关部门">
+          <el-select v-model="proTaskFrom.unit" placeholder="请选择部门" clearable class="filter-item">
+            <el-option
+              v-for="item in synergOfficeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
 
-  <!-- 详情弹窗 -->
-          <el-dialog :visible.sync="visible" title="上报详情" :modal-append-to-body="false">
-            <el-form :model="form" abel-width="80px" size="mini">
-              <el-form-item label="上报内容">
-                {{form.content}}
-              </el-form-item>
-              <el-form-item label="事件类型">
-                {{form.typeLabel}}
-              </el-form-item>
-              <el-form-item label="上 报 人">
-                {{form.userName}}
-              </el-form-item> 
-              <el-form-item label="上报时间"> 
-                {{form.reportTime}}
-              </el-form-item>
-              <el-form-item label="处理状态">
-                <span :class="[ form.auditStatus == '未处理' ? 'unHandle' : 'handling' ]">
-                  {{form.auditStatus}} 
-                </span> 
-              </el-form-item>
-            </el-form>
-            <viewer :images="form.pictureUrls" class="clearfix">
-              <img :src="img" :key="index" v-for="(img, index) in form.pictureUrls">
-            </viewer>
-           <div class="work-order-details-list-split" v-if="prodetail.list!=null&&prodetail.list.length >0"></div>
-           <div class="splitBox" v-for="(child, wrapindex) in prodetail.list" :key="wrapindex">
-              <div class="work-order-details-list-title">{{child.title}}</div>
-              <el-form :model="form" abel-width="80px" size="mini">
-                <el-form-item
-                  v-for="(filed, index2) in child.list"
-                  :key="index2"
-                  :label="filed.name"
-                >{{filed.value}}</el-form-item>
-              </el-form>
-              <!--图片路径-->
-              <viewer :images="child.prictureUrls" class="clearfix">
-                <img :src="img" :key="index" v-for="(img, index) in child.prictureUrls">
-              </viewer>
-              <!-- 分割线 -->
-              <div class="work-order-details-list-split" v-if="wrapindex !== prodetail.list.length - 1"></div>
-            </div>
-            <div style="border-bottom: 1px solid #ddd;"></div>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="visible = false">关 闭</el-button>
-            </div>
-          </el-dialog>
-       
-       </div>
+        <el-form-item label="办结时间">
+          <el-date-picker
+            v-model="proTaskFrom.handleTime"
+            type="date"
+            placeholder="Pick a date"
+            style="width: 100%;"
+          />
+        </el-form-item>
+        <el-form-item label="问题描述">
+          <el-input v-model="proTaskFrom.description"/>
+        </el-form-item>
+        <el-form-item label="任务描述">
+          <el-input v-model="proTaskFrom.taskcontent"/>
+        </el-form-item>
+      </el-form>
+      <el-upload
+        :action="doUpload"
+        list-type="picture-card"
+        :auto-upload="false"
+        :on-preview="handlePictureCardPreview"
+        accept
+        ref="upload"
+        :file-list="fileList"
+        :before-remove="removefile"
+        :data="uploaddata"
+        :on-success="handleSuccess"
+        :on-remove="handleRemove"
+        class="elUpload"
+      >
+        <i class="el-icon-plus"></i>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="visibleOrder = false">取 消</el-button>
+        <el-button @click="save()" type="primary">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 工单弹窗  end-->
+    <!-- 详情弹窗 -->
+    <el-dialog :visible.sync="visible" title="上报详情" :modal-append-to-body="false">
+      <el-form :model="form" abel-width="80px" size="mini">
+        <el-form-item label="上报内容">{{form.content}}</el-form-item>
+        <el-form-item label="事件类型">{{form.typeLabel}}</el-form-item>
+        <el-form-item label="上 报 人">{{form.userName}}</el-form-item>
+        <el-form-item label="上报时间">{{form.reportTime}}</el-form-item>
+        <el-form-item label="处理状态">
+          <span
+            :class="[ form.auditStatus == '未处理' ? 'unHandle' : 'handling' ]"
+          >{{form.auditStatus}}</span>
+        </el-form-item>
+      </el-form>
+      <viewer :images="form.pictureUrls" class="clearfix">
+        <img :src="img" :key="index" v-for="(img, index) in form.pictureUrls">
+      </viewer>
+      <div
+        class="work-order-details-list-split"
+        v-if="prodetail.list!=null&&prodetail.list.length >0"
+      ></div>
+      <div class="splitBox" v-for="(child, wrapindex) in prodetail.list" :key="wrapindex">
+        <div class="work-order-details-list-title">{{child.title}}</div>
+        <el-form :model="form" abel-width="80px" size="mini">
+          <el-form-item
+            v-for="(filed, index2) in child.list"
+            :key="index2"
+            :label="filed.name"
+          >{{filed.value}}</el-form-item>
+        </el-form>
+        <!--图片路径-->
+        <viewer :images="child.prictureUrls" class="clearfix">
+          <img :src="img" :key="index" v-for="(img, index) in child.prictureUrls">
+        </viewer>
+        <!-- 分割线 -->
+        <div class="work-order-details-list-split" v-if="wrapindex !== prodetail.list.length - 1"></div>
+      </div>
+      <div style="border-bottom: 1px solid #ddd;"></div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="visible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template> 
 <script>
 import Pagination from "@/components/Pagination";
-import { getList,  del,get } from "@/api/work/report.js"; 
+import { getList, del, get } from "@/api/work/report.js";
 import RmDict from "@/components/rm/dict";
 import RmOrgSelect from "@/components/rm/orgselect";
 import RmUserSelect from "@/components/rm/userselect";
 import RmAreaSelect from "@/components/rm/areaselect";
-import { getToken } from '@/utils/auth' 
-import {save,acttaskinfo} from '@/api/work/proTask.js'
+import { getToken } from '@/utils/auth'
+import { save, acttaskinfo } from '@/api/work/proTask.js'
 import RmMap from "@/components/rm/map";
-import { getorgtrees,getSynergOffice,getLoweroffice,findOfficeUserstree} from '@/api/res/management.js'
+import { getorgtrees, getSynergOffice, getLoweroffice, findOfficeUserstree } from '@/api/res/management.js'
+import LeftTree from '../setting/components/leftTree'
 
 export default {
-  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect,RmMap },
+  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect, RmMap, LeftTree },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -243,37 +291,38 @@ export default {
   },
   data() {
     return {
+      isShowTabbar: false,
       clientHeight: 0,
-      listLoading:true,
-      isMapShow:false,
-      marks:true,
-      map:null,
+      listLoading: true,
+      isMapShow: false,
+      marks: true,
+      map: null,
       visible: false,
-      visibleOrder:false,
+      visibleOrder: false,
       checked: false,
       dataArray: [],
-      fileList: [], 
+      fileList: [],
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
-      proTaskFrom:{
-        name : null,
-        reportId:null,
-        source : 'report'
+      proTaskFrom: {
+        name: null,
+        reportId: null,
+        source: 'report'
       },
       prodetail: {
-        list:null,
-        handel:{
-          btnlist:null
+        list: null,
+        handel: {
+          btnlist: null
         }
-      }, 
-      officeData:{},
+      },
+      officeData: {},
       defaultProps: {
         children: "children",
         label: "label"
       },
       form: {
-        areaId : null,
-        officeId:null,
-        officeName:null,
+        areaId: null,
+        officeId: null,
+        officeName: null,
         user: null,
         province: null,
         region: null,
@@ -290,7 +339,7 @@ export default {
         auditPerson: null,
         auditDate: null,
         auditStatus: '',
-        pictureUrls : null
+        pictureUrls: null
       },
       uploaddata: {
         bizId: null,
@@ -299,16 +348,16 @@ export default {
       slide1: [],
       list: [],
       total: 0,
-      synergOfficeList : null,
-      lowerofficeList : null,
+      synergOfficeList: null,
+      lowerofficeList: null,
       listQuery: {
         pageNo: 1,
         pageSize: 10,
         importance: undefined,
         search: undefined,
         type: undefined,
-        officeId :undefined,
-        areaId : undefined,
+        officeId: undefined,
+        areaId: undefined,
         sort: "+id"
       },
       importanceOptions: [1, 2, 3]
@@ -317,7 +366,7 @@ export default {
   created() {
     this.loadLeftTree();
   },
-  mounted(){
+  mounted() {
     const tempH = this.getHeight(document.getElementsByClassName('app-container')[0]) - 210
     this.clientHeight = tempH
     const that = this
@@ -336,11 +385,11 @@ export default {
         this.companyID = data[0].id
         this.getList()
       }).catch((errorRes) => {
-        console.error("errror:::::::",errorRes)
+        console.error("errror:::::::", errorRes)
 
       })
     },
-     // 点击顶部的按钮 切换到地图
+    // 点击顶部的按钮 切换到地图
     changeMap() {
       if (this.isMapShow && this.marks) {
         this.isMapShow = false;
@@ -364,8 +413,8 @@ export default {
       }
       var lng = lng;
       var lat = lat;
-      var self=this;
-       setTimeout(() => {
+      var self = this;
+      setTimeout(() => {
         //console.log("self.map",self.map)
         self.map.showFeature({ id: id, gtype: type, name: '上报', lng: lng, lat: lat })
       }, 500);
@@ -384,8 +433,8 @@ export default {
         this.synergOfficeList = response.data.list
       });
       getLoweroffice().then(response => {
-       // console.log('接单单位数据：',response.data);
-       this.lowerofficeList = response.data.list
+        // console.log('接单单位数据：',response.data);
+        this.lowerofficeList = response.data.list
       });
     },
     handleFilter() {
@@ -399,31 +448,31 @@ export default {
     },
     save() {
       //	console.log('保存:',JSON.stringify(this.form),this.selectUser);
- 
+
       save(this.proTaskFrom).then(response => {
+        // 上传到服务器
+        this.uploaddata.bizId = response.data.id;
+        console.log('response.data.id:', this.uploaddata.bizId);
+        console.log('保存:', this.$refs.upload.uploadFiles.length);
+        if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
           // 上传到服务器
-          this.uploaddata.bizId = response.data.id;
-          console.log('response.data.id:',  this.uploaddata.bizId);
-          console.log('保存:', this.$refs.upload.uploadFiles.length);
-          if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
-           // 上传到服务器
-              this.$refs.upload.submit();         
-          }  
-          this.visibleOrder = false
-              this.$message({
-                type: "success",
-                message: "提交成功!"
-              })
-               this.getList();
-        }).catch(error => {
-          this.listLoading = false;
-        });
+          this.$refs.upload.submit();
+        }
+        this.visibleOrder = false
+        this.$message({
+          type: "success",
+          message: "提交成功!"
+        })
+        this.getList();
+      }).catch(error => {
+        this.listLoading = false;
+      });
     },
     // 点击生成工单
-      addOrder(id) { /*  */
+    addOrder(id) { /*  */
       this.visibleOrder = true;
-       console.log("id", id);
-       this.proTaskFrom.reportId = id
+      console.log("id", id);
+      this.proTaskFrom.reportId = id
     },// 点击详情,查看详情
     detailBtn(idx) {
       this.visible = true;
@@ -431,11 +480,11 @@ export default {
       get(idx).then(response => {
         this.form = response.data.report;
         const imagelist = this.form.pictureUrls;
-        this.prodetail = response.data; 
-        this.slide1 = imagelist; 
-        
-        console.log("this.prodetail.list::::",this.prodetail);
-        console.log("this.prodetail.list::::",this.prodetail.list);
+        this.prodetail = response.data;
+        this.slide1 = imagelist;
+
+        console.log("this.prodetail.list::::", this.prodetail);
+        console.log("this.prodetail.list::::", this.prodetail.list);
         // imagelist.forEach((value, index) => {
         //   this.slide1.push(
         //     {
@@ -445,11 +494,11 @@ export default {
         //   )
         // });
       });
-    }, 
-     onlyShowSelectBtn() {
-      console.log("只显示所属单位",this.listQuery,this.checked)
+    },
+    onlyShowSelectBtn() {
+      console.log("只显示所属单位", this.listQuery, this.checked)
 
-     this.handleNodeClick(this.officeData);
+      this.handleNodeClick(this.officeData);
     },
     handleNodeClick(data) {
       console.log("节点信息", data)
@@ -457,20 +506,20 @@ export default {
       //选择的是哪个单位
       this.unit = data.label
       this.companyID = data.id
-      if (this.checked){
-          this.listQuery.officeId = data.id
-          this.listQuery.areaId = null
+      if (this.checked) {
+        this.listQuery.officeId = data.id
+        this.listQuery.areaId = null
       } else {
         this.listQuery.areaId = data.area.id
         this.listQuery.officeId = null
-      } 
+      }
       this.getList()
     },
     handleSuccess() {
       this.fileList = [];
       this.getList();
     },
-   handlePictureCardPreview(file) {
+    handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisibleImg = true;
     },
@@ -481,7 +530,7 @@ export default {
       delfiles({ ids: file.id }).then(response => {
         console.log("图片删除成功!!!!!");
       })
-    },  
+    },
     del(row) {
       var self = this;
       console.log(row.id);
@@ -721,17 +770,16 @@ export default {
   max-height: 500px;
 }
 .elUpload {
-  margin-top: 20px;  
+  margin-top: 20px;
 }
 /* 未处理 */
 .unHandle {
   color: #f25c5c;
 }
-/* 处理中 */ 
+/* 处理中 */
 .handling {
   color: #3dc87e;
 }
-
 </style>
 
 <style lang="scss" scoped>

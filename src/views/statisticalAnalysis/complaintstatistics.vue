@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-24 17:28:08 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-25 15:19:38
+ * @Last Modified time: 2018-12-25 16:08:42
  */
 // 投诉统计
 <template>
@@ -294,6 +294,10 @@ export default {
   }
   > .el-container {
     min-height: 86vh;
+    > .el-container {
+      // 兼容IE浏览器
+      min-height: 86vh;
+    }
   }
 }
 </style>

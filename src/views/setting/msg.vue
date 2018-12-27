@@ -1,3 +1,10 @@
+/*
+ * @Author: 刘小康 
+ * @Date: 2018-12-27 09:44:29 
+ * @Last Modified by: 刘小康
+ * @Last Modified time: 2018-12-27 09:44:50
+ */
+// 通知公告
 <template>
   <div class="app-container">
     <el-container v-loading="v.loading">

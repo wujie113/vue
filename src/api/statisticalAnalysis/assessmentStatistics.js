@@ -8,6 +8,14 @@ export function getChartsList(params) {
   })
 }
 
+//考核管理 table数据api/dc/asstable
+export function getAssessTable(params) {
+  return request({
+    url: '/api/dc/asstable',
+    method: 'get',
+    params
+  })
+}
 // 投诉管理
 export function getComplaintChartsList(params) {
   return request({
@@ -16,3 +24,4 @@ export function getComplaintChartsList(params) {
     params
   })
 }
+

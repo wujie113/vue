@@ -56,3 +56,12 @@ export function savescore(params) {
     data: params
   })
 }
+
+
+export function officelist(params) {
+  return request({
+    url: '/api/dc/asstable',
+    method: 'post',
+    data: params
+  })
+}

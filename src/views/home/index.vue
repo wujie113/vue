@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-24 10:50:06
+ * @Last Modified time: 2018-12-25 17:46:22
  */
 <template>
   <div class="app-container homeIndex">
@@ -262,6 +262,7 @@ export default {
   name: 'Home',
   data() {
     return {
+      barColor: ["#ff7370", "#48dff0", "#52b4ff", "#ff66a3", "#5ce5aa", "#c484f5", "#ffb870", "#fae164"],
       spanActiveIndex: 0,
       chartData: [],
       leftData: {},

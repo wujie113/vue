@@ -1,8 +1,15 @@
+/*
+ * @Author: 刘小康 
+ * @Date: 2018-12-27 09:43:44 
+ * @Last Modified by:   刘小康 
+ * @Last Modified time: 2018-12-27 09:43:44 
+ */
+// 通讯录
 <template>
   <div class="app-container">
     <el-container v-loading="listLoading">
       <el-aside>
-        <div class="panel">
+        <!-- <div class="panel">
           <div class="panelHeading">
             <div>单位</div>
             <div>
@@ -18,7 +25,8 @@
               highlight-current
             ></el-tree>
           </div>
-        </div>
+        </div> -->
+        <left-tree titleName="单位" :dataArray="dataArray" @areaData="handleNodeClick" :isShowTabbar="isShowTabbar" />
       </el-aside>
       <el-container>
         <el-header height="125px">
@@ -41,7 +49,7 @@
           </div>
         </el-header>
 
-        <el-main>
+        <el-main v-loading="mainLoading">
           <div class="filter-container" style="padding-top: 0;">
             <el-button
               class="filter-item"
@@ -119,8 +127,10 @@ import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
 import { getorgtrees, getSynergOffice, getLoweroffice } from '@/api/res/management.js'
+import LeftTree from './components/leftTree'
+
 export default {
-  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
+  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect, LeftTree },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -133,11 +143,13 @@ export default {
   },
   data() {
     return {
+      isShowTabbar: false,
       v: {
         form: false,
         loading: false
       },
-      listLoading: true,
+      listLoading: false,
+      mainLoading: false,
       list: null,
       checked: false,
       dataArray: [],
@@ -165,6 +177,7 @@ export default {
     }
   },
   created() {
+    this.listLoading = true
     this.loadLeftTree()
   },
   methods: {
@@ -182,14 +195,12 @@ export default {
       })
     },
     getList() {
-      this.listLoading = true;
-      console.log("this.query::::", this.query);
       getList(this.query).then(response => {
         this.listLoading = false
+        this.mainLoading = false
         this.list = response.data.list
         this.query.total = response.data.count
       })
-
       getLoweroffice().then(response => {
         // console.log('接单单位数据：',response.data);
         this.lowerofficeList = response.data.list
@@ -213,10 +224,12 @@ export default {
         this.query.areaId = data.area.id
         this.query.unit = null
       }
+      this.mainLoading = true
       this.getList()
     },
     searchBtn() {
       this.query.pageNo = 1
+      this.mainLoading = true
       this.getList()
     },
     create() {

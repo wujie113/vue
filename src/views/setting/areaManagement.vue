@@ -1,8 +1,15 @@
+/*
+ * @Author: 刘小康 
+ * @Date: 2018-12-27 09:45:21 
+ * @Last Modified by: 刘小康
+ * @Last Modified time: 2018-12-27 10:08:00
+ */
+// 区域管理
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6">
-        <div class="panel">
+      <el-col :xs="5" :sm="5" :md="5" :lg="5" :xl="5">
+        <!-- <div class="panel">
           <div class="panelHeading">
             <div>
               <svg-icon icon-class="tree" />行政区域
@@ -22,9 +29,10 @@
           <div class="source panel-body">
             <el-tree :data="dataArray" node-key="id" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current ref="tree"></el-tree>
           </div>
-        </div>
+        </div> -->
+        <left-tree titleName="行政区域" :dataArray="dataArray" @areaData="handleNodeClick" :isShowTabbar="isShowTabbar" @delete="deleteBtn" @add="addBtn" @refresh="refreshBtn" />
       </el-col>
-      <el-col :xs="18" :sm="18" :md="18" :lg="18" :xl="18">
+      <el-col :xs="19" :sm="19" :md="19" :lg="19" :xl="19">
         <div class="panel">
           <div class="panelHeading">
             <div>
@@ -54,10 +62,14 @@
 </template>
 <script>
 import { AreaTree, AreaMytree, Delete, Add, Datails } from "@/api/setting/areaTree"
+import LeftTree from './components/leftTree'
+
 export default {
   name: 'areaManagement',
+  components: { LeftTree },
   data() {
     return {
+      isShowTabbar: true,
       ruleForm: {
         name: "",
         sort: "",
@@ -172,6 +184,7 @@ export default {
         this.nodeData = res.data.list[0]
       }).catch(errorRes => { })
     },
+    // 刷新
     refreshBtn() {
       this.AreaTree()
       this.leftName = "编辑站点"

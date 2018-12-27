@@ -1,13 +1,17 @@
+/*
+ * @Author: 刘小康 
+ * @Date: 2018-12-27 09:43:20 
+ * @Last Modified by:   刘小康 
+ * @Last Modified time: 2018-12-27 09:43:20 
+ */
+//  用户管理
 <template>
   <div class="app-container userM">
     <el-container v-loading="loading">
-
       <el-aside>
-        <div class="panel">
+        <!-- <div class="panel">
           <div class="panelHeading">
-            <div>
-              单位
-            </div>
+            <div>单位</div>
             <div>
               <el-checkbox v-model="checked" @change="onlyShowSelectBtn">仅显示所选单位用户</el-checkbox>
             </div>
@@ -15,9 +19,9 @@
           <div class="source panel-body">
             <el-tree :data="dataArray" :props="defaultProps" @node-click="handleNodeClick" empty-text="暂无数据" highlight-current></el-tree>
           </div>
-        </div>
+        </div> -->
+        <left-tree titleName="单位" :dataArray="dataArray" @areaData="handleNodeClick" :isShowTabbar="isShowTabbar" />
       </el-aside>
-
       <el-container>
         <el-header height="125px">
           <div style="" class="topTitle">
@@ -33,9 +37,7 @@
             <el-select placeholder="请选择角色" clearable style="width: 140px" class="filter-item" v-model="listQuery.role">
               <el-option v-for="item in roles" :key="item" :label="item" :value="item" />
             </el-select> -->
-
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchBtn">查询</el-button>
-
           </div>
         </el-header>
         <el-main>
@@ -216,10 +218,11 @@ import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
+import LeftTree from './components/leftTree'
 
 export default {
   name: 'UserManagement',
-  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
+  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect, LeftTree },
   data() {
     // 自定义校验规则
     var validatePass = (rule, value, callback) => {
@@ -256,6 +259,7 @@ export default {
       }
     }
     return {
+      isShowTabbar: false,
       postArray: [],
       loading: true,
       tableLoading: false,
@@ -274,7 +278,7 @@ export default {
         role: "",
         pageNo: 1,
         pageSize: 10,
-        id: ""
+        // id: ""
       },
       unit: "",
       "company.id": "",
@@ -351,10 +355,6 @@ export default {
         this.loading = false
       }).catch((errorRes) => {
         this.loading = false
-        this.$message({
-          type: "error",
-          message: errorRes
-        })
       })
     },
     onlyShowSelectBtn(v) {
@@ -578,6 +578,15 @@ export default {
     min-height: 86vh;
     overflow: auto;
     height: 100%;
+    margin-bottom: 0;
+    min-height: 86vh;
+    overflow: auto;
+    height: 100%;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-color: #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
     .panelHeading {
       color: #333;
       background-color: #f5f5f5;
@@ -587,6 +596,10 @@ export default {
       justify-content: space-between;
       align-items: center;
       height: 39px;
+      padding: 8px 15px;
+      border-bottom: 1px solid transparent;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
       .svg-icon {
         margin: 0 5px;
       }
@@ -605,21 +618,6 @@ export default {
       height: calc(86vh - 41px);
     }
   }
-}
-
-.panel {
-  margin-bottom: 20px;
-  background-color: #fff;
-  border: 1px solid transparent;
-  border-color: #ddd;
-  border-radius: 4px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-}
-.panelHeading {
-  padding: 8px 15px;
-  border-bottom: 1px solid transparent;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
 }
 </style>
 <style scoped>

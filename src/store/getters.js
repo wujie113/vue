@@ -18,6 +18,7 @@ const getters = {
   gender: state => state.user.gender,
   id: state => state.user.id,
   nickname: state => state.user.nickname,
+  officeName: state => state.user.officeName,
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters,
   errorLogs: state => state.errorLog.logs

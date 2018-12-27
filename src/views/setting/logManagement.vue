@@ -1,3 +1,10 @@
+/*
+ * @Author: 刘小康 
+ * @Date: 2018-12-27 09:44:57 
+ * @Last Modified by:   刘小康 
+ * @Last Modified time: 2018-12-27 09:44:57 
+ */
+// 日志管理
 <template>
   <div class="app-container">
     <el-container v-loading="logLoading">
@@ -48,10 +55,10 @@
           </div>
         </el-header>
         <el-main>
-          <div class="filter-container" style="padding-top: 0;">
-            <!--<el-button class="filter-item" type="primary" icon="el-icon-plus" @click="create">新增公告</el-button>-->
-            <!--<el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>-->
-          </div>
+          <!-- <div class="filter-container" style="padding-top: 0;">
+            <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="create">新增公告</el-button>
+            <el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>
+          </div> -->
           <div>
             <el-table :data="tableData" stripe style="width: 100%" border>
               <el-table-column

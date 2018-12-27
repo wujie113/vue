@@ -20,6 +20,7 @@ const user = {
     phone: '',
     id: '',
     nickname: '',
+    officeName: '',
   },
 
   mutations: {
@@ -64,6 +65,9 @@ const user = {
     },
     SET_NICKNAME: (state, nickname) => {
       state.nickname = nickname
+    },
+    SET_OFFICENAME: (state, officeName) => {
+      state.officeName = officeName
     }
   },
 
@@ -112,6 +116,7 @@ const user = {
           commit('SET_PHONE', data.phone)
           commit('SET_ID', data.id)
           commit('SET_NICKNAME', data.nickname)
+          commit('SET_OFFICENAME', data.officeName)
           resolve(response)
         }).catch(error => {
           reject(error)

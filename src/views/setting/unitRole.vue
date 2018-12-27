@@ -2,15 +2,16 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 11:57:16 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-11-13 15:02:34
+ * @Last Modified time: 2018-12-27 10:03:35
  */
+// 单位角色
 <template>
   <div class="app-container">
     <el-row :gutter="20" v-loading="loading">
-      <el-col :xs="10" :sm="10" :md="10" :lg="6" :xl="6">
+      <el-col :xs="10" :sm="10" :md="10" :lg="5" :xl="5">
         <left-tree titleName="行政区域" :dataArray="dataArray" @areaData="selectNode" :isShowTabbar="isShowTabbar" />
       </el-col>
-      <el-col :xs="14" :sm="14" :md="14" :lg="18" :xl="18">
+      <el-col :xs="14" :sm="14" :md="14" :lg="19" :xl="19">
         <div class="panel">
           <div class="panelHeading">
             <div>

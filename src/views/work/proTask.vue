@@ -266,7 +266,7 @@
           </el-dialog>
  <!-- 工单弹窗  end-->
     <!--曝光弹窗-->
-    <el-dialog :visible.sync="exposureVisible" title="曝光" :modal-append-to-body="false" width="60%">
+    <el-dialog :visible.sync="exposureVisible" title="曝光" :modal-append-to-body="false" width="75%">
       <el-container v-loading="exposureLoading">
 
         <el-aside>
@@ -288,7 +288,7 @@
             <div style="" class="topTitle">
               接收列表
             </div>
-            <div class="filter-container" style="height: 157px;overflow-y: auto;">
+            <div class="filter-container container-scroll" style="height: 157px;overflow-y: auto;">
               <span class="command-user" v-for="(item, index) in receivedPersionNodes" :key="index">
                 {{ item.label }}
                 <i class="el-icon-ali-guanbi" @click="deleteNode(index)"></i>
@@ -300,7 +300,7 @@
             <div style="" class="topTitle">
               曝光详情
             </div>
-            <div class="filter-container" style="height: 276px;overflow-y: auto;">
+            <div class="filter-container container-scroll" style="height: 276px;overflow-y: auto;">
               <el-form ref="exposureForm" :model="exposureForm" label-width="50px">
                 <el-form-item label="标题">
                   <el-input v-model="exposureForm.title" placeholder="请输入曝光标题"></el-input>
@@ -1005,6 +1005,25 @@ export default {
   }
   /deep/ .el-form-item--mini.el-form-item {
     margin-bottom: 0px;
+  }  
+    /*滚动条样式*/
+  .container-scroll::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 4px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+  }
+  .container-scroll::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .container-scroll::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.1);
   }
   .work-order-details-list-title {
     color: #279cf5;

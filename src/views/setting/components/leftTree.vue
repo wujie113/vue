@@ -1,3 +1,9 @@
+/*
+ * @Author: 刘小康 
+ * @Date: 2018-12-27 09:45:50 
+ * @Last Modified by:   刘小康 
+ * @Last Modified time: 2018-12-27 09:45:50 
+ */
 <template>
   <div class="panel" :style="{ minHeight: panelMinHeight + 'vh' }">
     <div class="panelHeading">
@@ -94,13 +100,13 @@ export default {
       this.$emit("getMsgs", this.msg)
     },
     refreshBtn() {
-
+      this.$emit('refresh')
     },
     addBtn() {
-
+      this.$emit('add')
     },
     deleteBtn() {
-
+      this.$emit('delete')
     },
     handleNodeClick(data) {
       this.$emit('areaData', data)
@@ -150,6 +156,25 @@ export default {
   .panel-body {
     overflow: auto;
     /*height: calc(86vh - 41px);*/
+  }
+    /*滚动条样式*/
+  .panel-body::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 4px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+  }
+  .panel-body::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .panel-body::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.1);
   }
 }
 </style>

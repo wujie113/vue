@@ -655,7 +655,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
 }
 
 label {
@@ -846,10 +846,6 @@ ul, li, p {
   z-index: 1000 !important;
 }
 
-.el-dialog__wrapper {
-  position: absolute;
-}
-
 .el-dialog__wrapper .el-dialog {
   /*滚动条样式*/
 }
@@ -924,7 +920,7 @@ ul, li, p {
 }
 
 .el-container .el-aside {
-  width: 25% !important;
+  width: 20% !important;
   margin-right: 1%;
 }
 
@@ -939,17 +935,17 @@ ul, li, p {
 }
 
 .el-container .el-header {
-  margin-bottom: 1%;
+  margin-bottom: 10px;
 }
 
-.el-container .el-header .topTitle {
+.el-container .el-header .topTitle, .el-container .el-main .topTitle {
   text-align: left;
   border-bottom: 1px solid #ccc;
   padding: 10px 0;
 }
 
-.el-container .el-header .filter-container {
-  padding: 25px 0 !important;
+.el-container .el-header .filter-container, .el-container .el-main .filter-container {
+  padding: 25px 0;
 }
 
 .el-table th > .cell,
