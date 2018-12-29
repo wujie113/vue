@@ -991,7 +991,7 @@ export default {
 }
 
 .app-container > .el-container {
-  min-height: 86vh;
+  min-height: calc(100vh - 126px)
 }
 .app-container {
   /deep/ .el-dialog__body {

@@ -6,7 +6,7 @@
 			<el-button icon="el-icon-download" type="primary" @click="downloadExcel">下载水库数据模板</el-button>
 			<el-button icon="el-icon-refresh" type="primary" @click="updateData">更新水库数据</el-button>
 		</div>
-		<el-table v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%;">
+		<el-table v-loading="listLoading"  @current-change="handleCurrentChange" :data="list" border row-key="id" stripe style="width: 100%;">
 			<el-table-column prop="name" label="水库名称" :show-overflow-tooltip="true" min-width="150px" />
 			<el-table-column prop="code" label="水库编码" :show-overflow-tooltip="true" min-width="150px" />
 			<el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" />
@@ -262,6 +262,10 @@ export default {
 		this.getList();
 	},
 	methods: {
+		 handleCurrentChange(row){
+			console.log(row)
+			  this.$emit('clickRow', { id: row.id, gtype: 'shuiku', name: row.name, lng: row.lng, lat: row.lat })
+		},
 		getList() {
 			this.listLoading = true;
 			getList(this.query).then(response => {

@@ -6,7 +6,7 @@
       <el-button icon="el-icon-download" type="primary" @click="downloadExcel">下载农饮工程数据模板</el-button>
       <el-button icon="el-icon-refresh" type="primary" @click="updateData">更新农饮工程数据</el-button>
     </div>
-    <el-table v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%" fit>
+    <el-table  @current-change="handleCurrentChange" v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%" fit>
       <el-table-column prop="name" label="工程名称" :show-overflow-tooltip="true" min-width="200px" />
       <el-table-column prop="code" label="工程编码" :show-overflow-tooltip="true" min-width="150px" />
       <el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" min-width="100px" />
@@ -151,6 +151,7 @@ export default {
         bizId: 10005,
         bizType: "nygc"
       },
+      
       listLoading: null,
       listLoadingHistory: null,
       form: {
@@ -216,6 +217,10 @@ export default {
   },
 
   methods: {
+     handleCurrentChange(row){
+			console.log(row)
+			  this.$emit('clickRow', { id: row.id, gtype: 'nongyin', name: row.name, lng: row.lng, lat: row.lat })
+		},
     getList() {
       this.listLoading = true;
       getList(this.query).then(response => {

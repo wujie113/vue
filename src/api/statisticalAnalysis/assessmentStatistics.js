@@ -25,3 +25,11 @@ export function getComplaintChartsList(params) {
   })
 }
 
+// 工单统计
+export function getOrderChartsList(params) {
+  return request({
+    url: '/api/dc/workchart',
+    method: 'get',
+    params
+  })
+}

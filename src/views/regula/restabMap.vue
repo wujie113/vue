@@ -1,7 +1,7 @@
 <template>
   <div class="resourceMange">
     <el-container>
-      <rm-map />
+   <rm-map v-model="map" />
       <!-- 最大化按钮 -->
       <div
         class="el-mindiv"
@@ -48,7 +48,7 @@
             name="1"
           >
             <keep-alive>
-              <sluice v-if="activeName==1" />
+              <sluice v-if="activeName==1" @clickRow="clickRow" />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -56,7 +56,7 @@
             name="2"
           >
             <keep-alive>
-              <cradle v-if="activeName==2" />
+              <cradle v-if="activeName==2"  @clickRow="clickRow"  />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -64,7 +64,7 @@
             name="3"
           >
             <keep-alive>
-              <reservoir v-if="activeName==3" />
+              <reservoir v-if="activeName==3" @clickRow="clickRow"  />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -72,7 +72,7 @@
             name="4"
           >
             <keep-alive>
-              <wells v-if="activeName==4" />
+              <wells v-if="activeName==4" @clickRow="clickRow"  />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -80,7 +80,7 @@
             name="5"
           >
             <keep-alive>
-              <agricultural v-if="activeName==5" />
+              <agricultural v-if="activeName==5" @clickRow="clickRow"  />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -88,7 +88,7 @@
             name="6"
           >
             <keep-alive>
-              <waterSubstation v-if="activeName==6" />
+              <waterSubstation v-if="activeName==6" @clickRow="clickRow"  />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -96,7 +96,7 @@
             name="7"
           >
             <keep-alive>
-              <intake v-if="activeName==7" />
+              <intake v-if="activeName==7" @clickRow="clickRow" />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -104,7 +104,7 @@
             name="8"
           >
             <keep-alive>
-              <riverWall v-if="activeName==8" />
+              <riverWall v-if="activeName==8" @clickRow="clickRow" />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -112,7 +112,7 @@
             name="9"
           >
             <keep-alive>
-              <pump v-if="activeName==9" />
+              <pump v-if="activeName==9" @clickRow="clickRow" />
             </keep-alive>
           </el-tab-pane>
           <el-tab-pane
@@ -120,7 +120,7 @@
             name="10"
           >
             <keep-alive>
-              <sewage v-if="activeName==10" />
+              <sewage v-if="activeName==10" @clickRow="clickRow" />
             </keep-alive>
           </el-tab-pane>
         </el-tabs>
@@ -164,12 +164,13 @@ import riverWall from '../res/riverWall.vue' //堤防
 import pump from '../res/pump.vue' //泵站
 import sewage from '../res/sewage.vue' //排污口
 export default {
-  name: "restabmap",
+  name: "Restabmap",
   components: { Pagination, RmMap, sluice, cradle, reservoir, wells, agricultural, waterSubstation, intake, riverWall, pump, sewage },
   data() {
     return {
       activeName: "1",
       loading: true,
+      map: null,
       tableLoading: false,
       checked: false,
       dataArray: [],
@@ -184,7 +185,7 @@ export default {
   },
   created() {
   },
-  mounted(){
+  mounted() {
     this.dialogVisible = true
   },
   methods: {
@@ -197,8 +198,11 @@ export default {
         this.digLogMini = true
         this.dialogVisible = false
         console.log(this.digLogMini, this.dialogVisible)
-
       }
+    }, 
+    clickRow(data) {
+        //转list 
+        this.map.showFeature({ list: [data] })
     },
     handleClick(tab) {
 

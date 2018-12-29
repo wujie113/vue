@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:45:21 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-27 10:08:00
+ * @Last Modified time: 2018-12-27 15:38:48
  */
 // 区域管理
 <template>
@@ -224,7 +224,7 @@ export default {
 .app-container {
   .panel {
     margin-bottom: 0;
-    min-height: 86vh;
+    min-height: calc(100vh - 126px);
     overflow: auto;
     background-color: #fff;
     border: 1px solid transparent;

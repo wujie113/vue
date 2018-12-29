@@ -48,10 +48,27 @@ export function getscorelist(params) {
     params
   })
 }
+
+
+export function geteditscorelist(params) {
+  return request({
+    url: '/api/ass/assOrgTemplateItem/score/editlist',
+    method: 'get',
+    params
+  })
+}
  
 export function savescore(params) {
   return request({
     url: '/api/ass/assOrgScores/save',
+    method: 'post',
+    data: params
+  })
+}
+
+export function editsavescore(params) {
+  return request({
+    url: '/api/ass/assOrgScores/edit/save',
     method: 'post',
     data: params
   })
@@ -65,3 +82,4 @@ export function officelist(params) {
     data: params
   })
 }
+

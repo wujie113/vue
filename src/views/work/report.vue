@@ -265,15 +265,15 @@
   </div>
 </template> 
 <script>
-import Pagination from "@/components/Pagination";
-import { getList, del, get } from "@/api/work/report.js";
-import RmDict from "@/components/rm/dict";
-import RmOrgSelect from "@/components/rm/orgselect";
-import RmUserSelect from "@/components/rm/userselect";
-import RmAreaSelect from "@/components/rm/areaselect";
+import Pagination from "@/components/Pagination"
+import { getList, del, get } from "@/api/work/report.js"
+import RmDict from "@/components/rm/dict"
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
 import { getToken } from '@/utils/auth'
 import { save, acttaskinfo } from '@/api/work/proTask.js'
-import RmMap from "@/components/rm/map";
+import RmMap from "@/components/rm/map"
 import { getorgtrees, getSynergOffice, getLoweroffice, findOfficeUserstree } from '@/api/res/management.js'
 import LeftTree from '../setting/components/leftTree'
 
@@ -285,8 +285,8 @@ export default {
         published: "success",
         draft: "gray",
         deleted: "danger"
-      };
-      return statusMap[status];
+      }
+      return statusMap[status]
     }
   },
   data() {
@@ -361,17 +361,17 @@ export default {
         sort: "+id"
       },
       importanceOptions: [1, 2, 3]
-    };
+    }
   },
   created() {
-    this.loadLeftTree();
+    this.loadLeftTree()
   },
   mounted() {
-    const tempH = this.getHeight(document.getElementsByClassName('app-container')[0]) - 210
+    const tempH = this.getHeight(document.getElementsByClassName('app-container')[0]) - 217
     this.clientHeight = tempH
     const that = this
     window.onresize = function temp() {
-      that.clientHeight = that.getHeight(document.getElementsByClassName('app-container')[0]) - 210
+      that.clientHeight = that.getHeight(document.getElementsByClassName('app-container')[0]) - 217
     }
   },
   methods: {
@@ -386,105 +386,102 @@ export default {
         this.getList()
       }).catch((errorRes) => {
         console.error("errror:::::::", errorRes)
-
       })
     },
     // 点击顶部的按钮 切换到地图
     changeMap() {
       if (this.isMapShow && this.marks) {
-        this.isMapShow = false;
-        this.marks = true;
+        this.isMapShow = false
+        this.marks = true
       } else if (this.isMapShow && this.marks == false) {
-        this.isMapShow = false;
-        this.marks = true;
+        this.isMapShow = false
+        this.marks = true
       } else {
-        this.isMapShow = true;
-        this.marks = true;
+        this.isMapShow = true
+        this.marks = true
       }
     },
     //定位
     showFeature(id, type, lng, lat) {
       if (this.isMapShow) {
-        this.isMapShow = false;
-        this.marks = true;
+        this.isMapShow = false
+        this.marks = true
       } else {
-        this.isMapShow = true;
-        this.marks = false;
-      }
-      var lng = lng;
-      var lat = lat;
-      var self = this;
-      setTimeout(() => {
+        this.isMapShow = true
+        this.marks = false
+      } 
+      var self = this
+      this.$nextTick(() => {
         //console.log("self.map",self.map)
-        self.map.showFeature({ id: id, gtype: type, name: '上报', lng: lng, lat: lat })
-      }, 500);
+        self.map.showFeature({ list: [{ id: id, gtype: type, name: '上报', lng: lng, lat: lat }] })
+      })
     },
     getList() {
-      this.listLoading = true;
+      this.listLoading = true
       // console.log("this.listQuery::::",this.listQuery)
       getList(this.listQuery).then(response => {
-        this.listLoading = false;
-        this.list = response.data.list;
-        this.total = response.data.count;
-      });
+        this.listLoading = false
+        this.list = response.data.list
+        this.total = response.data.count
+      })
       //相关部门数据
       getSynergOffice().then(response => {
         //console.log('相关部门数据：',response.data);
         this.synergOfficeList = response.data.list
-      });
+      })
       getLoweroffice().then(response => {
         // console.log('接单单位数据：',response.data);
         this.lowerofficeList = response.data.list
-      });
+      })
     },
     handleFilter() {
-      this.listQuery.pageNo = 1;
-      this.getList();
+      this.listQuery.pageNo = 1
+      this.getList()
     },
     edit(row) {
       //console.log(JSON.stringify(row));
-      this.visible = true;
-      this.form = row;
+      this.visible = true
+      this.form = row
     },
     save() {
       //	console.log('保存:',JSON.stringify(this.form),this.selectUser);
 
       save(this.proTaskFrom).then(response => {
         // 上传到服务器
-        this.uploaddata.bizId = response.data.id;
-        console.log('response.data.id:', this.uploaddata.bizId);
-        console.log('保存:', this.$refs.upload.uploadFiles.length);
+        this.uploaddata.bizId = response.data.id
+        console.log('response.data.id:', this.uploaddata.bizId)
+        console.log('保存:', this.$refs.upload.uploadFiles.length)
         if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
           // 上传到服务器
-          this.$refs.upload.submit();
+          this.$refs.upload.submit()
         }
         this.visibleOrder = false
         this.$message({
           type: "success",
           message: "提交成功!"
         })
-        this.getList();
+        this.getList()
       }).catch(error => {
-        this.listLoading = false;
-      });
+        this.listLoading = false
+      })
     },
     // 点击生成工单
     addOrder(id) { /*  */
-      this.visibleOrder = true;
-      console.log("id", id);
+      this.visibleOrder = true
+      console.log("id", id)
       this.proTaskFrom.reportId = id
     },// 点击详情,查看详情
     detailBtn(idx) {
-      this.visible = true;
-      console.log("idx", idx);
+      this.visible = true
+      console.log("idx", idx)
       get(idx).then(response => {
-        this.form = response.data.report;
-        const imagelist = this.form.pictureUrls;
-        this.prodetail = response.data;
-        this.slide1 = imagelist;
+        this.form = response.data.report
+        const imagelist = this.form.pictureUrls
+        this.prodetail = response.data
+        this.slide1 = imagelist
 
-        console.log("this.prodetail.list::::", this.prodetail);
-        console.log("this.prodetail.list::::", this.prodetail.list);
+        console.log("this.prodetail.list::::", this.prodetail)
+        console.log("this.prodetail.list::::", this.prodetail.list)
         // imagelist.forEach((value, index) => {
         //   this.slide1.push(
         //     {
@@ -493,12 +490,12 @@ export default {
         //     }
         //   )
         // });
-      });
+      })
     },
     onlyShowSelectBtn() {
       console.log("只显示所属单位", this.listQuery, this.checked)
 
-      this.handleNodeClick(this.officeData);
+      this.handleNodeClick(this.officeData)
     },
     handleNodeClick(data) {
       console.log("节点信息", data)
@@ -516,34 +513,34 @@ export default {
       this.getList()
     },
     handleSuccess() {
-      this.fileList = [];
-      this.getList();
+      this.fileList = []
+      this.getList()
     },
     handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisibleImg = true;
+      this.dialogImageUrl = file.url
+      this.dialogVisibleImg = true
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      console.log(file, fileList)
     },
     removefile(file) {
       delfiles({ ids: file.id }).then(response => {
-        console.log("图片删除成功!!!!!");
+        console.log("图片删除成功!!!!!")
       })
     },
     del(row) {
-      var self = this;
-      console.log(row.id);
+      var self = this
+      console.log(row.id)
       del(row.id)
         .then(response => {
-          this.getList();
+          this.getList()
         })
         .catch(error => {
-          this.listLoading = false;
-        });
+          this.listLoading = false
+        })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .el-dialog__body {
@@ -555,7 +552,7 @@ export default {
   }
 }
 .app-container > .el-container {
-  min-height: 86vh;
+  min-height: calc(100vh - 126px);
   .el-container {
     width: 80%;
   }
@@ -824,7 +821,7 @@ export default {
 }
 
 .app-container > .el-container {
-  min-height: 86vh;
+  min-height: calc(100vh - 126px)
 }
 .app-container {
   /deep/ .el-dialog__body {

@@ -92,13 +92,13 @@
 
     <el-dialog :visible.sync="v.form" title="编辑">
       <el-form ref="form" :model="form" label-width="120px">
-        <el-form-item label="名称">
+        <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称"/>
         </el-form-item>
-        <el-form-item label="电话">
+        <el-form-item label="电话" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入电话"/>
         </el-form-item>
-        <el-form-item label="单位">
+        <el-form-item label="单位" prop="unit">
           <el-select v-model="form.unit" placeholder="请选择单位" clearable class="filter-item">
             <el-option
               v-for="item in lowerofficeList"
@@ -108,7 +108,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="排序">
+        <el-form-item label="排序" prop="sort">
           <el-input v-model="form.sort" placeholder="请输入排序"/>
         </el-form-item>
       </el-form>
@@ -167,11 +167,10 @@ export default {
         type: undefined
       },
       form: {
-        name: null,
-        phone: null,
-        unit: null,
-        sort: null,
-        state: null,
+        name: "",
+        phone: "",
+        unit: "",
+        sort: "",
       },
       multipleSelection: [],
     }
@@ -233,8 +232,14 @@ export default {
       this.getList()
     },
     create() {
+      // this.$nextTick(() => {
+      if(this.$refs['form'] !== undefined) {
+        this.$refs['form'].resetFields()
+      }
       this.v.form = true
-      this.form = {}
+      // })
+
+      // this.form = {}
     },
     edit(row) {
       //console.log(JSON.stringify(row));

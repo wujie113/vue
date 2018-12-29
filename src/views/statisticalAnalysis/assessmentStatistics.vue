@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-24 17:28:23 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-26 16:52:46
+ * @Last Modified time: 2018-12-27 15:45:36
  */
 //  考核统计
 <template>
@@ -65,6 +65,7 @@
                 :label="item.label"
                 v-for="(item, index) in assessTable.tableCoulmn"
                 :key="index"
+                :fixed="item.prop === 'officename'"
               ></el-table-column>
             </el-table>
           </div>
@@ -197,7 +198,7 @@ export default {
       this.aeesssTableParams.tab2Month = tab2Month
       this.assessTable.tableCoulmn = []
       this.assessTable.tableData = []
-      this.filename = this.aeesssTableParams.tab2Year + '年' + this.aeesssTableParams.tab2Month + '月' + this.officeName + '下级单位考核评分表'      
+      this.filename = this.aeesssTableParams.tab2Year + '年' + this.aeesssTableParams.tab2Month + '月' + this.officeName + '下级单位考核评分表'
       this.getAssessTable()
     },
     // 下载导出Excel表格
@@ -237,63 +238,69 @@ export default {
     drawBar() {
       // 基于准备好的dom，初始化echarts实例
       // let myChart1 = echarts.init(document.getElementById('myChart1'))
-      this.chart1 = echarts.init(this.$refs.myChart)
-      // 绘制图表
-      this.chart1.setOption({
-        title: {
-          text: this.echartsData.title,
-          x: "50%",
-          y: "3%",
-          textStyle: {
-            color: '#008acd',
-            fontSize: 16
-          }
-        },
-        tooltip: {
-          show: true,
-          trigger: 'axis',
-        },
-        legend: {
-          data: this.legendDataArray,
-          x: "7%",
-          y: "10%",
-        },
-        xAxis: [{
-          name: "月份",
-          type: 'category',
-          data: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-          axisLabel: {
-            interval: 0, //横轴信息全部显示
-            //   rotate: 30, //60度角倾斜显示            
-          },
-          axisLine: {
-            lineStyle: {
-              color: '#008acd' //坐标轴线颜色
+      if (this.$refs.myChart) {
+        this.chart1 = echarts.init(this.$refs.myChart)
+        // 绘制图表
+        this.chart1.setOption({
+          title: {
+            text: this.echartsData.title,
+            x: "50%",
+            y: "3%",
+            textStyle: {
+              color: '#008acd',
+              fontSize: 16
             }
           },
-          boundaryGap: true,
-        }],
-        yAxis: [{
-          type: 'value',
-          name: '总分',
-          nameTextStyle: {
-            color: '#008acd'
+          tooltip: {
+            show: true,
+            trigger: 'axis',
           },
-          axisLine: {
-            lineStyle: {
-              color: '#008acd' //坐标轴线颜色
+          legend: {
+            data: this.legendDataArray,
+            x: "7%",
+            y: "10%",
+          },
+          xAxis: [{
+            name: "月份",
+            type: 'category',
+            data: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            axisLabel: {
+              interval: 0, //横轴信息全部显示
+              //   rotate: 30, //60度角倾斜显示 
+              textStyle: {
+                color: "#000"
+              }
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#008acd' //坐标轴线颜色
+              }
+            },
+            boundaryGap: true,
+          }],
+          yAxis: [{
+            type: 'value',
+            name: '总分',
+            nameTextStyle: {
+              color: '#008acd'
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#008acd' //坐标轴线颜色
+              }
             }
-          }
-        }],
-        grid: {
-          x: "5%",
-          x2: "5%",
-          y: "20%",
-          y2: "5%",
-        },
-        color: ['#52b4ff', '#fa7de5', '#48dff0', '#ff7370', '#5ce5aa', '#ffb870', '#bc84f5', '#fae164', '#778eff', '#ff7faa'],
-        series: this.echartsData.series
-      })
+          }],
+          grid: {
+            x: "5%",
+            x2: "5%",
+            y: "20%",
+            y2: "5%",
+          },
+          color: ['#52b4ff', '#fa7de5', '#48dff0', '#ff7370', '#5ce5aa', '#ffb870', '#bc84f5', '#fae164', '#778eff', '#ff7faa'],
+          series: this.echartsData.series
+        })
+      }
+
     },
   },
 }
@@ -311,10 +318,10 @@ export default {
     }
   }
   > .el-container {
-    min-height: 86vh;
+    min-height: calc(100vh - 126px);
     > .el-container {
       // 兼容IE浏览器
-      min-height: 86vh;
+      min-height: calc(100vh - 126px);
     }
   }
 }

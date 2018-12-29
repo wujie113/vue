@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-25 17:46:22
+ * @Last Modified time: 2018-12-28 10:33:25
  */
 <template>
   <div class="app-container homeIndex">
@@ -16,29 +16,44 @@
                 <span>巡河专管员优秀榜</span>
               </div>
               <div class="right">
-                <span :class="{ spanActive : spanActiveIndex === 0 }" @click="spanBtn(0)" data-index = '0'>本月专管员巡河</span>
+                <span
+                  :class="{ spanActive : spanActiveIndex === 0 }"
+                  @click="spanBtn(0)"
+                  data-index="0"
+                >本月专管员巡河</span>
                 <span>|</span>
-                <span :class="{ spanActive : spanActiveIndex === 1 }" @click="spanBtn(1)" data-index = '1'>本月巡河</span>
+                <span
+                  :class="{ spanActive : spanActiveIndex === 1 }"
+                  @click="spanBtn(1)"
+                  data-index="1"
+                >本月巡河</span>
               </div>
             </div>
             <div class="tableBox">
-              <el-table :data="tableData3" height="270" border style="width: 100%" size="mini" v-show="spanActiveIndex === 0">
-                <el-table-column type="index" width="50" label="排名">
-                </el-table-column>
-                <el-table-column prop="name" label="姓名">
-                </el-table-column>
-                <el-table-column prop="officeName" label="所属单位" width="180" show-overflow-tooltip="">
-                </el-table-column>
-                <el-table-column prop="total" label="巡河次数">
-                </el-table-column>
+              <el-table
+                :data="tableData3"
+                height="270"
+                border
+                style="width: 100%"
+                size="mini"
+                v-show="spanActiveIndex === 0"
+              >
+                <el-table-column type="index" width="50" label="排名"></el-table-column>
+                <el-table-column prop="name" label="姓名"></el-table-column>
+                <el-table-column prop="officeName" label="所属单位" width="180" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="total" label="巡河次数"></el-table-column>
               </el-table>
-              <el-table :data="tableData3" height="270" border style="width: 100%" size="mini" v-show="spanActiveIndex === 1">
-                <el-table-column type="index" width="50" label="排名">
-                </el-table-column>
-                <el-table-column prop="name" label="姓名">
-                </el-table-column>
-                <el-table-column prop="total" label="巡河次数">
-                </el-table-column>
+              <el-table
+                :data="tableData3"
+                height="270"
+                border
+                style="width: 100%"
+                size="mini"
+                v-show="spanActiveIndex === 1"
+              >
+                <el-table-column type="index" width="50" label="排名"></el-table-column>
+                <el-table-column prop="name" label="姓名"></el-table-column>
+                <el-table-column prop="total" label="巡河次数"></el-table-column>
               </el-table>
             </div>
           </div>
@@ -51,13 +66,13 @@
                 <!-- <span>入库河流统计</span> -->
                 <span>{{ riverMap.msg }}</span>
               </div>
-        <!--       <div class="right">
+              <!--       <div class="right">
                 <el-select v-model="value" placeholder="请选择" size="mini">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
                 <span>市级筛选</span>
-              </div> -->
+              </div>-->
             </div>
             <div class="flexBox">
               <ul class="clearfix">
@@ -144,16 +159,18 @@
                 <img src="../../../static/img/gdgl.svg" alt="工单处理统计">
                 <span>工单处理统计</span>
               </div>
-             <!--  <div class="right">
+              <!--  <div class="right">
                 <el-select v-model="value" placeholder="请选择" size="mini">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
-              </div> -->
+              </div>-->
             </div>
             <div class="canvasBox">
               <!-- <div id="myChart" :style="{width: '100%', height: '290px'}" ref="myChart"></div> -->
-              <echarts-pie :_chartData="chartData"></echarts-pie>
+              <!-- 饼状图 -->
+              <com-echarts :option="pieOption" height="290px"></com-echarts>
+              <!-- <echarts-pie :_chartData="pieChartData"></echarts-pie> -->
             </div>
           </div>
         </el-col>
@@ -168,23 +185,25 @@
                 <img src="../../../static/img/fenxi.svg" alt="河长管理分析">
                 <span>河长管理分析</span>
               </div>
-         <!--      <div class="right">
+              <!--      <div class="right">
                 <el-select v-model="value" placeholder="请选择" size="mini">
                   <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
                 <span>筛选</span>
-              </div> -->
+              </div>-->
             </div>
-            <div class="tableBox">
+            <div class="tableBox" style="min-height:26.5em;">
               <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="本月投诉次数统计" name="first">
                   <!-- <div id="myChart1" :style="{width: '100%', height: '23em'}" ref="myChart1"></div> -->
-                  <leftEchartsBar v-if="activeName === 'first'" :left_chartData="leftData"></leftEchartsBar>
+                  <!-- <leftEchartsBar v-if="activeName === 'first'" :left_chartData="leftData"></leftEchartsBar> -->
+                  <com-echarts :option="leftOption" height="22em" v-if="activeName === 'first'"></com-echarts>
                 </el-tab-pane>
                 <el-tab-pane label="本月工单统计" name="second">
                   <!-- <div id="myChart2" :style="{width: '100%', height: '23em'}" ref="myChart2"></div> -->
-                  <rightEchartsBar v-if="activeName === 'second'" :right_chartData="rightData"></rightEchartsBar>
+                  <!-- <rightEchartsBar v-if="activeName === 'second'" :right_chartData="rightData"></rightEchartsBar> -->
+                  <com-echarts :option="rightOption" height="22em" v-if="activeName === 'second'"></com-echarts>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -201,15 +220,17 @@
               </div>
               <div class="right" style="cursor: pointer;">
                 <!--更多,跳转到通知公告-->
-                <router-link to="/setting/msg">
-                  更多
-                </router-link>
+                <router-link to="/setting/msg">更多</router-link>
                 <i class="el-icon-d-arrow-right"></i>
               </div>
             </div>
             <div class="NewsBox">
               <ul>
-                <li class="home-page-top-notice-list" v-for="(list, index) in msgMap" @click="newsDetailBtn(index)">
+                <li
+                  class="home-page-top-notice-list"
+                  v-for="(list, index) in msgMap"
+                  @click="newsDetailBtn(index)"
+                >
                   <span class="home-page-top-notice-list-top">
                     <span>{{ list.title }}</span>
                     <i class="circle"></i>
@@ -229,12 +250,8 @@
     <el-dialog title="通知公告详情" :visible.sync="dialogVisible" width="60%">
       <div class="NotificationDetailContent clearfix">
         <div class="subContent clearfix">
-          <h1 class="ContentHeader">
-            {{ msgDeatail.title }}
-          </h1>
-          <p class="DetailMore">
-            {{ msgDeatail.content }}
-          </p>
+          <h1 class="ContentHeader">{{ msgDeatail.title }}</h1>
+          <p class="DetailMore">{{ msgDeatail.content }}</p>
           <div class="clearfix">
             <viewer :images="images1">
               <img v-for="src in images1" :src="src.url" :key="src.name">
@@ -258,13 +275,158 @@ import { getList } from '@/api/home/home'
 import EchartsPie from './components/echartsPie'
 import leftEchartsBar from './components/leftEchartsBar'
 import rightEchartsBar from './components/rightEchartsBar'
+import ComEcharts from './components/echarts'
 export default {
   name: 'Home',
   data() {
     return {
+      pieShow: false,
+      pieOption: {
+        tooltip: {
+          trigger: 'item',
+          formatter: "{b}: {c} ({d}%)"
+        },
+        color: ["#52b4ff", "#ffc552"],
+        legend: {
+          orient: 'horizontal',
+          y: 'bottom',
+          // data: ['待处理工单', '待处理投诉']
+        },
+        series: [
+          {
+            name: '',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+              normal: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                show: true,
+                textStyle: {
+                  fontSize: '16',
+                  fontWeight: 'bold'
+                }
+              }
+            },
+            labelLine: {
+              normal: {
+                show: false
+              }
+            },
+            data: []
+          }
+        ]
+      },
+      leftOption: {
+        color: ["#ff7370", "#48dff0", "#52b4ff", "#ff66a3", "#5ce5aa", "#c484f5", "#ffb870", "#fae164"],
+        tooltip: {
+          show: true,
+          trigger: 'axis',
+        },
+        dataZoom: {
+          show: false,
+          realtime: true,
+          height: 20,
+          end: 100,
+          handleSize: '20px',
+        },
+        legend: {
+          data: [],
+          left: "right"
+        },
+        grid: {
+          x: "5%",
+          x2: "5%",
+          y: "10%",
+          y2: "15%",
+        },
+        xAxis: [{
+          name: "类型",
+          type: 'category',
+          data: [],
+          axisLabel: {
+            interval: 0, //横轴信息全部显示
+            //rotate: 60, //60度角倾斜显示
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#008acd' //坐标轴线颜色
+            }
+          },
+        }],
+        yAxis: [{
+          name: "数量",
+          type: 'value',
+          minInterval: 1,
+          axisLine: {
+            lineStyle: {
+              color: '#008acd' //坐标轴线颜色
+            }
+          },
+        }],
+        series: [{
+          name: '数量',
+          type: 'bar',
+          barCategoryGap: "55%",
+          data: [],
+        }]
+      },
+      rightOption: {
+        tooltip: {
+          show: true,
+          trigger: 'axis',
+        },
+        dataZoom: {
+          show: false,
+          realtime: true,
+          height: 20,
+          end: 100,
+          handleSize: '20px',
+        },
+        grid: {
+          x: "5%",
+          x2: "5%",
+          y: "10%",
+          y2: "15%",
+        },
+        xAxis: [{
+          name: "单位",
+          type: 'category',
+          data: [],
+          axisLabel: {
+            interval: 0, //横轴信息全部显示
+            rotate: 60, //60度角倾斜显示
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#008acd' //坐标轴线颜色
+            }
+          },
+        }],
+        yAxis: [{
+          //nameLocation:"middle",
+          name: "数量",
+          type: 'value',
+          minInterval: 1,
+          axisLine: {
+            lineStyle: {
+              color: '#008acd' //坐标轴线颜色
+            }
+          },
+        }],
+        series: [{
+          name: '工单数量',
+          type: 'bar',
+          barCategoryGap: "55%",
+          data: [],
+        }]
+      },
       barColor: ["#ff7370", "#48dff0", "#52b4ff", "#ff66a3", "#5ce5aa", "#c484f5", "#ffb870", "#fae164"],
       spanActiveIndex: 0,
-      chartData: [],
+      pieChartData: [],
       leftData: {},
       rightData: {},
       activeName: '',
@@ -279,14 +441,15 @@ export default {
       otherWrap: {},
       msgDeatail: {},
       tableData3: [],
-      images1:[]
+      images1: []
 
     }
   },
   components: {
     EchartsPie,
     leftEchartsBar,
-    rightEchartsBar
+    rightEchartsBar,
+    ComEcharts
   },
   computed: {
     ...mapGetters([
@@ -341,18 +504,48 @@ export default {
           const obj = {}
           obj.name = item.msg
           obj.value = item.data
-          this.chartData.push(obj)
+          this.pieChartData.push(obj)
         })
+        this.pieOption.series[0].data = this.pieChartData
+        this.pieShow = true
+
         const statisticalMap = res.data.statisticalMap
         //本月投诉统计
         const tempComplaints = statisticalMap.statisticalComplaintsWrap.data.list
+        
+        this.leftData = this.echartsDataTran(tempComplaints, true)
+        let value = []
+        this.leftData.yAxis.map((item, index) => {
+          value.push({
+            value: item,
+            itemStyle: {
+              normal: {
+                color: this.barColor[index % this.barColor.length]
+              }
+            }
+          })
+        })
+        this.leftOption.xAxis[0].data = this.leftData.xAxis
+        this.leftOption.series[0].data = value
 
-        this.leftData = this.echartsDataTran(tempComplaints,true)
         // 解决第一次进来页面不显示 '本月投诉统计'的问题
         this.activeName = 'first'
         //本月工单统计
         const tempReport = statisticalMap.statisticalReportWrap.data.list
         this.rightData = this.echartsDataTran(tempReport)
+        let value2 = []
+        this.rightData.yAxis.map((item, index) => {
+          value2.push({
+            value: item,
+            itemStyle: {
+              normal: {
+                color: this.barColor[index % this.barColor.length]
+              }
+            }
+          })
+        })
+        this.rightOption.xAxis[0].data = this.rightData.xAxis
+        this.rightOption.series[0].data = value2
       }).catch(erroRes => {
         loading.close()
       })
@@ -364,7 +557,7 @@ export default {
      * @returns {*}
      */
     // 格式化 '本月投诉统计' 和 '本月工单统计'的后台数据
-    echartsDataTran(originData, isReverse){
+    echartsDataTran(originData, isReverse) {
       const xAxis = []
       const yAxis = []
       for (const key in originData) {
@@ -397,11 +590,10 @@ export default {
     init() {
       const self = this
       setTimeout(() => {
-        window.onresize = function() {
+        window.onresize = function () {
           self.chart = echarts.init(document.getElementById('pieID'))
           // self.chart1 = echarts.init(self.$refs.myChart1)
           // self.chart2 = echarts.init(self.$refs.myChart2)
-          console.log("饼状图")
           self.chart.resize()
           // self.chart1.resize()
           // self.chart2.resize()
@@ -563,7 +755,7 @@ export default {
 
 <style lang="scss" scoped>
 .homeIndex {
-  position: absolute;
+  // position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
@@ -609,7 +801,7 @@ export default {
   }
 }
 .topWrap {
-  padding-bottom: 10px;
+  padding-bottom: 19px;
   height: 42%;
 }
 .bottomWrap {
@@ -656,7 +848,7 @@ export default {
         color: #333;
       }
       .spanActive {
-        color: #fff!important;
+        color: #fff !important;
       }
       span:last-of-type {
         color: #333;
@@ -812,7 +1004,7 @@ export default {
     width: 100%;
   }
   .NewsBox {
-    height: 92%;
+    height: 26.5em;
     width: 100%;
     ul,
     li {
@@ -877,7 +1069,7 @@ export default {
   .el-table__body
   tr.el-table__row:nth-of-type(1)
   td:nth-of-type(1)
-.cell
+  .cell
   div {
   background-image: url(../../../static/img/one.png);
   background-position: center center;
@@ -889,7 +1081,7 @@ export default {
   .el-table__body
   tr.el-table__row:nth-of-type(2)
   td:nth-of-type(1)
-.cell
+  .cell
   div {
   background-image: url(../../../static/img/two.png);
   background-position: center center;

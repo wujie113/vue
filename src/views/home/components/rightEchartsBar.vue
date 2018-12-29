@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <!-- <div> -->
     <div :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
-  </div>
+  <!-- </div> -->
 </template>
 <script>
 import echarts from 'echarts'
@@ -13,7 +13,10 @@ export default {
     }
   },
   mounted() {
+    setTimeout(() => {
     this.initChart()
+      
+    }, 100);
     this.init()
   },
   props: {
@@ -31,7 +34,7 @@ export default {
     },
     height: {
       type: String,
-      default: '23em'
+      default: '22em'
     },
     right_chartData: {
       type: Object,
@@ -43,6 +46,9 @@ export default {
   },
   watch: {
 
+  },
+  destroyed() {
+    window.onresize = null
   },
   methods: {
     init() {

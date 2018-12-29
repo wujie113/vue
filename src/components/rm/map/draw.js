@@ -9,7 +9,7 @@ import Collection from 'ol/Collection'
 import { getArea, getLength } from 'ol/sphere.js'
 import Overlay from 'ol/Overlay.js'
 import WKT from 'ol/format/WKT.js'
-import { drawingStyleFunc, markerSelectedStyleFunc, measureStyleFunc, selectedStyleFunc ,trailGeoMarkerStyle } from "@/components/rm/map/style.js"
+import { drawingStyleFunc, markerSelectedStyleFunc, measureStyleFunc, selectedStyleFunc, trailGeoMarkerStyle } from "@/components/rm/map/style.js"
 
 
 //绘制河流责任段
@@ -728,7 +728,7 @@ export const showUtil = {
         var id = options.id
         var fid = this.layerCode + '.' + id
         //地图上是否已存在
-        var f = this.layer.getSource().getFeatureById(fid)      
+        var f = this.layer.getSource().getFeatureById(fid)
         if (f) {
             //存在记录 
             this.geoMarkerStyle = trailGeoMarkerStyle
@@ -737,29 +737,29 @@ export const showUtil = {
     },
     startAnimation: function() {
         var self = this
-       
+
         var moveFeature = function(event) {
             //此方法，this句柄指向map对象
             var vectorContext = event.vectorContext
             var frameState = event.frameState
-          
+
             if (self.animating) {
-              var elapsedTime = frameState.time - self.now
-              // here the trick to increase speed is to jump some indexes
-              // on lineString coordinates
-              var index = Math.round(self.speed * elapsedTime / 1000)
-    
-              if (index >= self.routeLength) {
-                 stopAnimation(true)
-                return
-              }
-    
-              var currentPoint = new Point(self.routeCoords[index])
-              var feature = new Feature(currentPoint)
-              feature.set('index',index)
-              //移动点的样式
-              self.geoMarkerStyle.getText().setText(index + 1)
-              vectorContext.drawFeature(feature, self.geoMarkerStyle)
+                var elapsedTime = frameState.time - self.now
+                // here the trick to increase speed is to jump some indexes
+                // on lineString coordinates
+                var index = Math.round(self.speed * elapsedTime / 1000)
+
+                if (index >= self.routeLength) {
+                    stopAnimation(true)
+                    return
+                }
+
+                var currentPoint = new Point(self.routeCoords[index])
+                var feature = new Feature(currentPoint)
+                feature.set('index', index)
+                //移动点的样式
+                self.geoMarkerStyle.getText().setText(index + 1)
+                vectorContext.drawFeature(feature, self.geoMarkerStyle)
             }
             // tell OpenLayers to continue the postcompose animation
             self.map.render()
@@ -767,31 +767,31 @@ export const showUtil = {
 
         var stopAnimation = function(ended) {
             self.animating = false
-           // startButton.textContent = 'Start Animation';
-    
+            // startButton.textContent = 'Start Animation';
+
             // if animation cancelled set the marker at the beginning
             var coord = ended ? self.routeCoords[self.routeLength - 1] : self.routeCoords[0];
             /** @type {module:ol/geom/Point~Point} */ (self.geoMarker.getGeometry())
-              .setCoordinates(coord)
+                .setCoordinates(coord)
             //remove listener
             self.map.un('postcompose', moveFeature)
         }
         if (this.animating) {
-             stopAnimation(false)
+            stopAnimation(false)
         } else {
             this.animating = true
             this.now = new Date().getTime()
             this.speed = 3
-            this.map.set('_speed',this.speed)
+            this.map.set('_speed', this.speed)
             //startButton.textContent = 'Cancel Animation';
-          // hide geoMarker
-          this.geoMarker.setStyle(null)
-          // just in case you pan somewhere else
-          //this.map.getView().setCenter(center);
-          this.map.on('postcompose',  moveFeature)
-          this.map.render()
+            // hide geoMarker
+            this.geoMarker.setStyle(null)
+            // just in case you pan somewhere else
+            //this.map.getView().setCenter(center);
+            this.map.on('postcompose', moveFeature)
+            this.map.render()
         }
-    },     
+    },
     /** 显示轨迹 */
     showTrail: function(parent, options) {
         this.layerCode = 'searchlayer'
@@ -852,24 +852,29 @@ export const showUtil = {
         this.layerCode = 'searchlayer'
         this.init(parent, options)
 
-        var id = options.id
-        var lng = options.lng
-        var lat = options.lat
-        var fid = this.layerCode + '.' + id
-        //地图上是否已存在
-        var f = this.layer.getSource().getFeatureById(fid)
-        if (!f) {
-            f = new Feature({
-                geometry: new Point([lng, lat]),
-                id: id,
-                name: options.name
-            })
-            f.setId(fid)
-            //添加到图层
-            this.layer.getSource().addFeature(f)
+        var list = options.list || [] 
+        for (var i in list) {
+            var item = list[i] 
+
+            var id = item.id
+            var lng = item.lng
+            var lat = item.lat
+            var fid = this.layerCode + '.' + id
+            //地图上是否已存在
+            var f = this.layer.getSource().getFeatureById(fid)
+            if (!f) {
+                f = new Feature({
+                    geometry: new Point([lng, lat]),
+                    id: id,
+                    name: item.name
+                })
+                f.setId(fid)
+                //添加到图层
+                this.layer.getSource().addFeature(f)
+            }
+            //对象类型，根据这个类型，选用不同的样式
+            f.set("gtype", item.gtype || options.gtype)
         }
-        //对象类型，根据这个类型，选用不同的样式
-        f.set("gtype", options.gtype)
         //显示信息窗口
         // TODO
     },

@@ -749,7 +749,7 @@ export default {
 
 .panel {
   margin-bottom: 0;
-  min-height: 86vh;
+  min-height: calc(100vh - 86px);
   overflow: auto;
   height: 100%;
   .panelHeading {
@@ -796,7 +796,7 @@ export default {
   }
   .panel-body {
     overflow-y: auto;
-    height: 90.5vh;
+    height: calc(100vh - 86px);
     overflow-x: hidden;
     p {
       margin: 0;

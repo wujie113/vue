@@ -257,21 +257,21 @@
   </div>
 </template> 
 <script>
-import Pagination from "@/components/Pagination";
-import { getList, get, showstatus, addComment } from "@/api/work/complaint.js";
-import RmDict from "@/components/rm/dict";
-import { getToken } from "@/utils/auth";
-import RmMap from "@/components/rm/map";
-import RmOrgSelect from "@/components/rm/orgselect";
-import RmUserSelect from "@/components/rm/userselect";
-import RmAreaSelect from "@/components/rm/areaselect";
-import { save } from "@/api/work/proTask.js";
+import Pagination from "@/components/Pagination"
+import { getList, get, showstatus, addComment } from "@/api/work/complaint.js"
+import RmDict from "@/components/rm/dict"
+import { getToken } from "@/utils/auth"
+import RmMap from "@/components/rm/map"
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
+import { save } from "@/api/work/proTask.js"
 import {
   getorgtrees,
   getSynergOffice,
   getLoweroffice
-} from "@/api/res/management.js";
-import { forEach } from "ol";
+} from "@/api/res/management.js"
+import { forEach } from "ol"
 export default {
   components: {
     Pagination,
@@ -287,13 +287,13 @@ export default {
         published: "success",
         draft: "gray",
         deleted: "danger"
-      };
-      return statusMap[status];
+      }
+      return statusMap[status]
     }
   },
   data() {
     return {
-      main:"",
+      main: "",
       clientHeight: 0,
       isMapShow: false,
       marks: true,
@@ -315,7 +315,7 @@ export default {
         name: null,
         reportId: null,
         source: "complaint",
-        isSupervise : '督'
+        isSupervise: '督'
       },
       uploaddata: {
         bizId: null,
@@ -341,9 +341,9 @@ export default {
         // bizId:""
       },
        prodetail: {
-        list:null,
-        handel:{
-          btnlist:null
+        list: null,
+        handel: {
+          btnlist: null
         }
       }, 
       lists: [],
@@ -358,157 +358,151 @@ export default {
         sort: "+id"
       },
       importanceOptions: [1, 2, 3]
-    };
+    }
   },
   created() {
     this.getList()
     console.log('--created周期',document.getElementsByClassName('el-main')[0])
-    
-
   },
-  mounted(){
-    const tempH = this.getHeight(document.getElementsByClassName('app-container')[0]) - 210
+  mounted() {
+    const tempH = this.getHeight(document.getElementsByClassName('app-container')[0]) - 215
     console.log('--mounted周期', tempH)
     this.clientHeight = tempH
 
     const that = this
     window.onresize = function temp() {
       // that.clientHeight = `${document.documentElement.clientHeight}px`
-      that.clientHeight = that.getHeight(document.getElementsByClassName('app-container')[0]) - 210
+      that.clientHeight = that.getHeight(document.getElementsByClassName('app-container')[0]) - 215
       // that.clientHeight = that.getHeight(window) - 84
       console.log('window.onresize',that.clientHeight)
     }
   },
   methods: {
     getList() {
-      this.listLoading = true;
+      this.listLoading = true
       getList(this.listQuery).then(response => {
-        this.listLoading = false;
-        this.lists = response.data.list;
+        this.listLoading = false
+        this.lists = response.data.list
         for (const key in this.lists) {
           // 图片只取前面四张,用于主页面显示
           if (this.lists[key].imageurl) {
-            this.lists[key].imageurl = this.lists[key].imageurl.splice(0, 4);
+            this.lists[key].imageurl = this.lists[key].imageurl.splice(0, 4)
           }
         }
-        this.total = response.data.count;
-      });
+        this.total = response.data.count
+      })
       //相关部门数据
       getSynergOffice().then(response => {
         //console.log('相关部门数据：',response.data);
-        this.synergOfficeList = response.data.list;
-      });
+        this.synergOfficeList = response.data.list
+      })
       getLoweroffice().then(response => {
         // console.log('接单单位数据：',response.data);
-        this.lowerofficeList = response.data.list;
-      });
+        this.lowerofficeList = response.data.list
+      })
     },
     // 点击生成工单
     addOrder(id) {
       /*  */
-      this.visibleOrder = true;
-      console.log("id", id);
-      this.proTaskFrom.reportId = id;
+      this.visibleOrder = true
+      console.log("id", id)
+      this.proTaskFrom.reportId = id
     },
     handleFilter() {
-      this.listQuery.pageNo = 1;
-      this.getList();
+      this.listQuery.pageNo = 1
+      this.getList()
     },
     handleSuccess() {
-      this.fileList = [];
-      this.getList();
+      this.fileList = []
+      this.getList()
     },
     handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisibleImg = true;
+      this.dialogImageUrl = file.url
+      this.dialogVisibleImg = true
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      console.log(file, fileList)
     },
     removefile(file) {
       delfiles({ ids: file.id }).then(response => {
-        console.log("图片删除成功!!!!!");
-      });
+        console.log("图片删除成功!!!!!")
+      })
     },
     // 点击顶部的按钮 切换到地图
     changeMap() {
       if (this.isMapShow && this.marks) {
-        this.isMapShow = false;
-        this.marks = true;
+        this.isMapShow = false
+        this.marks = true
       } else if (this.isMapShow && this.marks == false) {
-        this.isMapShow = false;
-        this.marks = true;
+        this.isMapShow = false
+        this.marks = true
       } else {
-        this.isMapShow = true;
-        this.marks = true;
+        this.isMapShow = true
+        this.marks = true
       }
     },
     //定位
     showFeature(id, type, lng, lat) {
-      
       if (this.isMapShow) {
-        this.isMapShow = false;
-        this.marks = true;
+        this.isMapShow = false
+        this.marks = true
       } else {
-        this.isMapShow = true;
-        this.marks = false;
-      }
-      var lng = lng;
-      var lat = lat;
-console.log("------------ ",id, type, lng, lat)
-var self=this;
-setTimeout(() => {
-  console.log("self.map",self.map)
-   self.map.showFeature({ id: id, gtype: type, name: '投诉', lng: lng, lat: lat })
-}, 500);
-     
+        this.isMapShow = true
+        this.marks = false
+      } 
+//console.log("------------ ",id, type, lng, lat)
+var self = this 
+this.$nextTick(() => {
+  //console.log("self.map",self.map)
+   self.map.showFeature({ list: [{ id: id, gtype: type, name: '投诉', lng: lng, lat: lat }] })
+})
     },
     // 点击详情,查看详情
     detailBtn(idx) {
-      this.visible = true;
+      this.visible = true
       get(idx).then(response => {
-        this.form = response.data.complaint;
-          this.prodetail = response.data; 
-        const imagelist = this.form.imageurl;
-        this.slide1 = imagelist;
-      });
+        this.form = response.data.complaint
+          this.prodetail = response.data 
+        const imagelist = this.form.imageurl
+        this.slide1 = imagelist
+      })
     },
     // 回复弹窗
     replayBtn(id) {
       // 打开弹窗
-      this.replayDialogVisible = true;
+      this.replayDialogVisible = true
       // 内容置空
-      Object.assign(this.form2, this.$options.data().form2);
-      this.checked = false;
-      this.params.idA = id;
+      Object.assign(this.form2, this.$options.data().form2)
+      this.checked = false
+      this.params.idA = id
     },
     // 无效投诉
     handleChecked(val) {
-      console.log("val", val);
+      console.log("val", val)
       if (val) {
-        this.form2.desc = "已收到投诉信息！谢谢您的反馈。";
+        this.form2.desc = "已收到投诉信息！谢谢您的反馈。"
       } else {
-        this.form2.desc = "";
+        this.form2.desc = ""
       }
     },
     // 回复内容提交
     saveReplay() {
-      var desc = this.form2.desc;
+      var desc = this.form2.desc
       console.log("desc",desc)
       if (desc == null) {
         this.$message({
           message: "输入不能为空"
-        });
+        })
       } else {
-        this.replayDialogVisible = false;
-        const data = Object.assign(this.form2, this.params);
+        this.replayDialogVisible = false
+        const data = Object.assign(this.form2, this.params)
         addComment(data).then(response => {
-          this.getList();
+          this.getList()
           this.$message({
             message: "回复成功",
             type: "success"
-          });
-        });
+          })
+        })
       }
     },
     // edit(row) {
@@ -537,35 +531,35 @@ setTimeout(() => {
       save(this.proTaskFrom)
         .then(response => {
           // 上传到服务器
-          this.uploaddata.bizId = response.data.id;
-          console.log("保存:", this.$refs.upload.uploadFiles.length);
+          this.uploaddata.bizId = response.data.id
+          console.log("保存:", this.$refs.upload.uploadFiles.length)
           if (
             this.$refs.upload.uploadFiles != undefined &&
             this.$refs.upload.uploadFiles.length > 0
           ) {
             // 上传到服务器
-            this.$refs.upload.submit();
+            this.$refs.upload.submit()
           }
-          this.visibleOrder = false;
+          this.visibleOrder = false
           this.$message({
             type: "success",
             message: "提交成功!"
-          });
-          this.getList();
+          })
+          this.getList()
         })
         .catch(error => {
-          this.listLoading = false;
-        });
+          this.listLoading = false
+        })
     },
     del(row) {
       // const self = this
       //console.log(row);
     },
     handleClose() {
-      console.log(".......");
+      console.log(".......")
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .el-dialog__body {
@@ -577,7 +571,7 @@ setTimeout(() => {
   }
 }
 .app-container > .el-container {
-  min-height: 86vh;
+  min-height: calc(100vh - 126px);
 }
 .app-container {
   /deep/ .el-form-item--mini.el-form-item {
@@ -710,6 +704,7 @@ setTimeout(() => {
       margin: 10px auto;
       img {
         margin-top: 30px;
+        height: 10em;
       }
     }
   }
@@ -758,7 +753,7 @@ setTimeout(() => {
 }
 
 .app-container > .el-container {
-  min-height: 86vh;
+  min-height: calc(100vh - 126px);
 }
 .app-container {
   /deep/ .el-dialog__body {

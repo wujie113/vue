@@ -1,8 +1,8 @@
 /*
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:44:57 
- * @Last Modified by:   刘小康 
- * @Last Modified time: 2018-12-27 09:44:57 
+ * @Last Modified by: 刘小康
+ * @Last Modified time: 2018-12-27 15:40:16
  */
 // 日志管理
 <template>
@@ -156,7 +156,7 @@
       }
     }
     > .el-container {
-      min-height: 86vh;
+      min-height: calc(100vh - 126px);
     }
   }
 </style>

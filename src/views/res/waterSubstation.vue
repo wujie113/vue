@@ -8,7 +8,7 @@
       <el-button icon="el-icon-refresh" type="primary" @click="updateData">更新水电站数据</el-button>
 
     </div>
-    <el-table v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%">
+    <el-table  @current-change="handleCurrentChange" v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%">
       <el-table-column prop="name" label="水电站名称" :show-overflow-tooltip="true" min-width="150px" />
       <el-table-column prop="code" label="水电站编码" :show-overflow-tooltip="true" min-width="150px" />
       <el-table-column prop="lng" label="厂房中点地理坐标(经度)" :show-overflow-tooltip="true" min-width="200px" />
@@ -217,7 +217,10 @@ export default {
         this.listLoadingHistory = false;
       });
     },
-
+    handleCurrentChange(row){
+			console.log(row)
+			  this.$emit('clickRow', { id: row.id, gtype: 'shuidz', name: row.name, lng: row.lng, lat: row.lat })
+		},
     updateData() {
       this.v.formupdate = true;
     },

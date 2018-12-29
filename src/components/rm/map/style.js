@@ -136,11 +136,7 @@ export const searchSelectStyleFunc = function(feature, resolution) {
 export const searchResultStyleFunc = function(feature, resolution) {
     //判断不通过的对象类型，构造不同的显示
     var gtype = feature.get('gtype')
-    if (gtype === 'tousu') {
-        return tousuStyleFunc(feature, resolution)
-    } else if (gtype === 'shangbao') {
-        return shangbaoStyleFunc(feature, resolution)
-    } else if (gtype === 'trail') {
+    if (gtype === 'trail') {
         return trailStyleFunc(feature, resolution)
     }
     var style = new Style({
@@ -151,11 +147,12 @@ export const searchResultStyleFunc = function(feature, resolution) {
             color: '#ff0000',
             width: 2.5
         }),
-        image: new Circle({
-            radius: 3,
-            fill: new Fill({
-                color: '#ff0000'
-            })
+        image: new Icon({
+            anchor: [0.5, 48],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            size: [48, 48],
+            src: require('@/../static/map/icon/' + gtype + '.png')
         }),
         text: new Text({
             text: feature.get('name'),

@@ -1,11 +1,11 @@
 /*
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:45:50 
- * @Last Modified by:   刘小康 
- * @Last Modified time: 2018-12-27 09:45:50 
+ * @Last Modified by: 刘小康
+ * @Last Modified time: 2018-12-28 11:17:30
  */
 <template>
-  <div class="panel" :style="{ minHeight: panelMinHeight + 'vh' }">
+  <div class="panel" :style="{ minHeight: 'calc(' + panelMinHeight + 'vh - 126px)' }">
     <div class="panelHeading">
       <div>
         <svg-icon icon-class="tree" />{{titleName}}
@@ -22,7 +22,7 @@
         </button>
       </div>
     </div>
-    <div class="source panel-body" :style="{ height: 'calc(' + panelbodyHeight + 'vh - 41px)' }">
+    <div class="source panel-body" :style="{ height: 'calc(' + panelbodyHeight + 'vh - 165px)' }">
       <el-tree
         :data="dataArray"
         :props="defaultProps"
@@ -84,12 +84,12 @@ export default {
     panelMinHeight: {
       type: Number,
       required: false,
-      default: 81
+      default: 100
     },
     panelbodyHeight: {
       type: Number,
       required: false,
-      default: 86
+      default: 100
     }
   },
   mounted(){

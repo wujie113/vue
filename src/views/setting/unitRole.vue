@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-05 11:57:16 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-27 10:03:35
+ * @Last Modified time: 2018-12-28 09:57:10
  */
 // 单位角色
 <template>
@@ -48,21 +48,21 @@
         <el-form-item label="所属区划">
           {{ form.area ? form.area : unitObj.label}}
         </el-form-item>
-        <el-form-item label="所属部门">
+        <el-form-item label="所属部门" prop="name">
           <el-select v-model="form.name" placeholder="请选择部门" clearable class="filter-item" @change="selectList">
             <el-option v-for="item in tableData" :key="item.id" :value="item.name" :label="item.name" />
           </el-select>
         </el-form-item>
-        <el-form-item label="名 称">
+        <el-form-item label="名 称" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="部门类型">
+        <el-form-item label="部门类型" prop="depType">
           <rm-dict type="sys_office_type" placeholder="请选择部门类型" @input="inputSelect" v-model="form.depType" />
         </el-form-item>
-        <el-form-item label="排序">
+        <el-form-item label="排序" prop="sort">
           <el-input type="number" v-model="form.sort" />
         </el-form-item>
-        <el-form-item label="描述">
+        <el-form-item label="描述" prop="desc">
           <el-input type="textarea" v-model="form.desc"></el-input>
         </el-form-item>
       </el-form>
@@ -114,6 +114,11 @@ export default {
   created() {
     this.AreaTreeFun()
   },
+  destroyed() {
+    console.log('执行了销毁周期');
+    
+    window.onresize = null
+  },
   methods: {
     AreaTreeFun() {
       AreaTree().then(res => {
@@ -164,7 +169,7 @@ export default {
       this.dialogTitle = "添加"
       if (this.$refs.form != undefined) {
         this.$refs.form.resetFields()
-        Object.assign(this.form, this.$options.data().form)
+        // Object.assign(this.form, this.$options.data().form)
       }
     },
     // 点击 单位 编辑按钮

@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-24 17:28:08 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-25 16:08:42
+ * @Last Modified time: 2018-12-27 16:07:47
  */
 // 投诉统计
 <template>
@@ -34,7 +34,13 @@
                     placeholder="选择年"
                     @change="tabYearChange"
                   ></el-date-picker>
-                  <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="document" @click="handleDownload">下载Excel</el-button>
+                  <el-button
+                    :loading="downloadLoading"
+                    style="margin:0 0 20px 20px;"
+                    type="primary"
+                    icon="document"
+                    @click="handleDownload"
+                  >下载Excel</el-button>
                 </div>
               </div>
             </el-tab-pane>
@@ -45,9 +51,16 @@
             <div id="myChart" :style="{width: '100%', height: clientHeight + 'px'}" ref="myChart"></div>
           </div>
           <div class="canvasBox" v-if="activeName === 'second'">
-            <h6 style="font-size: 20px;margin: 0px 0 20px 0;text-align: center;font-weight: normal;">{{year}}年全部投诉统计报表</h6>
-            <el-table :data="tableData" style="width: 100%" border :header-cell-style="{'color': '#333333'}">
-              <el-table-column prop="type" label="类型"></el-table-column>
+            <h6
+              style="font-size: 20px;margin: 0px 0 20px 0;text-align: center;font-weight: normal;"
+            >{{year}}年全部投诉统计报表</h6>
+            <el-table
+              :data="tableData"
+              style="width: 100%"
+              border
+              :header-cell-style="{'color': '#333333'}"
+            >
+              <el-table-column prop="type" label="类型" fixed></el-table-column>
               <el-table-column prop="Jan" label="一月"></el-table-column>
               <el-table-column prop="Feb" label="二月"></el-table-column>
               <el-table-column prop="Mar" label="三月"></el-table-column>
@@ -59,7 +72,7 @@
               <el-table-column prop="Sep" label="九月"></el-table-column>
               <el-table-column prop="Oct" label="十月"></el-table-column>
               <el-table-column prop="Nov" label="十一月"></el-table-column>
-              <el-table-column prop="Dec" label="十二月"></el-table-column>              
+              <el-table-column prop="Dec" label="十二月"></el-table-column>
             </el-table>
           </div>
         </el-main>
@@ -114,13 +127,13 @@ export default {
     //让echarts窗口自适应
     this.init()
   },
-  methods: {    
+  methods: {
     init() {
       const self = this
       setTimeout(() => {
         window.onresize = function () {
           // console.log("document.getElementById('myChart')", document.getElementById('myChart'))          
-          if(self.$refs.myChart) {
+          if (self.$refs.myChart) {
             self.chart = echarts.init(self.$refs.myChart)
             self.chart.resize()
           }
@@ -137,12 +150,12 @@ export default {
         this.echartsData = res.data
         this.legendDataArray = res.data.series.map(item => item.name)
         let barColor = ["#ff7370", "#48dff0", "#52b4ff", "#ff66a3", "#5ce5aa", "#c484f5", "#ffb870", "#fae164"]
-        let Months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        let Months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         this.echartsData.series.map((item, index) => {
           let obj = {
             "type": item.name
           }
-          for(let i = 0;i < Months.length; i++){
+          for (let i = 0; i < Months.length; i++) {
             obj[Months[i]] = item.data[i]
           }
           this.tableData.push(obj)
@@ -160,7 +173,7 @@ export default {
         })
         this.drawBar()
         this.loading = fase
-      }).catch((errorRes) => { 
+      }).catch((errorRes) => {
         this.loading = false
       })
     },
@@ -184,7 +197,7 @@ export default {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['类型', '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
-        const filterVal = ["type", "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        const filterVal = ["type", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         const list = this.tableData
         const data = this.formatJson(filterVal, list)
         excel.export_json_to_excel({
@@ -210,72 +223,76 @@ export default {
     drawBar() {
       // 基于准备好的dom，初始化echarts实例
       // let myChart1 = echarts.init(document.getElementById('myChart1'))
-      this.chart1 = echarts.init(this.$refs.myChart)
-      // 绘制图表
-      this.chart1.setOption({
-        title: {
-          text: this.echartsData.title,
-          x: "center",
-          y: "3%",
-          textStyle: {
-            color: '#008acd',
-            fontSize: 16
-          }
-        },
-        tooltip: {
-          show: true,
-          trigger: 'axis',
-        },
-        legend: {
-          data: this.legendDataArray,
-          x: "7%",
-          y: "10%",
-        },
-        color: ['#52b4ff', '#fa7de5', '#48dff0', '#ff7370', '#5ce5aa', '#ffb870', '#bc84f5', '#fae164', '#778eff', '#ff7faa'],
-        dataZoom: {
-          show: false,
-          realtime: true,
-          height: 20,
-          end: 100,
-          handleSize: '20px',
-        },
-        grid: {
-          x: "5%",
-          x2: "5%",
-          y: "20%",
-          y2: "14%",
-        },
-        xAxis: [{
-          name: "河段",
-          type: 'category',
-          data: this.echartsData.xAxisData,
-          //  nameTextStyle: {
-          //     color: "#000"
-          // },
-          axisLabel: {
-            interval: 0, //横轴信息全部显示
-            rotate: 60, //60度角倾斜显示
+
+      if (this.$refs.myChart) {
+        this.chart1 = echarts.init(this.$refs.myChart)
+        // 绘制图表
+        this.chart1.setOption({
+          title: {
+            text: this.echartsData.title,
+            x: "center",
+            y: "3%",
             textStyle: {
-              color: "#000"
+              color: '#008acd',
+              fontSize: 16
             }
           },
-          axisLine: {
-            lineStyle: {
-              color: '#008acd' //坐标轴线颜色
-            }
+          tooltip: {
+            show: true,
+            trigger: 'axis',
           },
-        }],
-        yAxis: [{
-          type: 'value',
-          name: "次数",
-          axisLine: {
-            lineStyle: {
-              color: '#008acd' //坐标轴线颜色
-            }
+          legend: {
+            data: this.legendDataArray,
+            x: "7%",
+            y: "10%",
           },
-        }],
-        series: this.echartsData.series
-      })
+          color: ['#52b4ff', '#fa7de5', '#48dff0', '#ff7370', '#5ce5aa', '#ffb870', '#bc84f5', '#fae164', '#778eff', '#ff7faa'],
+          dataZoom: {
+            show: false,
+            realtime: true,
+            height: 20,
+            end: 100,
+            handleSize: '20px',
+          },
+          grid: {
+            x: "5%",
+            x2: "5%",
+            y: "20%",
+            y2: "5%",
+          },
+          xAxis: [{
+            name: "月份",
+            type: 'category',
+            data: this.echartsData.xAxisData,
+            //  nameTextStyle: {
+            //     color: "#000"
+            // },
+            axisLabel: {
+              interval: 0, //横轴信息全部显示
+              //rotate: 60, //60度角倾斜显示
+              textStyle: {
+                color: "#000"
+              }
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#008acd' //坐标轴线颜色
+              }
+            },
+          }],
+          yAxis: [{
+            type: 'value',
+            name: "次数",
+            axisLine: {
+              lineStyle: {
+                color: '#008acd' //坐标轴线颜色
+              }
+            },
+          }],
+          series: this.echartsData.series
+        })
+      }
+
     },
   },
 }
@@ -293,10 +310,10 @@ export default {
     }
   }
   > .el-container {
-    min-height: 86vh;
+    min-height: calc(100vh - 126px);
     > .el-container {
       // 兼容IE浏览器
-      min-height: 86vh;
+      min-height: calc(100vh - 126px);
     }
   }
 }

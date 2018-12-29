@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <div :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
-  </div>
+  <div :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
 </template>
 <script>
 import echarts from 'echarts'
@@ -12,9 +10,14 @@ export default {
       barColor: ["#ff7370", "#48dff0", "#52b4ff", "#ff66a3", "#5ce5aa", "#c484f5", "#ffb870", "#fae164"],
     }
   },
-  mounted() {
-    this.initChart()
+  mounted() {    
+    console.log('执行执行');
     this.init()
+    
+    this.initChart()
+  },
+  destroyed() {
+    window.onresize = null
   },
   props: {
     className: {
@@ -31,7 +34,7 @@ export default {
     },
     height: {
       type: String,
-      default: '23em'
+      default: '22em'
     },
     left_chartData: {
       type: Object,
@@ -52,6 +55,7 @@ export default {
             console.log('柱形图1111')
           }
         }
+
       }, 20)
     },
     initChart() {
@@ -124,6 +128,10 @@ export default {
       }
       option.series[0].data = value
       this.chart.setOption(option)      
+      // window.addEventListener('resize', () => {
+      //   console.log('柱形图---addEventListener')
+      //   this.chart.resize()
+      // })
     },
   }
 }

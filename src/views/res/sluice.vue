@@ -7,7 +7,7 @@
 			<el-button icon="el-icon-refresh" type="primary" @click="updateData">更新水闸数据</el-button>
 
 		</div>
-		<el-table v-loading="listLoading" :data="list" border fit highlight-current-row row-key="id" stripe style="width: 100%">
+		<el-table  @current-change="handleCurrentChange" v-loading="listLoading" :data="list" border fit highlight-current-row row-key="id" stripe style="width: 100%">
 			<el-table-column prop="name" label="名称" :show-overflow-tooltip="true" min-width="110" />
 			<el-table-column prop="code" label="编码" :show-overflow-tooltip="true" min-width="160" />
 			<el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" min-width="160" />
@@ -238,6 +238,10 @@ export default {
 				this.list = response.data.list;
 				this.total = response.data.count;
 			});
+		},
+		handleCurrentChange(row){
+			console.log(row)
+			  this.$emit('clickRow', { id: row.id, gtype: 'shuizha', name: row.name, lng: row.lng, lat: row.lat })
 		},
 		downloadExcel() {
 			this.v.formhistory = true;

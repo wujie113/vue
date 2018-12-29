@@ -190,7 +190,9 @@
         this.resetAction()
         //放大
         if (!options.zoomView) {
-          this.centerView([options.lng, options.lat], 15)
+          var lng = options.lng || options.list[0].lng
+          var lat = options.lat || options.list[0].lat
+          this.centerView([lng,  lat], 15)
         }
         showUtil.showFeature(this, options)
       },
@@ -320,6 +322,7 @@
       showProperties(id, type) {
         //console.log('显示对象属性：', id, type)
         this.propanel.show = false
+        console.log("id::::",id)
         request({
           url: '/api/res/river/sourcecomment',
           method: 'get',
@@ -401,8 +404,15 @@
             if (layer instanceof VectorLayer) {
               var f = layer.getSource().getClosestFeatureToCoordinate(evt.coordinate)
               //console.log(f.getId(), f.get('name'))
-              //向上抛出事件，由上级页面处理展示内容
-              self.$emit("clickHandle", { type: f.get('gtype'), id: f.get('id'), name: f.get('name'), x: evt.originalEvent.x, y: evt.originalEvent.y })
+              //如果是工单类型，向上抛出事件，如果是资源类型的，显示属性窗口
+              if (f.get('gtype') === 'tousu' || f.get('gtype') === 'shangbao') {
+                //向上抛出事件，由上级页面处理展示内容
+                self.$emit("clickHandle", { type: f.get('gtype'), id: f.get('id'), name: f.get('name'), x: evt.originalEvent.x, y: evt.originalEvent.y })
+              } else {
+                 self.showProperties(f.get('id'), f.get('gtype'))
+                    //设置显示位置 
+                 self.proOverlay.setPosition(evt.coordinate)
+              }
             } else {
               //从geoserver获取feature信息URL,'INFO_FORMAT': 'text/html',application/json
               var url = layer.getSource().getGetFeatureInfoUrl(evt.coordinate, viewResolution, mapCfg.projection,
@@ -413,9 +423,10 @@
                 mapUtils.getFeatureInfo(url).then(response => {
                   //console.log(response.features)
                   if (response.features.length > 0) {
-                    var f = response.features[0]
-                    console.log(f.properties.id, f.properties.name)
-                    self.showProperties(f.properties.id, f.properties.gtype)
+                    var f = response.features[0] 
+                    var id = f.id.split('.')[1]
+                    console.log(id, f.properties.name)
+                    self.showProperties(id, f.properties.gtype)
                     //设置显示位置 
                     self.proOverlay.setPosition(evt.coordinate)
                   }

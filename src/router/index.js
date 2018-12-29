@@ -75,7 +75,7 @@ export const constantRouterMap = [
         path: 'home',
         component: () => import('@/views/home/index'),
         name: 'Home',
-        meta: { title: '首页', icon: 'home', noCache: false }
+        meta: { title: '首页', icon: 'home', noCache: true }
       }
     ]
   },
@@ -212,7 +212,7 @@ export const constantRouterMap = [
         path: 'logManagement',
         name: 'logManagement',
         component: () => import('@/views/setting/logManagement'),
-        meta: { title: '日志管理' }
+        meta: { title: '日志管理', noCache: true }
       },
       {
         path: 'userManagement',
@@ -223,18 +223,18 @@ export const constantRouterMap = [
         path: 'addressBook',
         name: 'addressBook',
         component: () => import('@/views/setting/addressBook'),
-        meta: { title: '通 讯 录' }
+        meta: { title: '通 讯 录', noCache: true }
       }, {
         path: 'msg',
         name: 'msg',
         component: () => import('@/views/setting/msg'),
-        meta: { title: '通知公告' }
+        meta: { title: '通知公告', noCache: true }
       },
       {
         path: 'unitRole',
         name: 'unitRole',
         component: () => import('@/views/setting/unitRole'),
-        meta: { title: '单位角色', noCache: false }
+        meta: { title: '单位角色', noCache: true }
       },
       // {
       //   path: 'basketball',

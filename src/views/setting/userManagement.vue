@@ -1,8 +1,8 @@
 /*
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:43:20 
- * @Last Modified by:   刘小康 
- * @Last Modified time: 2018-12-27 09:43:20 
+ * @Last Modified by: 刘小康
+ * @Last Modified time: 2018-12-27 15:42:10
  */
 //  用户管理
 <template>
@@ -456,10 +456,10 @@ export default {
       console.log('添加的---之前', this.unit)
 
       this.dialogVisible = true
-      if (this.$refs.form != undefined) {
-        // this.$refs.form.resetFields()
+      if (this.$refs.form != undefined) {              
+        this.$refs.form.resetFields()
         // Object.assign(this.form, this.$options.data().form)
-        Object.assign(this.form, this.$options.data().form)
+        // Object.assign(this.form, this.$options.data().form)
       }
       this.form.dept = this.deptObj
       console.log('添加的---', this.unit)
@@ -575,11 +575,10 @@ export default {
 .app-container {
   .panel {
     margin-bottom: 0;
-    min-height: 86vh;
+    min-height: calc(100vh - 126px);;
     overflow: auto;
     height: 100%;
-    margin-bottom: 0;
-    min-height: 86vh;
+    margin-bottom: 0;    
     overflow: auto;
     height: 100%;
     background-color: #fff;

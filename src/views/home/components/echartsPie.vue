@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
-  </div>
+  <!-- <div> -->
+  <div :style="{width: width, height: height}" :id="id" :class="className" ref="myChart"></div>
+  <!-- </div> -->
 </template>
 <script>
 import echarts from 'echarts'
@@ -9,19 +9,26 @@ export default {
   name: 'EchartsPie',
   data() {
     return {
-
+      chart: null,
     }
   },
   mounted() {
     this.initChart()
-    this.init()
-    // console.log('this._chartData', this._chartData)
   },
   watch: {
-    _chartData(v) {
-      console.log('v', v)
-      this.initChart()
-    }
+    // 数组的watch监听
+    _chartData: {
+      handler(newValue, oldValue) {
+        this.initChart()
+      }
+    },
+    deep: true //深度监听
+  },
+  destroyed() {
+    console.log('首页顶部的饼图--destroyed');
+    window.removeEventListener('resize', () => {
+      console.log('饼状图---removeEventListener')
+    })
   },
   props: {
     className: {
@@ -43,22 +50,24 @@ export default {
     _chartData: {
       type: Array,
       required: true,
-      default: function() {
+      default: function () {
         return []
       }
     }
   },
   methods: {
-    init() {
-      const self = this
-      setTimeout(() => {
-        window.onresize = function () {
-          self.chart = echarts.init(self.$refs.myChart)
-          self.chart.resize()
-          console.log('饼状图')
-        }
-      }, 20)
-    },
+    // init() {
+    //   const self = this
+    //   setTimeout(() => {
+    //     window.onresize = function () {
+    //       if (self.$refs.myChart) {
+    //         self.chart = echarts.init(self.$refs.myChart)
+    //         self.chart.resize()
+    //         console.log('饼状图')
+    //       }
+    //     }
+    //   }, 20)
+    // },
     initChart(v) {
       this.chart = echarts.init(this.$refs.myChart);
       // 把配置和数据放这里
@@ -100,6 +109,10 @@ export default {
             data: this._chartData
           }
         ]
+      })
+      // 图表自适应
+      window.addEventListener('resize', () => {
+        this.chart.resize()
       })
     },
   }

@@ -78,7 +78,7 @@
         var lng = '113.916'
         var lat = '27.70'
         console.log("this.map", this.map)
-        this.map.showFeature({ id: id, gtype: type, name: '测试工单', lng: lng, lat: lat })
+        this.map.showFeature({ list: [{ id: id, gtype: type, name: '测试工单1', lng: lng, lat: lat },{ id: '0002', gtype: type, name: '测试工单2', lng: '113.936', lat: '27.703' }] })
       },
       showTrail(id) {
         var lng = '113.01'

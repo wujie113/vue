@@ -155,7 +155,7 @@
 
         }).catch(errorRes => {
           this.$message({
-            type: "waring",
+            type: "wraning",
             message: "失败!"
           })
         })
@@ -243,7 +243,7 @@
     }
     .panel-body {
       overflow: auto;
-      height: calc(86vh - 41px);
+      height: calc(100vh - 165px);
       .el-form-item:nth-of-type(1) {
         display: flex;
         align-items: center;

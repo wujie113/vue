@@ -12,9 +12,6 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
   config => {
-
-    
-    console.log("输出。。。。。。。。",process.env.BASE_API)
     if (store.getters.token) { 
       if (config.params === undefined) {
         config.params = { 'token': getToken() }

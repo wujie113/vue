@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:44:29 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-27 09:44:50
+ * @Last Modified time: 2018-12-27 15:44:46
  */
 // 通知公告
 <template>
@@ -98,10 +98,10 @@
     <!--添加编辑弹窗-->
     <el-dialog :visible.sync="v.form" title="编辑">
       <el-form ref="form" :model="form" label-width="40px">
-        <el-form-item label="标题">
+        <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题"/>
         </el-form-item>
-        <el-form-item label="内容">
+        <el-form-item label="内容" prop="content">
           <el-input v-model="form.content" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
       </el-form>
@@ -225,8 +225,11 @@ export default {
     },
     create() {
       this.fileList = []
+      if (this.$refs.form != undefined) {
+        this.$refs.form.resetFields()
+      }
       this.v.form = true;
-      this.form = {};
+      // this.form = {};
     },
     edit(row) {
       //console.log(JSON.stringify(row));
@@ -354,7 +357,7 @@ export default {
     }
   }
   > .el-container {
-    min-height: 86vh;
+    min-height: calc(100vh - 126px);
   }
 }
 </style>

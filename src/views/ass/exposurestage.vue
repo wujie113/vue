@@ -547,7 +547,11 @@ export default {
     }
   }
   > .el-container {
-    min-height: 86vh;
+    min-height: calc(100vh - 126px);
+    > .el-container {
+      // 兼容IE浏览器
+      min-height: calc(100vh - 126px);  
+    }
   }
 }
 
