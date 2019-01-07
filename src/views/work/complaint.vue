@@ -52,7 +52,7 @@
                         {{ list.typename }}（
                         <span
                           class="unProcessed"
-                        >{{list.status == '0' ? '未处理' : '已处理'}}</span>）
+                        >{{list.statusLabel}}</span>）
                       </span>
                       <span>{{ list.reportDate }}</span>
                     </div>
@@ -84,7 +84,7 @@
                             <a href="javascript:void(0)" title="经纬度">
                               <svg-icon icon-class="location"/>
                             </a>
-                            {{ list.lng }},{{ list.lat }}
+                            {{ list.lng|numfilter }},{{ list.lat |numfilter}}
                           </span>
                           <span>
                             <a href="javascript:void(0)" title="上报人">
@@ -101,14 +101,19 @@
                         </div>
                       </el-col>
                       <el-col :xs="12" :sm="12" :md="9" :lg="7" :xl="6">
-                        <div class="grid-content bg-purple-light">  
-                           <a href="javascript:void(0)" title="生成工单" @click="list.protaskId != null&&list.protaskId!='' ? null : addOrder(list.id)">
-                                <svg-icon :icon-class="list.protaskId != null&&list.protaskId!='' ? 'addLightColor' : 'addColor'" />
+                        <div class="grid-content bg-purple-light"> 
+                          <a
+                            href="javascript:void(0)"
+                            title="生成工单"
+                            @click="(list.protaskId != null&&list.protaskId!='' )|| list.status==2 ? null : addOrder(list.id)"
+                          >
+                            <svg-icon   :icon-class="(list.protaskId != null&&list.protaskId!='' )|| list.status==2 ? 'addLightColor' : 'addColor'"
+                            />
                           </a>
                           <a
                             href="javascript:void(0)"
                             title="定位"
-                            @click="showFeature(list.id,'tousu',list.lng,list.lat)"
+                            @click="showFeature(list.id,'tousu',list.lng,list.lat,list.typename)"
                           >
                             <svg-icon icon-class="locationColor"/>
                           </a>
@@ -136,7 +141,7 @@
             />
           </div>
           <div class="mapBox" v-if="isMapShow">
-            <rm-map v-model="map" :clientHeight="clientHeight" />
+            <rm-map v-model="map" :clientHeight="clientHeight" @clickHandle="onClickFeature"/>
           </div>
         </el-main>
       </el-container>
@@ -154,26 +159,31 @@
       <viewer :images="slide1" class="clearfix">
         <img :src="img.url" :key="index" v-for="(img, index) in slide1">
       </viewer>
-      <div class="work-order-details-list-split" v-if="prodetail.list!=null&&prodetail.list.length >0"></div>
-      
+      <div
+        class="work-order-details-list-split"
+        v-if="prodetail.list!=null&&prodetail.list.length >0"
+      ></div>
+
       <div class="splitBox" v-for="(child, wrapindex) in prodetail.list" :key="wrapindex">
-              <div class="work-order-details-list-title">{{child.title}}</div>
-              <el-form :model="form" abel-width="80px" size="mini">
-                <el-form-item
-                  v-for="(filed, index2) in child.list"
-                  :key="index2"
-                  :label="filed.name"
-                >{{filed.value}}</el-form-item>
-              </el-form>
-              <!--图片路径-->
-              <viewer :images="child.prictureUrls" class="clearfix">
-                <img :src="img" :key="index" v-for="(img, index) in child.prictureUrls">
-              </viewer>
-              <!-- 分割线 -->
-              <div class="work-order-details-list-split" v-if="wrapindex !== prodetail.list.length - 1"></div>
-       </div>
+        <div class="work-order-details-list-title">{{child.title}}</div>
+        <el-form :model="form" abel-width="80px" size="mini">
+          <el-form-item
+            v-for="(filed, index2) in child.list"
+            :key="index2"
+            :label="filed.name"
+            :class="{ replayDashed : true === filed.needline}"
+          >{{filed.value}}</el-form-item> 
+        </el-form>
+        <!--图片路径-->
+        <viewer :images="child.prictureUrls" class="clearfix">
+          <img :src="img" :key="index" v-for="(img, index) in child.prictureUrls">
+        </viewer>
+        <!-- 分割线 -->
+        <div class="work-order-details-list-split" v-if="wrapindex !== prodetail.list.length - 1"></div>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="visible = false">关 闭</el-button>
+        <el-button v-if="isMapShow==true&&form.protaskId==null" @click="addOrder()" type="primary">生成工单</el-button>
       </div>
     </el-dialog>
     <!-- 回复弹窗 -->
@@ -193,9 +203,14 @@
     </el-dialog>
 
     <!-- 工单弹窗 -->
-    <el-dialog :visible.sync="visibleOrder" title="生成工单" :modal-append-to-body="false">
+    <el-dialog
+      :visible.sync="visibleOrder"
+      title="生成工单"
+      :modal-append-to-body="false"
+      close="closeorder"
+    >
       <el-form ref="proTaskFrom" :model="proTaskFrom" abel-width="80px" size="mini">
-        <el-form-item label="接单单位">
+        <el-form-item label="接单单位" prop="dept">
           <el-select v-model="proTaskFrom.dept" placeholder="请选择单位" clearable class="filter-item">
             <el-option
               v-for="item in lowerofficeList"
@@ -206,7 +221,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="相关部门">
+        <el-form-item label="相关部门" prop="unit">
           <el-select v-model="proTaskFrom.unit" placeholder="请选择部门" clearable class="filter-item">
             <el-option
               v-for="item in synergOfficeList"
@@ -217,20 +232,30 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="办结时间">
+        <el-form-item label="办结时间" prop="handleTime">
           <el-date-picker
             v-model="proTaskFrom.handleTime"
             type="date"
-            placeholder="Pick a date"
+            placeholder="办结时间"
             style="width: 100%;"
           />
         </el-form-item>
-        <el-form-item label="问题描述">
-                <el-input type="textarea" v-model="proTaskFrom.description" placeholder="请输入问题描述" rows="5"></el-input>
-       </el-form-item>
-              <el-form-item label="任务描述">
-                <el-input type="textarea" v-model="proTaskFrom.taskcontent" placeholder="请输入任务描述" rows="5"></el-input>
-              </el-form-item>
+        <el-form-item label="问题描述" prop="description">
+          <el-input
+            type="textarea"
+            v-model="proTaskFrom.description"
+            placeholder="请输入问题描述"
+            rows="5"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="任务描述" prop="taskcontent">
+          <el-input
+            type="textarea"
+            v-model="proTaskFrom.taskcontent"
+            placeholder="请输入任务描述"
+            rows="5"
+          ></el-input>
+        </el-form-item>
       </el-form>
       <el-upload
         :action="doUpload"
@@ -315,7 +340,12 @@ export default {
         name: null,
         reportId: null,
         source: "complaint",
-        isSupervise: '督'
+        isSupervise: '督',
+        description: "",
+        taskcontent: "",
+        unit: "",
+        handleTime: "",
+        dept: "",
       },
       uploaddata: {
         bizId: null,
@@ -340,12 +370,12 @@ export default {
         idA: ""
         // bizId:""
       },
-       prodetail: {
+      prodetail: {
         list: null,
         handel: {
           btnlist: null
         }
-      }, 
+      },
       lists: [],
       total: 0,
       listQuery: {
@@ -362,7 +392,7 @@ export default {
   },
   created() {
     this.getList()
-    console.log('--created周期',document.getElementsByClassName('el-main')[0])
+
   },
   mounted() {
     const tempH = this.getHeight(document.getElementsByClassName('app-container')[0]) - 215
@@ -374,10 +404,22 @@ export default {
       // that.clientHeight = `${document.documentElement.clientHeight}px`
       that.clientHeight = that.getHeight(document.getElementsByClassName('app-container')[0]) - 215
       // that.clientHeight = that.getHeight(window) - 84
-      console.log('window.onresize',that.clientHeight)
+      console.log('window.onresize', that.clientHeight)
+    }
+  },
+  filters:{
+    numfilter(num){
+        if(num==null||num==undefined){
+          return '-';
+        }else{
+          return   parseFloat(num).toFixed(3)
+        }
     }
   },
   methods: {
+    onClickFeature(rdx) {
+      this.detailBtn(rdx.id);
+    },
     getList() {
       this.listLoading = true
       getList(this.listQuery).then(response => {
@@ -401,12 +443,20 @@ export default {
         this.lowerofficeList = response.data.list
       })
     },
+    closeorder() {
+
+    },
     // 点击生成工单
     addOrder(id) {
-      /*  */
-      this.visibleOrder = true
-      console.log("id", id)
-      this.proTaskFrom.reportId = id
+      if (this.$refs['proTaskFrom'] !== undefined) {
+        this.$refs['proTaskFrom'].resetFields()
+      }
+      this.visibleOrder = true;
+      if (id == null || id == undefined) {
+        this.proTaskFrom.reportId = this.form.id;
+      } else {
+        this.proTaskFrom.reportId = id;
+      }
     },
     handleFilter() {
       this.listQuery.pageNo = 1
@@ -439,33 +489,49 @@ export default {
       } else {
         this.isMapShow = true
         this.marks = true
+        var self = this;
+        this.$nextTick(() => {
+         if(this.lists!=null&&this.lists.length>0){
+          var showlist=[];
+          for(var i=0;i<this.lists.length;i++){ 
+            var obj=this.lists[i]; 
+            showlist.push({ id: obj.id, gtype: 'tousu', name: obj.typename, lng: obj.lng, lat: obj.lat })
+          }
+          console.log("showlist:::",showlist);
+           self.map.showFeature({ list: showlist}) 
+         } 
+        }) 
       }
     },
     //定位
-    showFeature(id, type, lng, lat) {
+    showFeature(id, type, lng, lat,title) {
       if (this.isMapShow) {
         this.isMapShow = false
         this.marks = true
       } else {
-        this.isMapShow = true
-        this.marks = false
-      } 
-//console.log("------------ ",id, type, lng, lat)
-var self = this 
-this.$nextTick(() => {
-  //console.log("self.map",self.map)
-   self.map.showFeature({ list: [{ id: id, gtype: type, name: '投诉', lng: lng, lat: lat }] })
-})
+        this.isMapShow = true;
+        this.marks = false;
+      }
+      var lng = lng;
+      var lat = lat;
+      console.log("------------ ", id, type, lng, lat)
+      var self = this;
+     this.$nextTick(() => {
+        //console.log("self.map",self.map)
+        self.map.showFeature({ list: [{ id: id, gtype: type, name:title, lng: lng, lat: lat }] })
+      })
+      this.isMapShow = true
+      this.marks = false
     },
     // 点击详情,查看详情
     detailBtn(idx) {
       this.visible = true
       get(idx).then(response => {
-        this.form = response.data.complaint
-          this.prodetail = response.data 
-        const imagelist = this.form.imageurl
-        this.slide1 = imagelist
-      })
+        this.form = response.data.complaint;
+        this.prodetail = response.data;
+        const imagelist = this.form.imageurl;
+        this.slide1 = imagelist;
+      });
     },
     // 回复弹窗
     replayBtn(id) {
@@ -488,7 +554,7 @@ this.$nextTick(() => {
     // 回复内容提交
     saveReplay() {
       var desc = this.form2.desc
-      console.log("desc",desc)
+      console.log("desc", desc)
       if (desc == null) {
         this.$message({
           message: "输入不能为空"
@@ -540,12 +606,14 @@ this.$nextTick(() => {
             // 上传到服务器
             this.$refs.upload.submit()
           }
-          this.visibleOrder = false
+          this.visibleOrder = false;
           this.$message({
             type: "success",
             message: "提交成功!"
-          })
-          this.getList()
+          });
+          if (this.isMapShow == true)
+            this.form.protaskId = "";
+          this.getList();
         })
         .catch(error => {
           this.listLoading = false
@@ -756,6 +824,9 @@ this.$nextTick(() => {
   min-height: calc(100vh - 126px);
 }
 .app-container {
+  /deep/ .replayDashed {
+    border-bottom: 1px dashed #a1a1a1;
+  }
   /deep/ .el-dialog__body {
     max-height: 650px;
   }

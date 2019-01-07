@@ -121,7 +121,7 @@
                         <a
                           href="javascript:void(0)"
                           title="定位"
-                          @click="showFeature(report.id,'shangbao',report.lng,report.lat)"
+                          @click="showFeature(report.id,'shangbao',report.lng,report.lat,report.title)"
                         >
                           <svg-icon icon-class="locationColor"/>
                         </a>
@@ -150,7 +150,7 @@
             />
           </div>
           <div class="mapBox" v-if="isMapShow">
-            <rm-map v-model="map" :clientHeight="clientHeight"/>
+            <rm-map v-model="map" :clientHeight="clientHeight" @clickHandle="onClickFeature"/>
           </div>
         </el-main>
       </el-container>
@@ -162,7 +162,7 @@
         <!--    <el-form-item prop="area" label="所属区划">
                 <rm-area-select v-model="proTaskFrom.area" />
         </el-form-item>-->
-        <el-form-item label="接单单位">
+        <el-form-item label="接单单位" prop="dept">
           <el-select v-model="proTaskFrom.dept" placeholder="请选择单位" clearable class="filter-item">
             <el-option
               v-for="item in lowerofficeList"
@@ -173,7 +173,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="相关部门">
+        <el-form-item label="相关部门" prop="unit">
           <el-select v-model="proTaskFrom.unit" placeholder="请选择部门" clearable class="filter-item">
             <el-option
               v-for="item in synergOfficeList"
@@ -184,19 +184,29 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="办结时间">
+        <el-form-item label="办结时间" prop="handleTime">
           <el-date-picker
             v-model="proTaskFrom.handleTime"
             type="date"
-            placeholder="Pick a date"
+            placeholder="办结时间"
             style="width: 100%;"
           />
         </el-form-item>
-        <el-form-item label="问题描述">
-          <el-input v-model="proTaskFrom.description"/>
+        <el-form-item label="问题描述" prop="description">
+          <el-input
+            type="textarea"
+            v-model="proTaskFrom.description"
+            placeholder="请输入问题描述"
+            rows="5"
+          ></el-input>
         </el-form-item>
-        <el-form-item label="任务描述">
-          <el-input v-model="proTaskFrom.taskcontent"/>
+        <el-form-item label="任务描述" prop="taskcontent">
+          <el-input
+            type="textarea"
+            v-model="proTaskFrom.taskcontent"
+            placeholder="请输入问题描述"
+            rows="5"
+          ></el-input>
         </el-form-item>
       </el-form>
       <el-upload
@@ -260,6 +270,8 @@
       <div style="border-bottom: 1px solid #ddd;"></div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="visible = false">关 闭</el-button>
+
+        <el-button v-if="isMapShow==true&&form.protaskId == null" @click="addOrder()">生成工单</el-button>
       </div>
     </el-dialog>
   </div>
@@ -306,7 +318,12 @@ export default {
       proTaskFrom: {
         name: null,
         reportId: null,
-        source: 'report'
+        source: 'report',
+        description: "",
+        taskcontent: "",
+        unit: "",
+        handleTime: "",
+        dept: "",
       },
       prodetail: {
         list: null,
@@ -397,23 +414,38 @@ export default {
         this.isMapShow = false
         this.marks = true
       } else {
+        console.log("list::::",this.list);
+       
         this.isMapShow = true
         this.marks = true
+        var self = this
+       this.$nextTick(() => {
+        //console.log("self.map",self.map)
+         if(this.list!=null&&this.list.length>0){
+          var showlist=[];
+          for(var i=0;i<this.list.length;i++){ 
+            var obj=this.list[i]; 
+            showlist.push({ id: obj.id, gtype: 'shangbao', name: obj.title, lng: obj.lng, lat: obj.lat })
+          }
+          console.log("showlist:::",showlist);
+           self.map.showFeature({ list: showlist}) 
+         } 
+        })
       }
     },
     //定位
-    showFeature(id, type, lng, lat) {
+    showFeature(id, type, lng, lat,title) {
       if (this.isMapShow) {
         this.isMapShow = false
         this.marks = true
       } else {
         this.isMapShow = true
         this.marks = false
-      } 
+      }
       var self = this
       this.$nextTick(() => {
         //console.log("self.map",self.map)
-        self.map.showFeature({ list: [{ id: id, gtype: type, name: '上报', lng: lng, lat: lat }] })
+        self.map.showFeature({ list: [{ id: id, gtype: type, name:title, lng: lng, lat: lat }] })
       })
     },
     getList() {
@@ -460,16 +492,26 @@ export default {
           type: "success",
           message: "提交成功!"
         })
-        this.getList()
+        if (this.isMapShow == true) {
+          this.detailBtn(rdx.id);
+        }
+        this.getList();
       }).catch(error => {
         this.listLoading = false
       })
     },
     // 点击生成工单
-    addOrder(id) { /*  */
+    addOrder(id) {
+      if (this.$refs['proTaskFrom'] !== undefined) {
+        this.$refs['proTaskFrom'].resetFields()
+      }
       this.visibleOrder = true
-      console.log("id", id)
-      this.proTaskFrom.reportId = id
+
+      if (id == null || id == undefined) {
+        this.proTaskFrom.reportId = this.form.id;
+      } else {
+        this.proTaskFrom.reportId = id;
+      }
     },// 点击详情,查看详情
     detailBtn(idx) {
       this.visible = true
@@ -482,7 +524,7 @@ export default {
 
         console.log("this.prodetail.list::::", this.prodetail)
         console.log("this.prodetail.list::::", this.prodetail.list)
-        // imagelist.forEach((value, index) => {
+        //imagelist.forEach((value, index) => {
         //   this.slide1.push(
         //     {
         //       url: value.url,
@@ -493,8 +535,6 @@ export default {
       })
     },
     onlyShowSelectBtn() {
-      console.log("只显示所属单位", this.listQuery, this.checked)
-
       this.handleNodeClick(this.officeData)
     },
     handleNodeClick(data) {
@@ -527,6 +567,10 @@ export default {
       delfiles({ ids: file.id }).then(response => {
         console.log("图片删除成功!!!!!")
       })
+    },
+    onClickFeature(rdx) {
+      console.log("show:::", rdx)
+      this.detailBtn(rdx.id);
     },
     del(row) {
       var self = this
@@ -821,7 +865,7 @@ export default {
 }
 
 .app-container > .el-container {
-  min-height: calc(100vh - 126px)
+  min-height: calc(100vh - 126px);
 }
 .app-container {
   /deep/ .el-dialog__body {

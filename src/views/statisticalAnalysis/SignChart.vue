@@ -38,9 +38,9 @@
                   <span class="demonstration">年份</span>
                   <el-date-picker
                     v-model="value2"
-                    type="year"
+                    type="month"
                     placeholder="选择年月"
-                    @change="tabYearChange"
+                    @change="tabMonthChange"
                   ></el-date-picker>
                   <el-button
                     :loading="downloadLoading"
@@ -55,7 +55,9 @@
           </el-tabs>
         </el-header>
         <el-main v-loading="mainLoading">
-          <div class="canvasBox" v-if="activeName === 'first'">11111</div>
+          <div class="canvasBox" v-if="activeName === 'first'">
+            <h1>这里是打卡,暂未完成</h1>
+          </div>
           <div class="canvasBox" v-if="activeName === 'second'">
             <h6
               style="font-size: 20px;margin: 0px 0 20px 0;text-align: center;font-weight: normal;"
@@ -108,7 +110,7 @@ export default {
       mainLoading: false,
       activeName: 'first',
       year: '',
-      yearMonth: '',
+      month: '',
       value1: '',
       value2: '',
       activeName: 'first',
@@ -122,9 +124,8 @@ export default {
   created() {
     // 默认年
     this.year = new Date().getFullYear()
-    this.filename = this.year + "年" + this.unit + "工单报表"
+    this.filename = this.year + "年" + this.unit + "打卡报表"
     this.loading = true
-    this.filename = this.year + "年" + this.unit + "工单报表"
     this.loadLeftTree()
   },
   methods: {
@@ -142,7 +143,7 @@ export default {
       })
     },
     getSignTable() {
-
+      this.mainLoading = false
     },
     // 点击树形节点  handleNodeClick
     handleNodeClick(data) {
@@ -157,15 +158,18 @@ export default {
         // }, 100);
       }
     },
+    // 选择日期
     tabDateChange(date) {
-
-    },
-    // 选择日期--年份
-    tabYearChange(v) {
-      this.year = new Date(v).getFullYear() //年芦溪河长办工单报表
-      this.filename = this.year + "年" + "工单报表"
       this.mainLoading = true
-      this.getChartsList()
+      this.getSignTable()
+    },
+    // 选择月份
+    tabMonthChange(v){
+      this.year = new Date(v).getFullYear()
+      this.month = new Date(v).getMonth() + 1
+      this.filename = this.year + "年" + this.month + "月" + this.unit + "打卡报表" //2018年1月萍乡市河长办打卡报表
+      this.mainLoading = true
+      this.getSignTable()
     },
     // 下载Excel表格
     handleDownload() {

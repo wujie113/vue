@@ -233,12 +233,12 @@
                 >
                   <span class="home-page-top-notice-list-top">
                     <span>{{ list.title }}</span>
-                    <i class="circle"></i>
+                    <!-- <i class="circle"></i> -->
                   </span>
                   <span class="home-page-top-notice-list-bottom">
                     <i class="el-icon-time"></i>
                     {{ list.createDate }}
-                  </span>
+                  </span> 
                 </li>
               </ul>
             </div>

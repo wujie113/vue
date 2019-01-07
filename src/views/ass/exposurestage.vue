@@ -97,7 +97,7 @@
       </el-container>
     </el-container>
     <!--曝光弹窗-->
-    <el-dialog :visible.sync="exposureVisible" title="曝光" :modal-append-to-body="false" width="60%">
+    <el-dialog :visible.sync="exposureVisible" title="曝光" :modal-append-to-body="false" width="70%">
       <el-container v-loading="exposureLoading">
         <el-aside>
           <left-tree
@@ -116,7 +116,7 @@
         <el-container>
           <el-header height="200px">
             <div style class="topTitle">接收列表</div>
-            <div class="filter-container" style="height: 157px;overflow-y: auto;">
+            <div class="filter-container container-scroll" style="height: 157px;overflow-y: auto;">
               <span class="command-user" v-for="(item, index) in receivedPersionNodes" :key="index">
                 {{ item.label }}
                 <i class="el-icon-ali-guanbi" @click="deleteNode(index)"></i>
@@ -125,7 +125,7 @@
           </el-header>
           <el-main style="padding-top:0;position: relative;">
             <div style class="topTitle">曝光详情</div>
-            <div class="filter-container" style="height: 276px;overflow-y: auto;">
+            <div class="filter-container container-scroll" style="height: 276px;overflow-y: auto;">
               <el-form ref="exposureForm" :model="exposureForm" label-width="50px">
                 <el-form-item label="标题">
                   <el-input v-model="exposureForm.title" placeholder="请输入曝光标题"></el-input>
@@ -199,8 +199,8 @@ export default {
       exposuredataArray: [],
       isShowTabbar: false,
       isshowCheckbox: true,
-      panelMinHeight: 62,
-      panelbodyHeight: 62,
+      panelMinHeight: 72,
+      panelbodyHeight: 72,
       refLeftTree: null,// 用于接收 LeftTree组件里面的this.$refs.tree
       receivedPersionNodes: [],
       fileList: [],
@@ -288,7 +288,10 @@ export default {
       this.exposureLoading = true
       this.exposureVisible = true
       this.receivedPersionNodes = []
-      this.refLeftTree.setCheckedKeys([])
+      if(this.refLeftTree) {
+        this.refLeftTree.setCheckedKeys([])
+      }
+      
       this.fileList = []
     },
     start(start) {
@@ -545,6 +548,25 @@ export default {
       color: #636363;
       font-size: 12px;
     }
+  }
+  /*滚动条样式*/
+  .container-scroll::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 4px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+  }
+  .container-scroll::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .container-scroll::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.1);
   }
   > .el-container {
     min-height: calc(100vh - 126px);

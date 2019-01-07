@@ -73,7 +73,7 @@
     <el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表" width="60%"  :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
       <el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe  border>
         <el-table-column type="index" label="序号" width="50" />
-        <el-table-column prop="CreateDate" label="上传时间" width="150" />
+        <el-table-column prop="createDate" label="上传时间" width="150" />
         <el-table-column prop="name" label="文件名" width="250" />
         <el-table-column prop="id" label="操作" min-width="120">
           <template slot-scope="scope">
@@ -277,7 +277,9 @@ export default {
       this.v.formhistory = true;
       this.listLoadingHistory = true;
       getfiles(this.uploaddata).then(response => {
-        this.listDate = response.data.list;
+        this.listDate = response.uploadexcelarr;
+        console.log("data",this.listDate);
+        
         this.listLoadingHistory = false;
       });
     },

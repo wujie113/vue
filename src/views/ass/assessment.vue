@@ -17,15 +17,16 @@
                 ></el-option>
               </el-select>
               <span>日期选择</span>
-              <el-date-picker
+            <el-date-picker
                 v-model="yearvalue"
                 type="year"
                 format="yyyy年"
-                value-format="  "
+                value-format="yyyy"
                 placeholder="选择年"
                 @change="yearselection"
                 :clearable="false"
               ></el-date-picker>
+
               <el-date-picker
                 v-model="monthvalue"
                 type="month"
@@ -54,7 +55,7 @@
         </el-header>
 
         <el-main>
-          <div class="filter-container" style="padding-top: 0;">
+          <div class="filter-container" style="padding-top: 0">
             <el-button
               class="filter-item"
               type="primary"
@@ -73,7 +74,7 @@
               </el-table-column> 
               <el-table-column  label="操作">
                 <template slot-scope="scope">
-                  <el-button @click="editoffice(scope.row)" type="primary"  size="mini" icon="el-icon-edit"/>
+                  <el-button @click="editoffice(scope.row)" type="text"  size="mini" icon="el-icon-edit"/>
                 </template>
               </el-table-column> 
             </el-table>
@@ -118,7 +119,7 @@
           :visible.sync="scoreVisible"
           title="考核评分"
           :modal-append-to-body="false"
-          width="66%"
+          width="64.2%"
         >
           <div class="filter-container"  v-if="searchshow">
             <div class="block">
@@ -145,7 +146,7 @@
               <span>单位选择</span>
               <el-select v-model="value3" :clearable="true" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in options2"
                   :key="item.id"
                   :label="item.label"
                   :value="item.id"
@@ -165,7 +166,7 @@
               show-summary
               v-loading="scoreloading"
             >
-              <el-table-column prop="name" label="考核项目1" width="120"></el-table-column>
+              <el-table-column prop="name" label="考核项目" width="120"></el-table-column>
               <el-table-column prop="content" label="考评内容" width="400"></el-table-column>
               <el-table-column prop="score" label="基本分" width="120"></el-table-column>
               <el-table-column prop="standard" label="考核标准" width="400"></el-table-column>
@@ -174,11 +175,11 @@
                   <el-input
                     size="small"
                     id="index"
-                    type="number" 
+                    type="number"
                     @input="inputChange(scope.row.fraction,scope.row.score,scope.row,scope.$index)"
-                    v-model="scope.row.fraction"  
-                    placeholder="请打分"
-                    style="width: 80px;"
+                    v-model="scope.row.fraction" 
+                    value="请打分"
+                    style="width: 80px"
                     onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                     :min="1"
                   ></el-input>
@@ -188,7 +189,7 @@
             </el-table>            
           </div>
           <div  slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="scoreBtn()">提交</el-button>
+            <el-button type="primary" @click="scoreBtn">评分提交</el-button>
           </div>
         </el-dialog>
 
@@ -250,13 +251,12 @@
 
 
 <script>
-import { save, findsettemplateItemlist, del, getscorelist, savescore, officelist,getlist,editsavescore,geteditscorelist } from "@/api/ass/assessment.js";
-import { getLoweroffice } from "@/api/core/org.js";
+import { save, findsettemplateItemlist, del, getscorelist, savescore, officelist,getlist,editsavescore,geteditscorelist } from "@/api/ass/assessment.js"
+import { getLoweroffice } from "@/api/core/org.js"
 export default {
   components: {},
   data() {
     return {
-      aaaaaa: "",
       scorearray:[],
       v: {
         loading: false
@@ -298,7 +298,6 @@ export default {
           office: null,
           year: null,
           month: null,
-          office:null,
         },
     officescorelist: {
         tableCoulmn: [],
@@ -306,140 +305,186 @@ export default {
       },
       idvalue: [],
       selectionitems: null,
-      options: []
-    };
+      options: [],
+      options2: []
+    }
   },
   created() {
-    this.getarealist();
-    this. getlist();
+    this.getarealist()
+    this.getlist()
+    this.getarealist1()
   },
   methods: {
     getarealist() {
       getLoweroffice().then(Response => {
-        this.options = Response.data.list;
-      });
+        this.options = Response.data.list
+      })
+    },
+    getarealist1() {
+      getLoweroffice({"pid":this.value2}).then(Response => {
+        this.options2 = Response.data.list
+      })
     },
     //时间事件
     yearselection(yearselection) {
-      var date = new Date();
-      var year = date.getFullYear();
+      console.log("yearselection",yearselection)
+      var date = new Date()
+      var year = date.getFullYear()
       if (this.yearvalue > year) {
-        this.yearvalue = null;
-        this.monthvalue = null;
+        this.yearvalue = null
+        this.monthvalue = null
         this.$message({
           message: "超出当前系统时间",
           type: "warning"
-        });
+        })
       } else {
-        this.condition.year = yearselection;
-        var month = date.getMonth() + 1;
-        this.monthvalue = month + "月";
-        this.condition.month = month.toString();
+        this.condition.year = yearselection
+        var month = date.getMonth() + 1
+        this.monthvalue = month + "月"
+        this.condition.month = month.toString()
+        console.log("this.condition",this.condition);
         officelist(this.condition).then(response => {
-          this.list = response.data.list;
+          this.officescorelist.tableCoulmn = response.data.tableCoulmn
+            this.officescorelist.tableData = response.data.tableData 
+            this.value2=null
           this.$message({
             message: "查询成功",
             type: "success"
-          });
-        });
+          })
+        })
       }
     },
     monthselection(monthselection) {
-      var date = new Date();
-      var month = date.getMonth() + 1;
-      if (this.monthvalue > month) {
-        this.yearvalue = null;
-        this.monthvalue = null;
+      var date = new Date()
+      var month = date.getMonth() + 1
+      let index = this.yearvalue.indexOf("年")
+      console.log('index', index);
+      let cc
+      if(index > -1){
+        cc = Number(this.yearvalue.slice(0, index))
+      }else {
+        cc = this.yearvalue
+      }
+      if(cc > date.getFullYear()){
+        // this.yearvalue = null
+        // this.monthvalue = null
         this.$message({
           message: "超出当前系统时间",
           type: "warning"
-        });
-      } else {
-        this.condition.month = monthselection;
-        var year = date.getFullYear();
-        this.yearvalue = year + "年";
+        })
+      }else if(cc == date.getFullYear()){
+        if (this.monthvalue > month) {
+          // this.yearvalue = null
+          // this.monthvalue = null
+          this.$message({
+            message: "超出当前系统时间",
+            type: "warning"
+          })
+        } else {
+          this.condition.month = monthselection
+          var year = date.getFullYear()
+          this.yearvalue = year + "年"
+          officelist(this.condition).then(response => {
+            this.officescorelist.tableCoulmn = response.data.tableCoulmn
+            this.officescorelist.tableData = response.data.tableData
+            this.value2=null
+            this.$message({
+              message: "查询成功",
+              type: "success"
+            })
+          })
+        }
+      }else if(cc < date.getFullYear()){
+        this.condition.month = monthselection
+
+        this.yearvalue = cc + "年"
         officelist(this.condition).then(response => {
-          this.list = response.data.list;
+          this.officescorelist.tableCoulmn = response.data.tableCoulmn
+          this.officescorelist.tableData = response.data.tableData
+          this.value2=null
           this.$message({
             message: "查询成功",
             type: "success"
-          });
-        });
+          })
+        })
       }
+
     },
 
     yearselection2(yearselection2) {
-      var date = new Date();
-      var year = date.getFullYear();
+      var date = new Date()
+      var year = date.getFullYear()
       if (this.yearvalue2 > year) {
-        this.yearvalue2 = null;
-        this.monthvalue2 = null;
+        this.yearvalue2 = null
+        this.monthvalue2 = null
         this.$message({
           message: "超出当前系统时间",
           type: "warning"
-        });
+        })
       } else {
-        this.condition.year = yearselection2;
-        var month = date.getMonth() + 1;
-        this.monthvalue2 = month + "月";
-        this.condition.month = month.toString();
+        this.condition.year = yearselection2
+        var month = date.getMonth() + 1
+        this.monthvalue2 = month + "月"
+        this.condition.month = month.toString()
         getscorelist(this.condition).then(response => {
-          this.scorelist = response.data.list;
+          this.scorelist = response.data.list
           this.$message({
             message: "模板查询成功",
             type: "success"
-          });
-        });
+          })
+        })
       }
     },
     monthselection2(monthselection2) {
-      var date = new Date();
-      var month = date.getMonth() + 1;
+      var date = new Date()
+      var month = date.getMonth() + 1
       if (this.monthvalue2 > month) {
-        this.yearvalue2 = null;
-        this.monthvalue2 = null;
+        this.yearvalue2 = null
+        this.monthvalue2 = null
         this.$message({
           message: "超出当前系统时间",
           type: "warning"
-        });
+        })
       } else {
-        this.condition.month = monthselection2;
-        var year = date.getFullYear();
-        this.yearvalue2 = year + "年";
+        this.condition.month = monthselection2
+        var year = date.getFullYear()
+        this.yearvalue2 = year + "年"
         getscorelist(this.condition).then(response => {
-          this.scorelist = response.data.list;
+          this.scorelist = response.data.list
           this.$message({
             message: "模板查询成功",
             type: "success"
-          });
-        });
+          })
+        })
       }
     },
     //考核评分
     assscore() {
-      this.scoreVisible = true;
-      this.scoreloading = true;
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = date.getMonth() + 1;
+      this.idvalue=[]
+      this.value3 = null
+      this.scoreVisible = true
+      this.scoreloading = true
+      var date = new Date()
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
       if(this.searchshow){
-          this.searchshow = true
+		this.searchshow = true
       }else{
-          this.searchshow = true
+		this.searchshow = true
       }
       getscorelist({ year: year, month: month }).then(response => {
         this.scoreloading = false
         this.scorelist = response.data.list
-      });
+      })
     },
     
     //考核设置
     getasslist() {
       this.selectionitems= []
-      this.settingVisible = true;
+      this.settingVisible = true
       findsettemplateItemlist().then(response => {
-        this.list = response.data.list;
-      });
+        this.list = response.data.list
+      })
     },
     //新增考核项
     addassBtn() {
@@ -448,10 +493,10 @@ export default {
         this.$message({
           message: "当前总分达到100分,无法继续添加",
           type: "warning"
-        });
+        })
       } else {
-        this.addVisible = true;
-        this.proTaskFrom = [];
+        this.addVisible = true
+        this.proTaskFrom = []
       }
     },
     //编辑考核项
@@ -460,9 +505,9 @@ export default {
         this.$message({
           message: "请选择编辑项",
           type: "warning"
-        });
+        })
       } else {
-        this.editVisible = true;
+        this.editVisible = true
         this.proTaskFrom.names= this.selectionitems.name
         this.proTaskFrom.contents =this.selectionitems.content
         this.proTaskFrom.scores = this.selectionitems.score
@@ -475,37 +520,43 @@ export default {
         this.$message({
           message: "请选择删除项",
           type: "warning"
-        });
+        })
       } else {
         del(this.selectionitems.id).then(response => {
-          this.getasslist();
+          this.getasslist()
           this.$message({
             message: response.msg,
             type: "success"
-          });
+          })
         }).catch((erroe) => {
-          this.getasslist();
+          this.getasslist()
         })
       }
     },
     getlist(){
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = date.getMonth() + 1;
+      var date = new Date()
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      this.condition.year = year
+      this.condition.month = month
+      this.yearvalue = year + '年'
+      this.monthvalue = month + '月'
          officelist({ year: year, month: month }).then(response =>{
             this.officescorelist.tableCoulmn = response.data.tableCoulmn
-            this.officescorelist.tableData = response.data.tableData        
+            this.officescorelist.tableData = response.data.tableData
         })
     },
     
     //查询
     handleFilter() {
       var condition = {
+        office:this.value2,
         year: this.condition.year,
         month: this.condition.month
-      };
-      if(  this.condition.year && this.condition.year != ''
-        &&  this.condition.month && this.condition.month != ''  ) {
+      }
+      console.log("condition",condition)
+
+      if(condition.year && condition.month) {
           this.listloading = true
           officelist(condition).then(response =>{
             this.listloading = false
@@ -516,32 +567,28 @@ export default {
         this.$message({
               message: "请选择日期",
               type: "warning"
-            });
+            })
       }
       
     },
     //提交
     addsubmitBtn() {
-      var str = parseInt(this.totalscore[2]);
-      console.log("总分",str)
+      var str = parseInt(this.totalscore[2])
       var inputnumber = parseInt(this.proTaskFrom.scores)
-      console.log("输入",inputnumber)
       var ifscore =  inputnumber+str
-      console.log("结果累加",ifscore)
       var remainder = 100 - str
-      console.log("可分配分数",remainder)
       if(ifscore>100){
          this.$message({
                message: "总分超过100分,当前可分配分数为"+remainder,
                type: "error"
-             });
+             })
       }else{
       var proTaskFrom = {
         name: this.proTaskFrom.names,
         content: this.proTaskFrom.contents,
         score: this.proTaskFrom.scores,
         standard: this.proTaskFrom.standards 
-      };
+      }
       console.log("proTaskFrom",proTaskFrom)
       if (proTaskFrom.name != null && proTaskFrom.content != null && proTaskFrom.score != null && proTaskFrom.standard != null) {
         save(proTaskFrom).then(Response => {
@@ -549,39 +596,35 @@ export default {
             this.$message({
               message: response.msg,
               type: "success"
-            });
+            })
           }
-          this.addVisible = false;
-          this.editVisible = false;
-          this.getasslist();
+          this.addVisible = false
+          this.editVisible = false
+          this.getasslist()
         }).catch((error) => {
-          this.addVisible = false;
-          this.editVisible = false;
-          this.getasslist();
+          this.addVisible = false
+          this.editVisible = false
+          this.getasslist()
         })
       } else {
         this.$message({
           message: "输入不能为空",
           type: "error"
-        });
+        })
       }
       }
     },
     //修改提交
     editsubmitBtn(){
-      var olescore = parseInt(this.selectionitems.score);
-      console.log("原来分",olescore)
-      var str = parseInt(this.totalscore[2]);
-      console.log("总分",str)
+      var oldscore = parseInt(this.selectionitems.score)
+      var str = parseInt(this.totalscore[2])
       var inputnumber = parseInt(this.proTaskFrom.scores)
-      console.log("输入",inputnumber)
-       var remainder = (100-str)+olescore
-      console.log("可分配分数",remainder)
+       var remainder = (100-str)+oldscore
       if(inputnumber>remainder){
          this.$message({
                message: "总分超过100分,当前可分配分数为"+remainder,
                type: "error"
-             });
+             })
       }else{
       var proTaskFrom = {
         id: this.proTaskFrom.id,
@@ -589,40 +632,42 @@ export default {
         content: this.proTaskFrom.contents,
         score: this.proTaskFrom.scores,
         standard: this.proTaskFrom.standards 
-      };
+      }
       if (proTaskFrom.name != null && proTaskFrom.content != null && proTaskFrom.score != null && proTaskFrom.standard != null) {
         save(proTaskFrom).then(Response => {
           if (response.success == true) {
             this.$message({
               message: response.msg,
               type: "success"
-            });
+            })
           }
-          this.addVisible = false;
-          this.editVisible = false;
-          this.getasslist();
+          this.addVisible = false
+          this.editVisible = false
+          this.getasslist()
         }).catch((error) => {
-          this.addVisible = false;
-          this.editVisible = false;
-          this.getasslist();
+          this.addVisible = false
+          this.editVisible = false
+          this.getasslist()
         })
       } else {
         this.$message({
           message: "输入不能为空",
           type: "error"
-        });
+        })
       }
       }
     },
     handleCurrentChange(row) {
       if (row) {
-        this.selectionitems = row;
-        this.proTaskFrom.id = row.id;
+        this.selectionitems = row
+        this.proTaskFrom.id = row.id
       }
 
     },
     //评分修改
     editoffice(row){
+      this.getarealist1()
+      this.idvalue=[]
       if(row.sum != null && row.sum != ""){
         this.condition.office = row.officeId
         this.scoreVisible = true
@@ -632,24 +677,26 @@ export default {
           this.searchshow = false
        }
       this.scoreloading = true
-      var date = new Date();
-      var year = date.getFullYear();
-      var month = date.getMonth() + 1;
-      geteditscorelist({ year: year, month: month ,"scoreOffice.id":row.officeId}).then(response => {
+      var date = new Date()
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      console.log("row",row)
+      geteditscorelist({ year: year, month: month ,"scoreOffice.id":row.officeId,"office":this.value2}).then(response => {
         this.scoreloading = false
         this.scorelist = response.data.list
-        this.scorenum=response.data.scorenum;
-        this.idvalue=response.data.idvalue;
-      });
+        this.scorenum=response.data.scorenum
+        this.idvalue=response.data.idvalue
+      })
       } else{
-        this.$message({
-            message: "请给单位评分",
-            type: "warning"
-          });
+        // this.$message({
+        //     message: "请给单位评分",
+        //     type: "warning"
+        //   })
         this.scoreVisible = true
         this.assscore()
         if(this.searchshow  == false){
          this.searchshow = true
+         
        }else{
           this.searchshow = true
        }
@@ -659,15 +706,15 @@ export default {
     //请输入
     inputChange(value,maxscore, row,index) {   
       if(parseInt(maxscore)<parseInt(value)){ 
-          value=0;
-          row.num=0;
+          value=0
+          row.num=0
           this.$message({
             message: "打分不能超过基本分!!!",
             type: "error"
-          });
+          })
       }   
       
-     this.scorelist[index].fraction = value
+     this.scorelist[index].fraction = parseInt(value)
      
       let temp = {
         "item_id": row.id,
@@ -691,89 +738,103 @@ export default {
     },
     //评分提交
     scoreBtn() {
-      if(this.searchshow == true){
-        var condition = {
-        office: this.value3,
-        year: this.condition.year,
-        month: this.condition.month,
-        idvalues: JSON.stringify(this.idvalue)
-      };
-      if (condition.office != null && condition.office != "") {
-        savescore(condition).then(response => {
-          if(response.success == true){
-             this.scoreVisible = false;
+       let values =[]
+       values = this.scorelist.map(item => item.fraction)
+         console.log("---",values)
+              if(values.indexOf("")>-1 || values.indexOf(NaN)>-1 ) {
                 this.$message({
-                  message: "评分成功",
-                  type: "success"
-                });
-                this.getlist();
-          } 
-        }).catch((erroe) => {
-          this.getlist();
-        })
-      } else {
-        this.$message({
-          message: "请选择单位",
-          type: "warning"
-        });
-      }
-      }else{
-        var  condition = {
-            office:this.condition.office,
-            idvalues: JSON.stringify(this.idvalue)
-        }
-        
-        editsavescore(condition).then(response => {
-          this.scoreVisible = false;
-                this.$message({
-                  message: "修改评分成功",
-                  type: "success"
-                });
-                this.getlist();
-        })
-      }
+                   message: "请给每一项评分",
+                type: "warning"
+                })
+            } else{
+                  if(this.searchshow == true){
+                    var condition = {
+                    office: this.value3,
+                    year: this.condition.year,
+                    month: this.condition.month,
+                    idvalues: JSON.stringify(this.idvalue)
+                  }
+                  if (condition.office != null && condition.office != "") {
+                    savescore(condition).then(response => {
+                      if(response.success == true){
+                         this.scoreVisible = false
+                            this.$message({
+                              message: "评分成功",
+                              type: "success"
+                            })
+                            //this.getlist()
+                            this.handleFilter()
+                      } 
+                    }).catch((erroe) => {
+                      this.getlist()
+                    })
+                   }
+                   else {
+                    this.$message({
+                      message: "请选择单位",
+                      type: "warning"
+                    })
+                  }
+                  }else{
+                    var  condition = {
+                        office:this.condition.office,
+                        idvalues: JSON.stringify(this.idvalue)
+                    }
+                    
+                    editsavescore(condition).then(response => {
+                      this.scoreVisible = false
+                            this.$message({
+                              message: "修改评分成功",
+                              type: "success"
+                            })
+                            // this.getlist()
+                            // this.value2 = null
+                            this.handleFilter()
+                    })
+                  }
+                }
     },
     
     //合计
     getCount(param) {
       
-      const { columns, data } = param;
-      const sums = [];
-      let values = []; 
+      const { columns, data } = param
+      const sums = []
+      let values = [] 
       columns.forEach((column, index) => {
         if (index === 0) {
-          sums[index] = "合计";
-          return;
+          sums[index] = "合计"
+          return
         }
         if (column.property == "score") {
-          values = data.map(item => Number(item.score));
+          values = data.map(item => Number(item.score))
         }
         if (column.property == "fraction") {
-          values = data.map(item => Number(item.fraction));
+          values = data.map(item => Number(item.fraction))
         }
         if (column.property == "score" || column.property == "fraction") {
           
           sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
+            const value = Number(curr)
             
             if (!isNaN(value)) {
-              return prev + curr;
+              return prev + curr
             } else {
-              return prev;
+              return prev
             }
-          }, 0);
-          sums[index] += "分";
+          }, 0)
+          sums[index] += "分"
         } else {
-          sums[index] = "N/A";
+          sums[index] = ""
         }
-      });
+      })
       
       this.totalscore = sums
 
-      return sums;
+      return sums
     }
   }
-};
+}
 </script>
 <style scoped lang="scss">
 .app-container {
@@ -793,7 +854,7 @@ export default {
     min-height: calc(100vh - 126px);
     > .el-container {
       // 兼容IE浏览器
-      min-height: calc(100vh - 126px);  
+      min-height: calc(100vh - 126px);
     }
   }
 }

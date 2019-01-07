@@ -12,8 +12,20 @@
               class="filter-item"
               @keyup.enter.native="handleFilter"
             />
-            <el-select  v-model="listQuery.status" placeholder="请选择列别"  @change="selectChang" clearable style="width: 120px" class="filter-item">
-              <el-option  v-for="item in importanceOptions" :key="item.key" :label="item.label"    :value="item.key"/>
+            <el-select
+              v-model="listQuery.status"
+              placeholder="请选择列别"
+              @change="selectChang"
+              clearable
+              style="width: 120px"
+              class="filter-item"
+            >
+              <el-option
+                v-for="item in importanceOptions"
+                :key="item.key"
+                :label="item.label"
+                :value="item.key"
+              />
             </el-select>
             <el-button
               class="filter-item"
@@ -28,7 +40,7 @@
           <el-table :data="list" row-key="id" stripe border style="width: 100%">
             <el-table-column label width="80">
               <template slot-scope="scope">
-                <span title="时时事事11111" class="city">市</span> 
+                <span title="时时事事11111" class="city">市</span>
                 <!-- <span title="督查" style="color: #ffa727;" @change="governor">督</span> -->
                 <el-button
                   title="督办记录"
@@ -36,12 +48,12 @@
                   @click="governor(scope.row)"
                 >督</el-button>
               </template>
-            </el-table-column> 
+            </el-table-column>
             <el-table-column type="index" label="序号" width="50"/>
             <el-table-column prop="description" label="问题描述"/>
             <el-table-column prop="username" label="发起人"/>
             <el-table-column prop="date" label="发起时间"/>
-            <el-table-column prop="status" label="工单状态"/> 
+            <el-table-column prop="status" label="工单状态"/>
             <el-table-column prop="taskcontent" label="任务描述"/>
             <el-table-column prop="id" label="操作" width="150">
               <template slot-scope="scope">
@@ -68,10 +80,9 @@
             :limit.sync="listQuery.pageSize"
             @pagination="getList"
           />
-          
         </el-main>
 
-         <Layer
+        <Layer
           title="工单详情"
           v-model="workflowdetail.visible"
           :dialog="false"
@@ -81,7 +92,7 @@
           :maskLayer="false"
           :shade="false"
           height="700"
-          :closeBack="closelayer" 
+          :closeBack="closelayer"
         >
           <el-button type="primary" @click="printBtn" class="printBtn">打印</el-button>
           <!--需要打印的区域-->
@@ -100,7 +111,10 @@
                 <img :src="img.url" :key="index" v-for="(img, index) in child.medium">
               </viewer>
               <!-- 分割线 -->
-              <div class="work-order-details-list-split" v-if="wrapindex !== prodetail.list.length - 1"></div>
+              <div
+                class="work-order-details-list-split"
+                v-if="wrapindex !== prodetail.list.length - 1"
+              ></div>
             </div>
             <div style="border-bottom: 1px solid #ddd;"></div>
           </div>
@@ -115,8 +129,6 @@
           </div>
         </Layer>
 
-  
-       
         <Layer
           title="转派工单"
           v-model="workflowsend.visible"
@@ -167,23 +179,22 @@
             <el-form-item prop="comment" label="备注">
               <el-input v-model="workflowsend.form.comment" :rows="4" type="textarea"/>
             </el-form-item>
-           
-           <el-upload
-                    v-model="workflowsend.form.annex"
-                    class="upload-demo"
-                    style="text-align: left;"
-                    :multiple="true"
-                    ref="upload"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :file-list="fileList"
-                    :auto-upload="false"
-                    :data="uploaddata"
-                    >
-                    <i class="el-icon-ali-icon-test"></i>附件上传
-                  </el-upload>
+
+            <el-upload
+              v-model="workflowsend.form.annex"
+              class="upload-demo"
+              style="text-align: left;"
+              :multiple="true"
+              ref="upload"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :file-list="fileList"
+              :auto-upload="false"
+              :data="uploaddata"
+            >
+              <i class="el-icon-ali-icon-test"></i>附件上传
+            </el-upload>
           </el-form>
         </Layer>
-
 
         <Layer
           title="工单退回"
@@ -205,70 +216,107 @@
             </el-form-item>
           </el-form>
         </Layer>
-       <Layer :title="worknotofficeopetion.title" v-model="worknotofficeopetion.visible"  :dialog="false" class="layer-1"  
-                width="400" :animation="2"  :maskLayer="false"  :shade="false"   height="300"  :confirmBack="doworknotofficeopetionhandel"   :confirm="worknotofficeopetion.confirm"
-               cancel="取消"> 
-            <el-form ref="workendhandelform"  label-width="80px">  
-                <el-form-item prop="comment" :label="worknotofficeopetion.label">
-                  <el-input v-model="workflowsend.form.comment" :placeholder="worknotofficeopetion.placeholder" :rows="4" type="textarea"/>
-                </el-form-item>
-              </el-form>
-       </Layer>
-
-
-
+        <Layer
+          :title="worknotofficeopetion.title"
+          v-model="worknotofficeopetion.visible"
+          :dialog="false"
+          class="layer-1"
+          width="400"
+          :animation="2"
+          :maskLayer="false"
+          :shade="false"
+          height="300"
+          :confirmBack="doworknotofficeopetionhandel"
+          :confirm="worknotofficeopetion.confirm"
+          cancel="取消"
+        >
+          <el-form ref="workendhandelform" label-width="80px">
+            <el-form-item prop="comment" :label="worknotofficeopetion.label">
+              <el-input
+                v-model="workflowsend.form.comment"
+                :placeholder="worknotofficeopetion.placeholder"
+                :rows="4"
+                type="textarea"
+              />
+            </el-form-item>
+          </el-form>
+        </Layer>
       </el-container>
     </el-container>
 
     <!-- 工单弹窗 -->
-          <el-dialog :visible.sync="visibleOrder" title="生成工单" :modal-append-to-body="false">
-               <el-form ref="proTaskFrom" :model="proTaskFrom" abel-width="80px" size="mini">
-             
-           <!--    <el-form-item prop="area" label="所属区划">
+    <el-dialog :visible.sync="visibleOrder" title="生成工单" :modal-append-to-body="false">
+      <el-form ref="proTaskFrom" :model="proTaskFrom" abel-width="80px" size="mini">
+        <!--    <el-form-item prop="area" label="所属区划">
                 <rm-area-select v-model="proTaskFrom.area" />
-              </el-form-item> -->
-              <el-form-item label="接单单位">                                
-                   <el-select v-model="proTaskFrom.dept" placeholder="请选择单位" clearable class="filter-item">
-                      <el-option v-for="item in lowerofficeList" :key="item.id" :label="item.label" :value="item.id" />
-                  </el-select>
-              </el-form-item>
-              
-              <el-form-item label="相关部门">
-                  <el-select v-model="proTaskFrom.unit" placeholder="请选择部门" clearable class="filter-item">
-                      <el-option v-for="item in synergOfficeList" :key="item.id" :label="item.name" :value="item.id" />
-                  </el-select>
-              </el-form-item>
+        </el-form-item>-->
+        <el-form-item label="接单单位" prop="dept">
+          <el-select v-model="proTaskFrom.dept" placeholder="请选择单位" clearable class="filter-item">
+            <el-option
+              v-for="item in lowerofficeList"
+              :key="item.id"
+              :label="item.label"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
 
-              <el-form-item label="办结时间">
-                 <el-date-picker v-model="proTaskFrom.handleTime" type="date" placeholder="Pick a date" style="width: 100%;"/>
-              </el-form-item>
-              <el-form-item label="问题描述">
-                <el-input type="textarea" v-model="proTaskFrom.description" placeholder="请输入问题描述" rows="5"></el-input>
-              </el-form-item>
-              <el-form-item label="任务描述">
-                <el-input type="textarea" v-model="proTaskFrom.taskcontent" placeholder="请输入任务描述" rows="5"></el-input>
-              </el-form-item>
-            </el-form> 
-              <el-upload
-                    class="upload-demo"
-                    style="text-align: left;"
-                    :multiple="true"
-                    ref="upload"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :file-list="fileList"
-                    :auto-upload="false">
-                    <i class="el-icon-ali-icon-test"></i>附件上传
-                  </el-upload>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="visibleOrder = false">取 消</el-button>
-            <el-button @click="save()" type="primary">确 定</el-button>
-          </div>
-          </el-dialog>
- <!-- 工单弹窗  end-->
+        <el-form-item label="相关部门" prop="unit">
+          <el-select v-model="proTaskFrom.unit" placeholder="请选择部门" clearable class="filter-item">
+            <el-option
+              v-for="item in synergOfficeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="办结时间" prop="handleTime">
+          <el-date-picker
+            v-model="proTaskFrom.handleTime"
+            type="date"
+            placeholder="办结时间"
+            style="width: 100%;"
+          />
+        </el-form-item>
+        <el-form-item label="问题描述" prop="description">
+          <el-input
+            type="textarea"
+            v-model="proTaskFrom.description"
+            placeholder="请输入问题描述"
+            rows="5"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="任务描述" prop="taskcontent">
+          <el-input
+            type="textarea"
+            v-model="proTaskFrom.taskcontent"
+            placeholder="请输入任务描述"
+            rows="5"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <el-upload
+        class="upload-demo"
+        style="text-align: left;"
+        :multiple="true"
+        ref="upload"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :file-list="fileList"
+        :auto-upload="false"
+      >
+        <i class="el-icon-ali-icon-test"></i>附件上传
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="visibleOrder = false">取 消</el-button>
+        <el-button @click="save()" type="primary">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 工单弹窗  end-->
     <!--曝光弹窗-->
     <el-dialog :visible.sync="exposureVisible" title="曝光" :modal-append-to-body="false" width="75%">
       <el-container v-loading="exposureLoading">
-
         <el-aside>
           <left-tree
             titleName="组织部门"
@@ -285,28 +333,28 @@
 
         <el-container>
           <el-header height="200px">
-            <div style="" class="topTitle">
-              接收列表
-            </div>
+            <div style class="topTitle">接收列表</div>
             <div class="filter-container container-scroll" style="height: 157px;overflow-y: auto;">
               <span class="command-user" v-for="(item, index) in receivedPersionNodes" :key="index">
                 {{ item.label }}
                 <i class="el-icon-ali-guanbi" @click="deleteNode(index)"></i>
               </span>
-
             </div>
           </el-header>
           <el-main style="padding-top:0;position: relative;">
-            <div style="" class="topTitle">
-              曝光详情
-            </div>
+            <div style class="topTitle">曝光详情</div>
             <div class="filter-container container-scroll" style="height: 276px;overflow-y: auto;">
               <el-form ref="exposureForm" :model="exposureForm" label-width="50px">
                 <el-form-item label="标题">
                   <el-input v-model="exposureForm.title" placeholder="请输入曝光标题"></el-input>
                 </el-form-item>
                 <el-form-item label="详情">
-                  <el-input type="textarea" v-model="exposureForm.content" rows="5" placeholder="请输入曝光详情"></el-input>
+                  <el-input
+                    type="textarea"
+                    v-model="exposureForm.content"
+                    rows="5"
+                    placeholder="请输入曝光详情"
+                  ></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-upload
@@ -316,18 +364,19 @@
                     ref="upload"
                     action="https://jsonplaceholder.typicode.com/posts/"
                     :file-list="fileList"
-                    :auto-upload="false">
+                    :auto-upload="false"
+                  >
                     <i class="el-icon-ali-icon-test"></i>附件上传
                   </el-upload>
                   <!--<el-upload-->
-                    <!--ref="upload"-->
-                    <!--style="text-align: left;"-->
-                    <!--class="upload-demo"-->
-                    <!--action="https://jsonplaceholder.typicode.com/posts/"-->
-                    <!--:file-list="fileList3">-->
-                    <!--<i class="el-icon-ali-icon-test"></i>附件上传-->
-                    <!--&lt;!&ndash;<span class="uplodText">附件上传</span>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<div slot="tip" class="el-upload__tip" style="line-height: 13px;">只能上传jpg/png文件，且不超过500kb</div>&ndash;&gt;-->
+                  <!--ref="upload"-->
+                  <!--style="text-align: left;"-->
+                  <!--class="upload-demo"-->
+                  <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+                  <!--:file-list="fileList3">-->
+                  <!--<i class="el-icon-ali-icon-test"></i>附件上传-->
+                  <!--&lt;!&ndash;<span class="uplodText">附件上传</span>&ndash;&gt;-->
+                  <!--&lt;!&ndash;<div slot="tip" class="el-upload__tip" style="line-height: 13px;">只能上传jpg/png文件，且不超过500kb</div>&ndash;&gt;-->
                   <!--</el-upload>-->
                 </el-form-item>
               </el-form>
@@ -369,10 +418,10 @@
 <script> 
 
 import Pagination from '@/components/Pagination'
-import { getList, del, get ,sav,subcontent,save,urgelist} from '@/api/work/proTask.js'
+import { getList, del, get, sav, subcontent, save, urgelist } from '@/api/work/proTask.js'
 import RmDict from '@/components/rm/dict'
 
-import { getToken } from '@/utils/auth' 
+import { getToken } from '@/utils/auth'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
@@ -382,12 +431,12 @@ import LeftTree from '../setting/components/leftTree'
 import { findOrgtreesandusers, saveExposure } from "@/api/res/management.js"
 import { file } from "@/api/imgUplodFile"
 
-import { getorgtrees,getSynergOffice,getLoweroffice,findOfficeUserstree} from '@/api/res/management.js'
- 
-import { officelist,send ,back,beginhandel,endhandel,audit} from "@/api/work/workflow.js"
- 
+import { getorgtrees, getSynergOffice, getLoweroffice, findOfficeUserstree } from '@/api/res/management.js'
 
-import { officeuserlist} from "@/api/core/user.js"
+import { officelist, send, back, beginhandel, endhandel, audit } from "@/api/work/workflow.js"
+
+
+import { officeuserlist } from "@/api/core/user.js"
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect, LeftTree },
   filters: {
@@ -399,7 +448,7 @@ export default {
       }
       return statusMap[status]
     },
-    formatDate: function(value) {
+    formatDate: function (value) {
       let date = new Date(value);
       let y = date.getFullYear();
       let MM = date.getMonth() + 1;
@@ -412,13 +461,13 @@ export default {
   data() {
     return {
       uploadParams: {
-        bizId:"",
-        bizType:"R"
+        bizId: "",
+        bizType: "R"
       },
-      synergOfficeList : null,
-      lowerofficeList : null,
-      lowerofficeList : null,
-      visibleOrder:false,
+      synergOfficeList: null,
+      lowerofficeList: null,
+      lowerofficeList: null,
+      visibleOrder: false,
       exposureForm: {
         title: "",
         content: "",
@@ -433,10 +482,10 @@ export default {
       refLeftTree: null,// 用于接收 LeftTree组件里面的this.$refs.tree
       fileList: [],
       receivedPersionNodes: [],
-      visible: false, 
+      visible: false,
       listLoading: false,
-      panelMinHeight: 62,
-      panelbodyHeight: 62,
+      panelMinHeight: 72,
+      panelbodyHeight: 72,
       exposuredataArray: [],
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
       isShowTabbar: false,
@@ -493,9 +542,9 @@ export default {
         pageSize: 10,
         importance: null,
         search: null,
-        type: null, 
+        type: null,
         status: "TODO"
-      },  
+      },
       gdid: {
         id: ""
       },
@@ -503,43 +552,43 @@ export default {
         content: ""
       },
       prodetail: {
-        list:null,
-        handel:{
-          btnlist:null
+        list: null,
+        handel: {
+          btnlist: null
         }
-      }, 
-      workflowdetail:{
-          visible:false,
-          row:null
+      },
+      workflowdetail: {
+        visible: false,
+        row: null
       },
       workflowsend: {
-          visible: false,
-          officelist: null,
-          isperson: false,
-          userlist: null,
-          form: {
-            actid: null,
-            officeid: null,
-            receiveUserId: null,
-            comment: null,
-            isaudit:null,
-          }
+        visible: false,
+        officelist: null,
+        isperson: false,
+        userlist: null,
+        form: {
+          actid: null,
+          officeid: null,
+          receiveUserId: null,
+          comment: null,
+          isaudit: null,
+        }
       },
       workflowback: {
-          visible: false
+        visible: false
       },
       workhandelend: {
-          visible: false
+        visible: false
       },
-      worknotofficeopetion:{
-        btn:null,
-        visible:false,
-        title:null,
-        placeholder:null,
-        label:null,
-        confirm:null
+      worknotofficeopetion: {
+        btn: null,
+        visible: false,
+        title: null,
+        placeholder: null,
+        label: null,
+        confirm: null
       },
-      importanceOptions: [{ label: "待处理", key: "TODO" }, { label: "处理中", key: "DOING" }, { label: "复核中", key: "AUDIT" }, { label: "已完结", key: "DONE" }] 
+      importanceOptions: [{ label: "待处理", key: "TODO" }, { label: "处理中", key: "DOING" }, { label: "复核中", key: "AUDIT" }, { label: "已完结", key: "DONE" }]
     }
   },
   created() {
@@ -590,7 +639,7 @@ export default {
           });
         });
       }
-    }, 
+    },
     baoguangBtn(row) {
       // 显示曝光弹窗
       this.exposureForm.bizId = row.id
@@ -602,50 +651,50 @@ export default {
       this.receivedPersionKeys = []
       this.exposureForm.title = ""
       this.exposureForm.content = ""
-    }, 
-    selectNode(data) {
-      console.log('点击树形data',data)
     },
-    save() { 
-          save(this.proTaskFrom).then(response => {
-          if (this.$refs.upload.uploadFiles !== undefined && this.$refs.upload.uploadFiles.length > 0) {
-            // 附件上传到服务器
-            const imgParams =  "&bizType=" +  this.uploaddata.bizType +  "&bizId=" + response.data.id;
-            file(imgParams, this.$refs.upload.uploadFiles).then(res => {
-              this.visibleOrder = false;
-            }).catch(errorRes => {
-              this.visibleOrder = false;
-            });
-          }
-          this.visibleOrder = false
-          this.$message({
-            type: "success",
-            message: "提交成功!"
-          })
-          this.getList();
-        }).catch(errorRes => {
+    selectNode(data) {
+      console.log('点击树形data', data)
+    },
+    save() {
+      save(this.proTaskFrom).then(response => {
+        if (this.$refs.upload.uploadFiles !== undefined && this.$refs.upload.uploadFiles.length > 0) {
+          // 附件上传到服务器
+          const imgParams = "&bizType=" + this.uploaddata.bizType + "&bizId=" + response.data.id;
+          file(imgParams, this.$refs.upload.uploadFiles).then(res => {
             this.visibleOrder = false;
-            this.getList();   
-        });  
+          }).catch(errorRes => {
+            this.visibleOrder = false;
+          });
+        }
+        this.visibleOrder = false
+        this.$message({
+          type: "success",
+          message: "提交成功!"
+        })
+        this.getList();
+      }).catch(errorRes => {
+        this.visibleOrder = false;
+        this.getList();
+      });
     },
     handleSuccess() {
       this.fileList = [];
       this.getList();
     },
-   handlePictureCardPreview(file) {
+    handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisibleImg = true;
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
-    selectChang(data){
-      console.log('data,',data)
+    selectChang(data) {
+      console.log('data,', data)
       this.listQuery.status = data
       this.listQuery.pageNo = 1
       this.getList()
     },
-    gdhandlePictureCardPreview(){
+    gdhandlePictureCardPreview() {
       this.gd.dialogImageUrl = file.url;
       this.gd.dialogVisibleImg = true;
     },
@@ -722,170 +771,173 @@ export default {
         this.total = response.data.count
       })
 
-      
+
       //相关部门数据
       getSynergOffice().then(response => {
         //console.log('相关部门数据：',response.data);
         this.synergOfficeList = response.data.list
       });
       getLoweroffice().then(response => {
-       // console.log('接单单位数据：',response.data);
-       this.lowerofficeList = response.data.list
+        // console.log('接单单位数据：',response.data);
+        this.lowerofficeList = response.data.list
       });
-    }, 
+    },
     handleFilter() {
       this.listQuery.pageNo = 1
       this.getList()
     },
-    showdetail(row) {  
-      if(row!=undefined&&row!=null)
-      this.workflowdetail.row=row;  
-      this.gdid.id =  this.workflowdetail.row.id
-     //  this.workflowdetail.visible = ""
-     // this.workflowsend.form = ""
+    showdetail(row) {
+      if (row != undefined && row != null)
+        this.workflowdetail.row = row;
+      this.gdid.id = this.workflowdetail.row.id
+      //  this.workflowdetail.visible = ""
+      // this.workflowsend.form = ""
       get(this.workflowdetail.row.id).then(response => {
         this.workflowdetail.visible = true
-        this.prodetail = response.data 
+        this.prodetail = response.data
         console.log(this.prodetail)
-        if(this.prodetail!=null&&this.prodetail.handel!=undefined&&this.prodetail.handel.actid!=undefined){
-            this.workflowsend.form.actid=this.prodetail.handel.actid;
-            this.uploaddata.bizId = this.workflowsend.form.actid
+        if (this.prodetail != null && this.prodetail.handel != undefined && this.prodetail.handel.actid != undefined) {
+          this.workflowsend.form.actid = this.prodetail.handel.actid;
+          this.uploaddata.bizId = this.workflowsend.form.actid
         }
       })
-    }, 
-     closelayer() { 
-      this.workflowdetail.visible=false;
-      if(this.worknotofficeopetion.isworknotofficeopetion)this.getList(); 
     },
-    operation(btn) {  
-       this.worknotofficeopetion.btn=btn; 
-       if(btn.id=="send"){
-         this.workflowsend.isperson=btn.isPerson;
-         this.send(btn);
-       }  
-       if(btn.id=="back"||btn.id=="handeled"||btn.id=="pass"||btn.id=='unpass'){
-         this.worknotofficeopetionhandel(btn);
-       }   
-       if(btn.id=="handel"){
-          this.dobeginhandel()
-       }
+    closelayer() {
+      this.workflowdetail.visible = false;
+      if (this.worknotofficeopetion.isworknotofficeopetion) this.getList();
+    },
+    operation(btn) {
+      this.worknotofficeopetion.btn = btn;
+      if (btn.id == "send") {
+        this.workflowsend.isperson = btn.isPerson;
+        this.send(btn);
+      }
+      if (btn.id == "back" || btn.id == "handeled" || btn.id == "pass" || btn.id == 'unpass') {
+        this.worknotofficeopetionhandel(btn);
+      }
+      if (btn.id == "handel") {
+        this.dobeginhandel()
+      }
     },
     create() {
-       // this.v.proTaskFrom = true
-        this.visibleOrder = true;
-        this.proTaskFrom = {}
-         this.fileList=[]
+      // this.v.proTaskFrom = true
+      if (this.$refs['proTaskFrom'] !== undefined) {
+        this.$refs['proTaskFrom'].resetFields()
+      }
+      this.visibleOrder = true;
+      // this.proTaskFrom = {}
+      this.fileList = []
     },
-	  officechange(data){ 
-	      if(data!=""){
-	         this.userlistload(data);
-	      }
-	  },
-    userlistload(data){
-        this.workflowsend.form.receiveUserId=null;
-        officeuserlist(data).then(response => { 
-          console.log("response.data.list:::",response.data.list);
-          if(response.data.list!=undefined){
-             this.workflowsend.userlist= response.data.list;
-          }else{
-            this.workflowsend.userlist=null;
-          }
-        }) 
-    }, 
+    officechange(data) {
+      if (data != "") {
+        this.userlistload(data);
+      }
+    },
+    userlistload(data) {
+      this.workflowsend.form.receiveUserId = null;
+      officeuserlist(data).then(response => {
+        console.log("response.data.list:::", response.data.list);
+        if (response.data.list != undefined) {
+          this.workflowsend.userlist = response.data.list;
+        } else {
+          this.workflowsend.userlist = null;
+        }
+      })
+    },
 
-    /***流程操作部分 start ****** */ 
-    worknotofficeopetionhandel(btn){ 
-         this.worknotofficeopetion.visible=true;
-         if(btn.id=="back"){ 
-           this.workflowsend.form.comment = ""
-           this.worknotofficeopetion.title="退回工单"
-           this.worknotofficeopetion.placeholder="请输入内容"
-           this.worknotofficeopetion.label="退回详情"
-           this.worknotofficeopetion.confirm="确认" 
-         }
-         if(btn.id=="handeled"){
-            this.workflowsend.form.comment = ""
-           this.worknotofficeopetion.title="处理完成操作"
-           this.worknotofficeopetion.placeholder="请输入内容"
-           this.worknotofficeopetion.label="处理详情"
-           this.worknotofficeopetion.confirm="确认" 
-         }
-         if(btn.id=="pass"){
-            this.workflowsend.form.comment = ""
-              this.worknotofficeopetion.title="复核通过"
-              this.worknotofficeopetion.placeholder="请输入内容"
-              this.worknotofficeopetion.label="内容"
-              this.worknotofficeopetion.confirm="确认" 
-              this.workflowsend.form.isaudit="1";
-         }
-         if(btn.id=='unpass'){
-              this.worknotofficeopetion.title="复核不通过"
-              this.worknotofficeopetion.placeholder="请输入内容"
-              this.worknotofficeopetion.label="内容"
-              this.worknotofficeopetion.confirm="确认" 
-              this.workflowsend.form.isaudit="0";
-         } 
+    /***流程操作部分 start ****** */
+    worknotofficeopetionhandel(btn) {
+      this.worknotofficeopetion.visible = true;
+      if (btn.id == "back") {
+        this.workflowsend.form.comment = ""
+        this.worknotofficeopetion.title = "退回工单"
+        this.worknotofficeopetion.placeholder = "请输入内容"
+        this.worknotofficeopetion.label = "退回详情"
+        this.worknotofficeopetion.confirm = "确认"
+      }
+      if (btn.id == "handeled") {
+        this.workflowsend.form.comment = ""
+        this.worknotofficeopetion.title = "处理完成操作"
+        this.worknotofficeopetion.placeholder = "请输入内容"
+        this.worknotofficeopetion.label = "处理详情"
+        this.worknotofficeopetion.confirm = "确认"
+      }
+      if (btn.id == "pass") {
+        this.workflowsend.form.comment = ""
+        this.worknotofficeopetion.title = "复核通过"
+        this.worknotofficeopetion.placeholder = "请输入内容"
+        this.worknotofficeopetion.label = "内容"
+        this.worknotofficeopetion.confirm = "确认"
+        this.workflowsend.form.isaudit = "1";
+      }
+      if (btn.id == 'unpass') {
+        this.worknotofficeopetion.title = "复核不通过"
+        this.worknotofficeopetion.placeholder = "请输入内容"
+        this.worknotofficeopetion.label = "内容"
+        this.worknotofficeopetion.confirm = "确认"
+        this.workflowsend.form.isaudit = "0";
+      }
     },
-    doworknotofficeopetionhandel(){
-       const btn=this.worknotofficeopetion.btn 
-         if(btn.id=="back"){
-           this.doback();
-         }
-         if(btn.id=="handeled"){
-             this.doendhandel();
-         }
-         if(btn.id=="pass"){
-            this.doauditandel();
-         }
-         if(btn.id=='unpass'){
-           this.doauditandel();
-         }  
-        this.worknotofficeopetion.visible=false;  
-        this.worknotofficeopetion.isworknotofficeopetion=true;
+    doworknotofficeopetionhandel() {
+      const btn = this.worknotofficeopetion.btn
+      if (btn.id == "back") {
+        this.doback();
+      }
+      if (btn.id == "handeled") {
+        this.doendhandel();
+      }
+      if (btn.id == "pass") {
+        this.doauditandel();
+      }
+      if (btn.id == 'unpass') {
+        this.doauditandel();
+      }
+      this.worknotofficeopetion.visible = false;
+      this.worknotofficeopetion.isworknotofficeopetion = true;
     },
-    send(btn){
-      this.workflowsend.visible=true; 
-       this.workflowsend.form.officeid =""
-      this. workflowsend.form.comment=""
-       this.workflowsend.form.annex=""
-       this.fileList= []
+    send(btn) {
+      this.workflowsend.visible = true;
+      this.workflowsend.form.officeid = ""
+      this.workflowsend.form.comment = ""
+      this.workflowsend.form.annex = ""
+      this.fileList = []
       officelist().then(response => {
-        if(response.data.list!=undefined&&response.data.list.length>0){
-          this.workflowsend.officelist = response.data.list;  
+        if (response.data.list != undefined && response.data.list.length > 0) {
+          this.workflowsend.officelist = response.data.list;
           this.officechange(this.workflowsend.officelist[0].id);
         }
-      }) 
+      })
     },
 
-    dosend(btn){ 
-      this.workflowsend.visible=false; 
-      this.worknotofficeopetion.isworknotofficeopetion=true;
-      send(this.workflowsend.form).then(response => {      
-          const imgParams = "&bizType=" + this.uploaddata.bizType +"&bizId=" + this.workflowsend.form.actid;
-          if(this.$refs.upload.uploadFiles!=undefined&&this.$refs.upload.uploadFiles.length>0){
-            file(imgParams, this.$refs.upload.uploadFiles).then(res => { 
-              this.visibleOrder = false
-              this.showdetail();
-            })
-            .catch(errorRes => {
-              this.exposureVisible = false;
-            }); 
-            this.$message({
-                type: "success",
-                message: "派单成功!"
-            }) 
-            this.showdetail(); 
-            this.visibleOrder = false
-          }else{
+    dosend(btn) {
+      this.workflowsend.visible = false;
+      this.worknotofficeopetion.isworknotofficeopetion = true;
+      send(this.workflowsend.form).then(response => {
+        const imgParams = "&bizType=" + this.uploaddata.bizType + "&bizId=" + this.workflowsend.form.actid;
+        if (this.$refs.upload.uploadFiles != undefined && this.$refs.upload.uploadFiles.length > 0) {
+          file(imgParams, this.$refs.upload.uploadFiles).then(res => {
             this.visibleOrder = false
             this.showdetail();
-             this.$message({
-              type: "success",
-              message: "派单成功!"
-            }) 
-          } 
-        })  
-    }, 
+          })
+            .catch(errorRes => {
+              this.exposureVisible = false;
+            });
+          this.$message({
+            type: "success",
+            message: "派单成功!"
+          })
+          this.showdetail();
+          this.visibleOrder = false
+        } else {
+          this.visibleOrder = false
+          this.showdetail();
+          this.$message({
+            type: "success",
+            message: "派单成功!"
+          })
+        }
+      })
+    },
     doback() {
       back(this.workflowsend.form).then(response => {
         this.$message({
@@ -896,36 +948,36 @@ export default {
         this.showdetail();
       });
     },
-    dobeginhandel(btn){ 
-      beginhandel({actid:this.workflowsend.form.actid}).then(response => { 
-       this.$message({
+    dobeginhandel(btn) {
+      beginhandel({ actid: this.workflowsend.form.actid }).then(response => {
+        this.$message({
           type: "success",
           message: "状态更新成功!"
         })
-       this.showdetail();
-      }) 
+        this.showdetail();
+      })
     },
-    endhandel(){
-      this.workhandelend.visible=true;
-    }, 
-    doendhandel(btn){
-      endhandel(this.workflowsend.form).then(response => { 
-       this.$message({
+    endhandel() {
+      this.workhandelend.visible = true;
+    },
+    doendhandel(btn) {
+      endhandel(this.workflowsend.form).then(response => {
+        this.$message({
           type: "success",
           message: "处理完成!"
         })
-       this.showdetail();
-      }) 
+        this.showdetail();
+      })
     },
-    doauditandel(){
+    doauditandel() {
       console.log("审核操作完成:::");
-        audit(this.workflowsend.form).then(response => { 
+      audit(this.workflowsend.form).then(response => {
         this.$message({
           type: "success",
           message: "审核操作完成!"
         })
         this.showdetail();
-      }) 
+      })
     },
     /***流程操作部分 end ****** */
     del(row) {
@@ -941,10 +993,10 @@ export default {
             type: "success",
             message: "删除成功!"
           });
-      
-      }).catch(error => {
-        this.listLoading = false
-      })
+
+        }).catch(error => {
+          this.listLoading = false
+        })
     }
   }
 }
@@ -991,7 +1043,7 @@ export default {
 }
 
 .app-container > .el-container {
-  min-height: calc(100vh - 126px)
+  min-height: calc(100vh - 126px);
 }
 .app-container {
   /deep/ .el-dialog__body {
@@ -1005,8 +1057,8 @@ export default {
   }
   /deep/ .el-form-item--mini.el-form-item {
     margin-bottom: 0px;
-  }  
-    /*滚动条样式*/
+  }
+  /*滚动条样式*/
   .container-scroll::-webkit-scrollbar {
     /*滚动条整体样式*/
     width: 4px;

@@ -107,7 +107,7 @@ export default {
   left: 0;
   right: 0;
   top: 0;
-  z-index: 1000;
+  z-index: 2000;
   background-image: url('../../../../static/img/tou_di.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;

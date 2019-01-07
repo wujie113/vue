@@ -103,7 +103,7 @@
   export default {
     name: "RmMap",
     props: {
-      id: {
+      id: { 
         required: false,
         default: 'map-' + Math.floor(Math.random() * 1000 + 1)
       },
@@ -580,5 +580,8 @@
 
   .tooltip-measure {
     color: #e6a23c;
+  }
+  /deep/ .cell{
+    white-space:normal !important
   }
 </style>
