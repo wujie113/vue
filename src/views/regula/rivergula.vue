@@ -171,7 +171,6 @@
           <el-upload
             :action="fileup.uploadaction"
             :show-file-list="false"
-            :limit="1"
             accept=".pdf"
             class="upload-demo"
             :before-upload="beforeUpload"

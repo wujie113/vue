@@ -472,7 +472,7 @@ export default {
       }else{
 		this.searchshow = true
       }
-      getscorelist({ year: year, month: month }).then(response => {
+      getscorelist({ year: year, month: month,office:this.value2}).then(response => {
         this.scoreloading = false
         this.scorelist = response.data.list
       })
@@ -668,6 +668,7 @@ export default {
     editoffice(row){
       this.getarealist1()
       this.idvalue=[]
+      //this.value3 = row.officeId
       if(row.sum != null && row.sum != ""){
         this.condition.office = row.officeId
         this.scoreVisible = true
@@ -696,7 +697,6 @@ export default {
         this.assscore()
         if(this.searchshow  == false){
          this.searchshow = true
-         
        }else{
           this.searchshow = true
        }

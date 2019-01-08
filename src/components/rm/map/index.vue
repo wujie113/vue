@@ -320,7 +320,7 @@
         // this.map.getView().centerOn(coord, size, [570, 500])
       },
       showProperties(id, type) {
-        //console.log('显示对象属性：', id, type)
+        console.log('显示对象属性：', id, type)
         this.propanel.show = false
         console.log("id::::",id)
         request({

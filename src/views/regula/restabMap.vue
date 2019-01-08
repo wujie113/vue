@@ -3,16 +3,9 @@
     <el-container>
    <rm-map v-model="map" />
       <!-- 最大化按钮 -->
-      <div
-        class="el-mindiv"
-        v-show="!dialogVisible"
-        @click="dialogVisible = !dialogVisible"
-      >
+      <div  class="el-mindiv" v-show="!dialogVisible" @click="dialogVisible = !dialogVisible" >
         <div class="layui-layer-title">资源管理</div>
-        <span class="layui-layer-setwin">
-          <!-- <svg-icon icon-class="huanyuan" /> -->
-          <i class="el-icon-ali-diejia"></i>
-        </span>
+        <span class="layui-layer-setwin"> <i class="el-icon-ali-diejia"></i> </span>
       </div>
     </el-container>
 
@@ -24,10 +17,10 @@
         v-model="dialogVisible"
         :dialog="false"
         class="layer-1"
-        width="5000"
         :animation="2"
         :maskLayer="false"
         :shade="false"
+         width="5000"
         height="680"
       >
         <span
@@ -123,6 +116,16 @@
               <sewage v-if="activeName==10" @clickRow="clickRow" />
             </keep-alive>
           </el-tab-pane>
+
+          <el-tab-pane
+            label="公示牌"
+            name="11"
+          >
+            <keep-alive>
+              <resBillboard v-if="activeName==11" @clickRow="clickRow" />
+            </keep-alive>
+          </el-tab-pane>
+
         </el-tabs>
         <!-- </el-dialog> -->
       </Layer>
@@ -163,9 +166,10 @@ import intake from '../res/intake.vue' //取水口
 import riverWall from '../res/riverWall.vue' //堤防
 import pump from '../res/pump.vue' //泵站
 import sewage from '../res/sewage.vue' //排污口
+import resBillboard from'../res/resBillboard.vue' //
 export default {
   name: "Restabmap",
-  components: { Pagination, RmMap, sluice, cradle, reservoir, wells, agricultural, waterSubstation, intake, riverWall, pump, sewage },
+  components: { Pagination, RmMap, sluice, cradle, reservoir, wells, agricultural, waterSubstation, intake, riverWall, pump, sewage, resBillboard},
   data() {
     return {
       activeName: "1",

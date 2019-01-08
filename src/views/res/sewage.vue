@@ -8,6 +8,7 @@
 
     </div>
     <el-table   @current-change="handleCurrentChange" v-loading="listLoading" :data="list" border row-key="id" stripe style="width: 100%">
+      <el-table-column type="index" label="序号" />      
       <el-table-column prop="name" label="排污口名称" :show-overflow-tooltip="true" min-width="250px" />
       <el-table-column prop="code" label="排污口编码" :show-overflow-tooltip="true" min-width="150px" />
       <el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" min-width="200px" />
@@ -68,7 +69,7 @@
     <el-dialog :visible.sync="v.formhistory" title="历史上传资源文件列表"  width="60%" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false">
       <el-table v-loading="listLoadingHistory" :data="listDate" row-key="id" stripe   border>
         <el-table-column type="index" label="序号" width="50" />
-        <el-table-column prop="CreateDate" label="上传时间" width="150" />
+        <el-table-column prop="createDate" label="上传时间" width="150" />
         <el-table-column prop="name" label="文件名" width="250" />
         <el-table-column prop="id" label="操作" min-width="120">
           <template slot-scope="scope">
@@ -89,7 +90,7 @@
           名称<br />县名<br />经度（如：113.8569）<br />纬度（如：27.6253）<br />
         </el-form-item>
       </el-form>
-      <el-upload :action="uploadaction" :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
+      <el-upload :action="uploadaction" :show-file-list="false"   accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
         <el-button type="primary" size="mini">去上传</el-button>
       </el-upload>
     </el-dialog>
@@ -213,7 +214,7 @@ export default {
       this.v.formhistory = true;
       this.listLoadingHistory = true;
       getfiles(this.uploaddata).then(response => {
-        this.listDate = response.list;
+        this.listDate = response.uploadexcelarr;
         this.listLoadingHistory = false;
       });
     },

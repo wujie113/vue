@@ -8,6 +8,7 @@
 
 		</div>
 		<el-table  @current-change="handleCurrentChange" v-loading="listLoading" :data="list" border fit highlight-current-row row-key="id" stripe style="width: 100%">
+			<el-table-column type="index" label="序号" />
 			<el-table-column prop="name" label="名称" :show-overflow-tooltip="true" min-width="110" />
 			<el-table-column prop="code" label="编码" :show-overflow-tooltip="true" min-width="160" />
 			<el-table-column prop="lng" label="经度" :show-overflow-tooltip="true" min-width="160" />
@@ -101,7 +102,7 @@
 					名称<br />县名<br />经度（如：113.8569）<br />纬度（如：27.6253）<br />
 				</el-form-item>
 			</el-form>
-			<el-upload :action="uploadaction" :show-file-list="false" :limit="1" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
+			<el-upload :action="uploadaction" :show-file-list="false"   accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
 				<el-button type="primary">去上传</el-button>
 			</el-upload>
 		</el-dialog>

@@ -2,12 +2,12 @@
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:44:29 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-27 15:44:46
+ * @Last Modified time: 2019-01-08 15:56:35
  */
 // 通知公告
 <template>
   <div class="app-container">
-    <el-container v-loading="v.loading">
+    <el-container>
       <el-container>
         <el-header height="125px">
           <div style class="topTitle">通知公告列表</div>
@@ -57,7 +57,7 @@
             </div>
           </div>
         </el-header>
-        <el-main>
+        <el-main v-loading="v.loading">
           <div class="filter-container" style="padding-top: 0;">
             <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="create">新增公告</el-button>
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>
@@ -75,12 +75,16 @@
               <el-table-column type="index" width="50" align="center" label="序号"></el-table-column>
               <el-table-column prop="title" label="标题"/>
               <el-table-column prop="createByName" label="发起人"/>
-
               <el-table-column prop="sendTime" label="发起时间"/>
-
               <el-table-column prop="id" label="操作" width="100">
                 <template slot-scope="scope">
-                  <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/>
+                  <!-- <el-button @click="edit(scope.row)" type="text" size="mini" icon="el-icon-edit"/> -->
+                  <el-button @click="edit(scope.row)" type="text" title="编辑">
+                    <svg-icon icon-class="editColor"/>
+                  </el-button>
+                  <el-button type="text" @click="detailBtn(scope.row)" title="详情">
+                    <svg-icon icon-class="detailColor"/>
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -127,6 +131,24 @@
         <el-button @click="save()" type="primary">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 通知公告弹窗 -->
+    <el-dialog title="通知公告详情" :visible.sync="dialogVisible" width="60%">
+      <div class="NotificationDetailContent clearfix">
+        <div class="subContent clearfix">
+          <h1 class="ContentHeader">{{ msgDeatail.title }}</h1>
+          <p class="DetailMore">{{ msgDeatail.content }}</p>
+          <div class="clearfix">
+            <viewer :images="images1" class="clearfix pre-image">
+              <img v-for="src in images1" :src="src.url" :key="src.name">
+            </viewer>
+          </div>
+          <div class="subUser">
+            <span class="DetailTime">{{ msgDeatail.createDate }}</span>
+            <span class="DetailUser">{{ msgDeatail.updateByName }}</span>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template> 
 <script>
@@ -157,20 +179,25 @@ export default {
         form: false,
         loading: false
       },
+      dialogVisible: false,
       list: null,
       fileList: [],
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
       value1: "",
       value2: "",
       popoverVisible: false,
+      originTime: {
+        beginDate: '',
+        endDate: '',
+      },
       query: {
         total: 0,
         pageNo: 1,
         pageSize: 10,
         search: undefined,
         type: undefined,
-        starttime: null,
-        endtime: null
+        startTime: "",
+        endTime: ""
       },
       uploaddata: {
         bizId: null,
@@ -191,37 +218,66 @@ export default {
         remark: null
       },
       multipleSelection: [],
+      msgDeatail: {
+        title: "",
+        content: "",
+        createDate: "",
+        updateByName: ""
+      },
+      images1: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/660x660/format/webp/quality/100' }]
     };
   },
   created() {
+    this.v.loading = true
     this.getList()
   },
   methods: {
+    detailBtn(row) {
+      // Todo 图片还没接入
+      this.msgDeatail.title = ""
+      this.msgDeatail.content = ""
+      this.msgDeatail.createDate = ""
+      this.msgDeatail.updateByName = ""
+      this.dialogVisible = true
+      this.$nextTick(() => {
+        this.msgDeatail.title = row.title
+        this.msgDeatail.content = row.content
+        this.msgDeatail.createDate = row.createDate
+        this.msgDeatail.updateByName = row.updateByName
+      })
+    },
     getList() {
-      if (this.query.starttime > this.query.endtime) {
+      getList(this.query).then(response => {
+        this.v.loading = false
+        this.list = response.data.list
+        this.query.total = response.data.count
+      }).catch((errorRes) => {
+        this.v.loading = false
+      })      
+    },
+    start(start) {
+      this.originTime.beginDate = start
+      let startDate = new Date(start)
+      this.query.startTime = startDate.getFullYear() + '-' + startDate.getMonth() + 1 + '-' + startDate.getDate()
+    },
+    end(end) {
+      this.originTime.endDate = end
+      let endDate = new Date(end)
+      this.query.endTime = endDate.getFullYear() + '-' + endDate.getMonth() + 1 + '-' + endDate.getDate()
+    },
+    handleFilter() {
+      if (this.originTime.beginDate > this.originTime.endDate) {
         this.popoverVisible = true
         setTimeout(() => {
           this.popoverVisible = false
-        }, 1500)
+        }, 1000)
         return
       } else {
-        this.v.loading = true;
-        getList(this.query).then(response => {
-          this.v.loading = false;
-          this.list = response.data.list;
-          this.query.total = response.data.count;
-        });
+        //进行查询
+        this.query.pageNo = 1
+        this.v.loading = true
+        this.getList()
       }
-    },
-    start(start) {
-      this.query.starttime = start
-    },
-    end(end) {
-      this.query.endtime = end
-    },
-    handleFilter() {
-      this.query.pageNo = 1;
-      this.getList();
     },
     create() {
       this.fileList = []
@@ -358,6 +414,45 @@ export default {
   }
   > .el-container {
     min-height: calc(100vh - 126px);
+  }
+  .el-dialog__body .pre-image img{
+    width: 19%;
+    height: 100px;
+    max-height: 15em;
+    margin: 0.5em 0.2em 0 0;
+    float: left;
+  }
+  .subContent {
+    h1,
+    p {
+      margin: 0;
+      padding: 0;
+    }
+    .ContentHeader {
+      text-align: center;
+      font-weight: 600;
+      font-size: 18px;
+      // font-family: "微软雅黑";
+    }
+    .DetailMore {
+      text-indent: 2em;
+      padding-top: 15px;
+      letter-spacing: 0.08em;
+      font-size: 15px;
+      color: rgb(41, 46, 51);
+      text-align: justify;
+      line-height: 26px;
+      // font-family: "宋体";
+      min-height: 200px;
+    }
+    .subUser {
+      margin-top: 25px;
+      float: right;
+      span {
+        display: block;
+        padding-top: 5px;
+      }
+    }
   }
 }
 </style>

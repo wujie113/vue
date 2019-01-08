@@ -54,7 +54,7 @@
                   {{ email }}
                   <!--<el-input v-model="form.email" />-->
                 </el-form-item>
-              </el-form>
+              </el-form>              
             </div>
           </div>
         </div>
@@ -75,6 +75,11 @@
     components: { PanThumb },
     data() {
       return {
+        // uploadaction: process.env.BASE_API + "/api/res/sluice/import?token=" + getToken(),
+        // uploaddata: {
+        //   bizId: 10001,
+        //   bizType: "sz"
+        // },
         imageUrl:"",
         addForm: {
           headImg: ''
@@ -128,6 +133,7 @@
       this.params.token = getToken()
     },
     methods: {
+      
       uploadHeadImg() {
         // this.$el.querySelector('.hiddenInput').click()
       },

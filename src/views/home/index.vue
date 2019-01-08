@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-28 10:33:25
+ * @Last Modified time: 2019-01-08 11:56:08
  */
 <template>
   <div class="app-container homeIndex">
@@ -253,7 +253,7 @@
           <h1 class="ContentHeader">{{ msgDeatail.title }}</h1>
           <p class="DetailMore">{{ msgDeatail.content }}</p>
           <div class="clearfix">
-            <viewer :images="images1">
+            <viewer :images="images1" class="clearfix">
               <img v-for="src in images1" :src="src.url" :key="src.name">
             </viewer>
           </div>
@@ -441,8 +441,7 @@ export default {
       otherWrap: {},
       msgDeatail: {},
       tableData3: [],
-      images1: []
-
+      images1: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/660x660/format/webp/quality/100'}]
     }
   },
   components: {

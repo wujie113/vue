@@ -375,21 +375,27 @@ export default {
     },
     // 表单编辑
     handleEdit(index, row) {
-      // if (this.$refs.form != undefined) {
-      //   this.$refs.form.resetFields()
-      // }
-      // Object.assign(this.form, row)
       // 查询岗位----对应的是弹窗里面的部门
       getPostState({ id: this.listQuery['office.id'] }).then(res => {
         this.postArray = res.data.list
       }).catch(errorRes => {
 
       })
-      this.form = row
+      // TODO 这里有bug,未解决(点击编辑弹窗,然后点击新增弹窗,新增弹窗会出现内容)      
+      if (this.$refs.form != undefined) {
+        console.log('表单编辑---重置表单');        
+        this.$refs.form.resetFields()
+      }
+      this.$nextTick(() => {
+        this.form = row
+      })      
+      // Object.assign(this.form, row)
+
       this.dialogVisible1 = true
-      console.log('表单编辑', row)
-      // this.form2 = row
+
+
     },
+
     // 修改密码
     ModifyPassword(index, row) {
       console.log(index, row)
@@ -443,26 +449,24 @@ export default {
       })
     },
     searchBtn() {
-      console.log("这是查询啊")
       this.listQuery.pageNo = 1
       this.getList()
     },
     addBtn() {
+      this.dialogVisible = true
       getPostState({ id: this.listQuery['office.id'] }).then(res => {
         this.postArray = res.data.list
       }).catch(errorRes => {
 
       })
-      console.log('添加的---之前', this.unit)
-
-      this.dialogVisible = true
-      if (this.$refs.form != undefined) {              
-        this.$refs.form.resetFields()
-        // Object.assign(this.form, this.$options.data().form)
-        // Object.assign(this.form, this.$options.data().form)
-      }
+      
+      this.$nextTick(() => {
+        if (this.$refs.form != undefined) {     
+          this.$refs.form.resetFields()
+          // Object.assign(this.form, this.$options.data().form)
+        }
+      })
       this.form.dept = this.deptObj
-      console.log('添加的---', this.unit)
     },
     deleteBtn() {
       if (this.multipleSelection.length > 0) {

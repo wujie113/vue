@@ -125,7 +125,7 @@
           </el-header>
           <el-main style="padding-top:0;position: relative;">
             <div style class="topTitle">曝光详情</div>
-            <div class="filter-container container-scroll" style="height: 276px;overflow-y: auto;">
+            <div class="filter-container container-scro ll" style="height: 276px;overflow-y: auto;">
               <el-form ref="exposureForm" :model="exposureForm" label-width="50px">
                 <el-form-item label="标题">
                   <el-input v-model="exposureForm.title" placeholder="请输入曝光标题"></el-input>

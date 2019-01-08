@@ -65,7 +65,7 @@ export function getfiles(data) {
 //删除图片文件
 export function delfiles(data) {
   return request({
-    url: "/c/common/fileRecord/del",
+    url: "/c/common/fileRecord/deleteFile",
     method: "post",
     data
   });

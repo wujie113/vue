@@ -10,7 +10,8 @@
     <!-- <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/> -->
     <!-- 快捷导航(标签栏导航) -->
     <!-- <breadcrumb class="breadcrumb-container"/> -->
-
+    <iframe width="420" scrolling="no" height="50" frameborder="0" allowtransparency="true" src="//i.tianqi.com/index.php?c=code&id=12&color=%23FFFFFF& icon=1&num=1&site=12"></iframe>  
+    <!-- <iframe name="weather_inc" src="http://i.tianqi.com/index.php?c=code&id=48&color=%23FFFFFF" width="440" height="50" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe> -->
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
@@ -121,6 +122,7 @@ export default {
     }
   }
   .systemName {
+    margin-right: 2em;
     font-size: 20px;
     color: #fff;
     font-weight: bolder;
