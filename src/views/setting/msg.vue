@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:44:29 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2019-01-08 15:56:35
+ * @Last Modified time: 2019-01-10 18:03:52
  */
 // 通知公告
 <template>
@@ -10,8 +10,8 @@
     <el-container>
       <el-container>
         <el-header height="125px">
-          <div style class="topTitle">通知公告列表</div>
-          <div class="filter-container" style>
+          <div class="topTitle">通知公告列表</div>
+          <div class="filter-container">
             <div class="block">
               <el-input
                 placeholder="输入内容搜索..."
@@ -135,17 +135,20 @@
     <el-dialog title="通知公告详情" :visible.sync="dialogVisible" width="60%">
       <div class="NotificationDetailContent clearfix">
         <div class="subContent clearfix">
-          <h1 class="ContentHeader">{{ msgDeatail.title }}</h1>
-          <p class="DetailMore">{{ msgDeatail.content }}</p>
+          <h2 class="ContentHeader">{{ msgDeatail.title }}</h2>
+          <p style="color: #636363;font-size: 12px;text-align: center;">{{msgDeatail.createDate}} {{msgDeatail.createByName}}</p>
+          <!-- <p class="DetailMore">{{ msgDeatail.content }}</p> -->
+          <div class="content ql-editor" v-html="msgDeatail.content"></div>
+          <div></div>
           <div class="clearfix">
             <viewer :images="images1" class="clearfix pre-image">
               <img v-for="src in images1" :src="src.url" :key="src.name">
             </viewer>
           </div>
-          <div class="subUser">
+          <!-- <div class="subUser">
             <span class="DetailTime">{{ msgDeatail.createDate }}</span>
             <span class="DetailUser">{{ msgDeatail.updateByName }}</span>
-          </div>
+          </div> -->
         </div>
       </div>
     </el-dialog>
@@ -224,7 +227,7 @@ export default {
         createDate: "",
         updateByName: ""
       },
-      images1: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/660x660/format/webp/quality/100' }]
+      images1: []
     };
   },
   created() {
@@ -240,6 +243,15 @@ export default {
       this.msgDeatail.updateByName = ""
       this.dialogVisible = true
       this.$nextTick(() => {
+        this.images1 = []
+        const p = {
+          "bizId": row.id
+        }
+        getfiles(p).then((res) => {
+          this.images1 = res.data
+        }).catch((errorRes) => {
+          
+        })
         this.msgDeatail.title = row.title
         this.msgDeatail.content = row.content
         this.msgDeatail.createDate = row.createDate
@@ -309,7 +321,7 @@ export default {
       console.log(file, fileList);
     },
     removefile(file) {
-      delfiles({ ids: file.id }).then(response => {
+      delfiles({ id: file.id }).then(response => {
         console.log("图片删除成功!!!!!");
       });
     },
@@ -368,10 +380,7 @@ export default {
               message: res.msg
             })
           }).catch(errorRes => {
-            this.$message({
-              type: "warn",
-              message: errorRes
-            })
+            this.getList()
           })
         }).catch(() => {
           // 用户点击取消按钮
@@ -432,6 +441,8 @@ export default {
       text-align: center;
       font-weight: 600;
       font-size: 18px;
+      margin-bottom:0.6em;
+      margin-top:0;
       // font-family: "微软雅黑";
     }
     .DetailMore {

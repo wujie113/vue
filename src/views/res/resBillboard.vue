@@ -107,29 +107,27 @@
                     style="text-align: left;"
                     :multiple="true"
                     ref="upload"
+                    accept=".png,.jpg,.gif"
                     :action="uploadaction2"
                     :file-list="fileList"
                     :auto-upload="true"
                     :data="uploaddata2"
                     :on-remove="handleRemove"
                     :on-preview="handlePreview"
-                  >
+                    :before-upload="beforeAvatarUpload">
                     <i class="el-icon-ali-icon-test"></i>附件上传
                   </el-upload>
                       <div style="text-align: right; margin: 10px">
         <el-button size="mini" type="primary" @click="v.formenclosure=false" >关闭</el-button>
       </div>
-    </el-dialog  >
-    
-    <div>
-         <el-dialog  :visible.sync="v.showphotodialog" title="查看图片文件" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" >
+      <el-dialog  :visible.sync="v.showphotodialog" title="查看图片文件" :append-to-body="false" :close-on-click-modal="false" :modal="false" :modal-append-to-body="false" >
           <img :src="imgUrl" alt=""  width="100%">
-          <div style="text-align: right; margin: 10px">
-        <el-button size="mini" type="primary" @click="v.showphotodialog=false" >关闭</el-button>
-      </div>
-        </el-dialog>
-    </div>
-   
+            <div style="text-align: right; margin: 10px">
+          <el-button size="mini" type="primary" @click="v.showphotodialog=false" >关闭</el-button>
+          </div>
+      </el-dialog>
+
+    </el-dialog  >
    </div>
 </template> 
 <script> 
@@ -345,6 +343,17 @@ export default {
         	this.imgUrl = file.url
         })
     },
+    beforeAvatarUpload(file) {
+       // const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        // if (!isJPG) {
+        //   this.$message.error('上传图片只能是 JPG 格式!');
+        // } 
+        if (!isLt2M) {
+          this.$message.error('上传图片大小不能超过 2MB!');
+        }
+        return  isLt2M;
+      }
    
   }
 }

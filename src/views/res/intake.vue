@@ -181,8 +181,7 @@ export default {
         nationAudit: null
       },
       list: null,
-      uploadaction:
-        process.env.BASE_API + "/api/res/intake/import?token=" + getToken(),
+      uploadaction:   process.env.BASE_API + "/api/res/intake/import?token=" + getToken(),
       total: 0,
       listQuery: {
         pageNo: 1,

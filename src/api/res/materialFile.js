@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 	export function getList(params) {
 	  return request({
-	    url: '/api/res/resBillboard/list',
+	    url: '/api/res/materialFile/list',
 	    method: 'get',
 	    params
 	  })
@@ -10,14 +10,14 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/res/resBillboard/recoveryExecl',
+	    url: '/api/res/materialFile/list',
 	    method: 'get',
 	    params:{id:id}
 	  })
 	}
 	export function save(data) {
 	  return request({
-	    url: '/api/res/resBillboard/save',
+	    url: '/api/res/materialFile/save',
 	    method: 'post',
 	    data
 	  })
@@ -25,24 +25,25 @@ import request from '@/utils/request'
 	
 	export function del(ids) {
 	  return request({
-	    url: '/api/res/resBillboard/del',
+	    url: '/api/res/materialFile/del',
 	    method: 'post',
 	    params:{ids:ids}
 	  })
 	}
-
-	export function delBtn(id) {
+	export function issue(id) {
+		console.log("id:::",id);
 	  return request({
-	    url: '/api/res/resBillboard/deleteExecl',
+	    url: '/api/res/materialFile/issue',
 	    method: 'post',
 	    params:{id:id}
 	  })
 	}
-
-	export function getphotolist(data) {
-		return request({
-			url: "/c/common/fileRecord/getFiles",
-			method: "get",
-			params: data
-		});
+	export function notissue(id) {
+		console.log("id:::",id);
+	  return request({
+	    url: '/api/res/materialFile/notissue',
+	    method: 'post',
+	    params:{id:id}
+	  })
 	}
+	

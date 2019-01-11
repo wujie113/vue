@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2019-01-08 11:56:08
+ * @Last Modified time: 2019-01-11 10:31:34
  */
 <template>
   <div class="app-container homeIndex">
@@ -216,20 +216,23 @@
             <div class="topTitle">
               <div class="left">
                 <img src="../../../static/img/news.svg" alt="通知公告">
-                <span>通知公告</span>
+                <span :class="{msgActive: msgActiveIndex === 0}" @click="msgBtn(0)">通知公告</span>
+                <span :class="{msgActive: msgActiveIndex === 1}" @click="msgBtn(1)">新闻动态</span>
+                <span :class="{msgActive: msgActiveIndex === 2}" @click="msgBtn(2)">任务提醒</span>
+                <span :class="{msgActive: msgActiveIndex === 3}" @click="msgBtn(3)">工作简报</span>
               </div>
               <div class="right" style="cursor: pointer;">
                 <!--更多,跳转到通知公告-->
-                <router-link to="/setting/msg">更多</router-link>
-                <i class="el-icon-d-arrow-right"></i>
+                <router-link :to="linkUrl">更多<i class="el-icon-d-arrow-right"></i></router-link>                
               </div>
             </div>
             <div class="NewsBox">
-              <ul>
+              <!-- 通知广告 -->
+              <ul v-show="msgActiveIndex === 0">
                 <li
                   class="home-page-top-notice-list"
                   v-for="(list, index) in msgMap"
-                  @click="newsDetailBtn(index)"
+                  @click="newsDetailBtn(index, msgActiveIndex, list.id)"
                 >
                   <span class="home-page-top-notice-list-top">
                     <span>{{ list.title }}</span>
@@ -241,26 +244,62 @@
                   </span> 
                 </li>
               </ul>
+              <!-- 新闻动态 -->
+              <ul v-show="msgActiveIndex === 1">
+                <li
+                  class="home-page-top-notice-list"
+                  v-for="(list, index) in newsList"
+                  @click="newsDetailBtn(index, msgActiveIndex)"
+                >
+                  <span class="home-page-top-notice-list-top">
+                    <span>{{ list.title }}</span>
+                    <!-- <i class="circle"></i> -->
+                  </span>
+                  <span class="home-page-top-notice-list-bottom">
+                    <i class="el-icon-time"></i>
+                    {{ list.createDate }}
+                  </span> 
+                </li>
+              </ul>               
+              <!-- 工作简报 -->
+              <ul v-show="msgActiveIndex === 3">
+                <li
+                  class="home-page-top-notice-list"
+                  v-for="(list, index) in workList"
+                  @click="newsDetailBtn(index, msgActiveIndex)"
+                >
+                  <span class="home-page-top-notice-list-top">
+                    <span>{{ list.title }}</span>
+                    <!-- <i class="circle"></i> -->
+                  </span>
+                  <span class="home-page-top-notice-list-bottom">
+                    <i class="el-icon-time"></i>
+                    {{ list.createDate }}
+                  </span> 
+                </li>
+              </ul>              
             </div>
           </div>
         </el-col>
       </el-row>
     </div>
     <!-- 通知公告弹窗 -->
-    <el-dialog title="通知公告详情" :visible.sync="dialogVisible" width="60%">
+    <el-dialog title="详情" :visible.sync="dialogVisible" width="60%">
       <div class="NotificationDetailContent clearfix">
         <div class="subContent clearfix">
-          <h1 class="ContentHeader">{{ msgDeatail.title }}</h1>
-          <p class="DetailMore">{{ msgDeatail.content }}</p>
-          <div class="clearfix">
+          <h2 class="ContentHeader">{{ msgDeatail.title }}</h2>
+          <p style="color: #636363;font-size: 12px;text-align: center;">{{msgDeatail.createDate}} {{msgDeatail.createByName}}</p>
+          <!-- <p class="DetailMore">{{ msgDeatail.content }}</p> -->
+          <div class="content ql-editor" v-html="msgDeatail.content"></div>
+          <div class="clearfix" v-show="images1.length > 0">
             <viewer :images="images1" class="clearfix">
               <img v-for="src in images1" :src="src.url" :key="src.name">
             </viewer>
           </div>
-          <div class="subUser">
+          <!-- <div class="subUser">
             <span class="DetailTime">{{ msgDeatail.createDate }}</span>
-            <span class="DetailUser">{{ msgDeatail.updateByName }}</span>
-          </div>
+            <span class="DetailUser">{{ msgDeatail.createByName }}</span>
+          </div> -->
         </div>
       </div>
     </el-dialog>
@@ -271,7 +310,7 @@
 import { mapGetters } from 'vuex'
 import echarts from 'echarts'
 import resize from '@/components/Charts/mixins/resize'
-import { getList } from '@/api/home/home'
+import { getList, getNewsList, getMsgList, getWorkBriefingList, getFiles } from '@/api/home/home'
 import EchartsPie from './components/echartsPie'
 import leftEchartsBar from './components/leftEchartsBar'
 import rightEchartsBar from './components/rightEchartsBar'
@@ -426,12 +465,16 @@ export default {
       },
       barColor: ["#ff7370", "#48dff0", "#52b4ff", "#ff66a3", "#5ce5aa", "#c484f5", "#ffb870", "#fae164"],
       spanActiveIndex: 0,
+      msgActiveIndex: 0,
+      linkUrl: "/setting/msg",
       pieChartData: [],
       leftData: {},
       rightData: {},
       activeName: '',
       dialogVisible: false,
       msgMap: [],
+      newsList: [],
+      workList: [],
       riverMap: [],
       riverWrap: {},
       dutyWrap: {},
@@ -441,7 +484,7 @@ export default {
       otherWrap: {},
       msgDeatail: {},
       tableData3: [],
-      images1: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/660x660/format/webp/quality/100'}]
+      images1: []
     }
   },
   components: {
@@ -586,6 +629,62 @@ export default {
         this.tableData3 = this.riverPersonMap.riverPersonWrap.data.list
       }
     },
+    msgBtn(i){
+      this.msgActiveIndex = i
+      // 通知公告
+      if(i === 0){
+        this.linkUrl = "/setting/msg"
+        
+      }else if(i === 1){
+        // 新闻动态
+        this.linkUrl = "/setting/sysNews"
+        const p = {
+          pageSize: 5,
+          pageNo: 1
+        }
+        getNewsList(p).then((res) => {
+          this.newsList = res.data.list
+        }).catch((errorRes) => {})
+      }else if(i === 2){
+        // 任务提醒
+        //Todo 路由路径没填
+        this.linkUrl = "/"
+      }else if(i === 3){
+        // 工作简报
+        this.linkUrl = "/assessmentmanagement/workBriefing"
+        const p = {
+          pageSize: 5,
+          pageNo: 1
+        }
+        getWorkBriefingList(p).then((res) => {
+          this.workList = res.data.list
+        }).catch((errorRes) => {})
+      }
+    },
+    // 点击通知列表,出现弹窗
+    newsDetailBtn(index, msgActiveIndex, bizId) {
+      this.dialogVisible = true
+      this.$nextTick(() => {
+        this.images1 = []
+        if(msgActiveIndex === 0) {
+          const p = {
+            "bizId": bizId
+          }
+          getFiles(p).then((res) => {
+            this.images1 = res.data
+          }).catch((errorRes) => {
+            
+          })
+          this.msgDeatail = this.msgMap[index]
+        }else if(msgActiveIndex === 1){
+          this.msgDeatail = this.newsList[index]
+        }else if(msgActiveIndex === 2){
+
+        }else if(msgActiveIndex === 3){
+          this.msgDeatail = this.workList[index]
+        }
+      })            
+    },    
     init() {
       const self = this
       setTimeout(() => {
@@ -733,11 +832,7 @@ export default {
         }]
       })
     },
-    // 点击通知列表,出现弹窗
-    newsDetailBtn(index) {
-      this.dialogVisible = true
-      this.msgDeatail = this.msgMap[index]
-    },
+
     handleClick(tab, event) {
       // console.log(tab, event)
       // if (tab.paneName == 'second') {
@@ -769,6 +864,8 @@ export default {
       text-align: center;
       font-weight: 600;
       font-size: 18px;
+      margin-bottom:0.6em;
+      margin-top:0;
       // font-family: "微软雅黑";
     }
     .DetailMore {
@@ -798,6 +895,11 @@ export default {
     margin: 0.5em 0.2em 0 0;
     float: left;
   }
+  .ql-editor {
+    /deep/ img {
+      width: 100%;
+    }
+  }  
 }
 .topWrap {
   padding-bottom: 19px;
@@ -838,6 +940,14 @@ export default {
         width: 3vh;
         margin-right: 8px;
       }
+      span {
+        padding: 0 0.3em;
+        color: #333;
+        cursor: pointer;
+      }
+      span.msgActive {
+        color: #ffffff;
+      }
     }
     .right {
       font-size: 14px;
@@ -856,67 +966,6 @@ export default {
       }
     }
   }
-  // /deep/ .tableBox {
-  //   padding: 10px 15px;
-  //   /deep/
-  //     .el-table__body
-  //     .el-table__row:first-child
-  //     .el-table_1_column_1
-  //     .cell
-  //     div {
-  //     background-image: url(../../../static/img/one.png);
-  //     background-position: center center;
-  //     background-repeat: no-repeat;
-  //     color: #fff;
-  //   }
-  //   /deep/
-  //     .el-table__body
-  //     .el-table__row:nth-of-type(2)
-  //     .el-table_1_column_1
-  //     .cell
-  //     div {
-  //     background-image: url(../../../static/img/two.png);
-  //     background-position: center center;
-  //     background-repeat: no-repeat;
-  //     color: #fff;
-  //   }
-  //   /deep/
-  //     .el-table__body
-  //     .el-table__row:nth-of-type(3)
-  //     .el-table_1_column_1
-  //     .cell
-  //     div {
-  //     background-image: url(../../../static/img/three.png);
-  //     background-position: center center;
-  //     background-repeat: no-repeat;
-  //     color: #fff;
-  //   }
-  //   /deep/ .el-table__body .el-table__row .el-table_1_column_1 .cell {
-  //     position: relative;
-  //     z-index: 3;
-  //   }
-  //   /deep/
-  //     .el-table__body
-  //     .el-table__row
-  //     .el-table_1_column_1
-  //     .cell
-  //     div::after {
-  //     content: "";
-  //     display: block;
-  //     position: absolute;
-  //     background: #eaf0f5;
-  //     border-radius: 50%;
-  //     height: 18px;
-  //     width: 18px;
-  //     left: 50%;
-  //     top: 50%;
-  //     transform: translate(-50%, -50%);
-  //     z-index: -1;
-  //   }
-  //   .el-tabs {
-  //     height: 100%;
-  //   }
-  // }
   .flexBox {
     padding: 5px;
     ul,
@@ -1014,6 +1063,7 @@ export default {
     ul {
       height: 100%;
       padding: 10px;
+      // overflow-y: scroll;
       .home-page-top-notice-list:hover {
         background: #fafafa;
         border-radius: 8px;

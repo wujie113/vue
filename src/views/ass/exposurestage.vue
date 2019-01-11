@@ -406,7 +406,7 @@ export default {
     },
     handleRemove(file, fileList) {
       console.log("----=====", file)
-      delfiles({ ids: file.id }).then((res) => {
+      delfiles({ id: file.id }).then((res) => {
 
       }).catch()
     },

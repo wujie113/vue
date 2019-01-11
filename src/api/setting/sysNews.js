@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 	export function getList(params) {
 	  return request({
-	    url: '/api/sys/addressbook/list',
+	    url: '/api/sys/sysNews/list',
 	    method: 'get',
 	    params
 	  })
@@ -10,14 +10,14 @@ import request from '@/utils/request'
 	
 	export function get(id) {
 	  return request({
-	    url: '/api/sys/addressbook/list',
+	    url: '/api/sys/sysNews/list',
 	    method: 'get',
-	    params: { id : id }
+	    params:{id:id}
 	  })
 	}
 	export function save(data) {
 	  return request({
-	    url: '/api/sys/addressbook/save',
+	    url: '/api/sys/sysNews/save',
 	    method: 'post',
 	    data
 	  })
@@ -25,16 +25,8 @@ import request from '@/utils/request'
 	
 	export function del(ids) {
 	  return request({
-	    url: '/api/sys/addressbook/del',
+	    url: '/api/sys/sysNews/del',
 	    method: 'post',
-	    params:{ ids:ids }
-		})
-	 }		
-	 export function synchronous(officeid) {
-	  return request({
-	    url: '/api/sys/addressbook/synchronous',
-	    method: 'post',
-	    officeid
-		})
-	 }
-	 
+	    params:{ids:ids}
+	  })
+	}

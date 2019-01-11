@@ -57,6 +57,12 @@
               icon="el-icon-plus"
               @click="create"
             >新增</el-button>
+            <el-button
+              class="filter-item"
+              type="primary"
+              icon="el-icon-refresh"
+              @click="synchronous"
+            >同步</el-button>
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>
           </div>
           <div>
@@ -121,7 +127,7 @@
 </template> 
 <script> 
 import Pagination from '@/components/Pagination'
-import { getList, get, save, del } from '@/api/setting/addressbook.js'
+import { getList, get, save, del ,synchronous} from '@/api/setting/addressbook.js'
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
@@ -175,11 +181,21 @@ export default {
       multipleSelection: [],
     }
   },
+
   created() {
     this.listLoading = true
     this.loadLeftTree()
   },
   methods: {
+    synchronous(){
+        this.listLoading = true
+        synchronous(this.query.unit).then((res) => {
+            this.getList();
+         }).catch((errorRes) => {
+          console.error("errror:::::::", errorRes)
+       })
+       
+    },
     loadLeftTree() {
       getorgtrees().then((res) => {
         const data = res.data.list

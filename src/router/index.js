@@ -84,7 +84,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/work/work',
     name: 'work',
-    meta: { title: '工单管理', icon: 'complaint' },
+    meta: { title: '工单管理', icon: 'gdgl' },
     children: [    
       {
         path: 'complaint',
@@ -103,7 +103,29 @@ export const constantRouterMap = [
         name: 'proTask',
         component: () => import('@/views/work/proTask'),
         meta: { title: '任务工单' }
-      }
+      },
+      
+    ]
+  },
+  {
+    path: '/res',
+    component: Layout,
+    redirect: '/res/res',
+    name: 'materialfile',
+    meta: { title: '资料文件', icon: 'file' },
+    children: [    
+      {
+        path: 'hlgd',
+        name: 'hlgd',
+        component: () => import('@/views/res/hlgdzl'),
+        meta: { title: '河流归档资料' }
+      },
+      {
+        path: 'flfg',
+        name: 'flfg',
+        component: () => import('@/views/res/flfg'),
+        meta: { title: '法律法规' }
+      }  
     ]
   },
   {
@@ -111,7 +133,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/regula/regula',
     name: 'regula',
-    meta: { title: '巡河一张图', icon: 'kaohe' },
+    meta: { title: '巡河一张图', icon: 'patrolriver' },
     children: [ 
       {
         path: 'rivergula',
@@ -158,6 +180,12 @@ export const constantRouterMap = [
         name: 'exposurestage',
         component: () => import('@/views/ass/exposurestage'),
         meta: { title: '曝光台', noCache: false }
+      },
+      {
+        path: 'workBriefing', 
+        name: 'workBriefing',
+        component: () => import('@/views/work/workBriefing'),
+        meta: { title: '工作简报' }
       }
       ]
   },
@@ -229,6 +257,11 @@ export const constantRouterMap = [
         name: 'msg',
         component: () => import('@/views/setting/msg'),
         meta: { title: '通知公告', noCache: true }
+      }, {
+        path: 'sysNews',
+        name: 'sysNews',
+        component: () => import('@/views/setting/sysNews'),
+        meta: { title: '新闻动态', noCache: true }
       },
       {
         path: 'unitRole',
