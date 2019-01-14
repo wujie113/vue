@@ -166,7 +166,7 @@ import intake from '../res/intake.vue' //取水口
 import riverWall from '../res/riverWall.vue' //堤防
 import pump from '../res/pump.vue' //泵站
 import sewage from '../res/sewage.vue' //排污口
-import resBillboard from'../res/resBillboard.vue' //
+import resBillboard from'../res/resBillboard.vue' //公示牌
 export default {
   name: "Restabmap",
   components: { Pagination, RmMap, sluice, cradle, reservoir, wells, agricultural, waterSubstation, intake, riverWall, pump, sewage, resBillboard},

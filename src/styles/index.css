@@ -847,15 +847,6 @@ ul, li, p {
 }
 
 .el-dialog__wrapper .el-dialog {
-  position: absolute !important;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-  margin-top: 0 !important;
   /*滚动条样式*/
 }
 
@@ -952,7 +943,10 @@ ul, li, p {
   border-bottom: 1px solid #ccc;
   padding: 10px 0;
 }
-
+.el-header.filter-container{
+    height: auto;
+    padding: 20px 10px 0px 10px;
+}
 .el-container .el-header .filter-container, .el-container .el-main .filter-container {
   padding: 25px 0;
 }

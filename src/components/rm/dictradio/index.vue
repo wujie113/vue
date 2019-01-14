@@ -37,10 +37,10 @@
       this.getDictList()
     },
     methods: {
-      getDictList() {
+      getDictList() { 
         getdictList(this.type).then(response => {
           this.optionlists = response.data.list
-          console.log(" this.optionlists ", this.optionlists)
+          //console.log(" this.optionlists ", this.optionlists)
         })
       },
        handleInput(value, instanceId) {        

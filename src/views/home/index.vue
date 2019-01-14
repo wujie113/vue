@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2019-01-11 10:31:34
+ * @Last Modified time: 2019-01-14 14:12:07
  */
 <template>
   <div class="app-container homeIndex">
@@ -218,12 +218,22 @@
                 <img src="../../../static/img/news.svg" alt="通知公告">
                 <span :class="{msgActive: msgActiveIndex === 0}" @click="msgBtn(0)">通知公告</span>
                 <span :class="{msgActive: msgActiveIndex === 1}" @click="msgBtn(1)">新闻动态</span>
-                <span :class="{msgActive: msgActiveIndex === 2}" @click="msgBtn(2)">任务提醒</span>
+                <div style="position:relative;">
+                  <span
+                    :class="{msgActive: msgActiveIndex === 2,markClass: markCount > 0}"
+                    @click="msgBtn(2)"
+                    :data-length="markCount"
+                    class
+                  >任务提醒</span>
+                </div>
                 <span :class="{msgActive: msgActiveIndex === 3}" @click="msgBtn(3)">工作简报</span>
               </div>
-              <div class="right" style="cursor: pointer;">
+              <div class="right" style="cursor: pointer;" v-show="msgActiveIndex !== 2">
                 <!--更多,跳转到通知公告-->
-                <router-link :to="linkUrl">更多<i class="el-icon-d-arrow-right"></i></router-link>                
+                <router-link :to="linkUrl">
+                  更多
+                  <i class="el-icon-d-arrow-right"></i>
+                </router-link>
               </div>
             </div>
             <div class="NewsBox">
@@ -241,7 +251,7 @@
                   <span class="home-page-top-notice-list-bottom">
                     <i class="el-icon-time"></i>
                     {{ list.createDate }}
-                  </span> 
+                  </span>
                 </li>
               </ul>
               <!-- 新闻动态 -->
@@ -258,9 +268,31 @@
                   <span class="home-page-top-notice-list-bottom">
                     <i class="el-icon-time"></i>
                     {{ list.createDate }}
-                  </span> 
+                  </span>
                 </li>
-              </ul>               
+              </ul>
+              <!-- 任务提醒 -->
+              <ul
+                v-show="msgActiveIndex === 2"
+                style="overflow-y: auto;text-align: center;"
+                id="ultest"
+              >
+                <li
+                  class="home-page-top-notice-list"
+                  v-for="(list, index) in markList"
+                  @click="newsDetailBtn(index, msgActiveIndex, list.id, list.type)"
+                >
+                  <span class="home-page-top-notice-list-top">
+                    <span>{{ list.title }}</span>
+                    <i :class="{circle: list.readFlag === '0'}"></i>
+                  </span>
+                  <span class="home-page-top-notice-list-bottom">
+                    <i class="el-icon-time"></i>
+                    {{ list.createDate }}
+                  </span>
+                </li>
+                <img src="../../../static/img/loading.gif" v-show="isShowLoading">
+              </ul>
               <!-- 工作简报 -->
               <ul v-show="msgActiveIndex === 3">
                 <li
@@ -275,9 +307,9 @@
                   <span class="home-page-top-notice-list-bottom">
                     <i class="el-icon-time"></i>
                     {{ list.createDate }}
-                  </span> 
+                  </span>
                 </li>
-              </ul>              
+              </ul>
             </div>
           </div>
         </el-col>
@@ -288,7 +320,9 @@
       <div class="NotificationDetailContent clearfix">
         <div class="subContent clearfix">
           <h2 class="ContentHeader">{{ msgDeatail.title }}</h2>
-          <p style="color: #636363;font-size: 12px;text-align: center;">{{msgDeatail.createDate}} {{msgDeatail.createByName}}</p>
+          <p
+            style="color: #636363;font-size: 12px;text-align: center;"
+          >{{msgDeatail.createDate}} {{msgDeatail.createByName}}</p>
           <!-- <p class="DetailMore">{{ msgDeatail.content }}</p> -->
           <div class="content ql-editor" v-html="msgDeatail.content"></div>
           <div class="clearfix" v-show="images1.length > 0">
@@ -299,7 +333,7 @@
           <!-- <div class="subUser">
             <span class="DetailTime">{{ msgDeatail.createDate }}</span>
             <span class="DetailUser">{{ msgDeatail.createByName }}</span>
-          </div> -->
+          </div>-->
         </div>
       </div>
     </el-dialog>
@@ -310,7 +344,7 @@
 import { mapGetters } from 'vuex'
 import echarts from 'echarts'
 import resize from '@/components/Charts/mixins/resize'
-import { getList, getNewsList, getMsgList, getWorkBriefingList, getFiles } from '@/api/home/home'
+import { getList, getNewsList, getMsgList, getWorkBriefingList, getFiles, markRead } from '@/api/home/home'
 import EchartsPie from './components/echartsPie'
 import leftEchartsBar from './components/leftEchartsBar'
 import rightEchartsBar from './components/rightEchartsBar'
@@ -475,6 +509,10 @@ export default {
       msgMap: [],
       newsList: [],
       workList: [],
+      markList: [],
+      markCount: 0,
+      markPageNo: 1,
+      markPageSize: 10,
       riverMap: [],
       riverWrap: {},
       dutyWrap: {},
@@ -484,7 +522,8 @@ export default {
       otherWrap: {},
       msgDeatail: {},
       tableData3: [],
-      images1: []
+      images1: [],
+      isShowLoading: false,
     }
   },
   components: {
@@ -499,16 +538,31 @@ export default {
       'roles'
     ])
   },
+  watch: {
+
+  },
+
   created() {
+
     this.getListData()
+    this.hasRead()
   },
   mounted() {
     // this.drawPie()
     // this.drawBar()
     //让echarts窗口自适应
     // this.init()
+    document.getElementById("ultest").addEventListener('scroll', this.handleScroll)
   },
   methods: {
+    handleScroll() {
+      var scrollTop = document.getElementById("ultest").scrollTop
+      console.log('scrollTop', scrollTop)
+      if (scrollTop > 400 * this.markPageNo) {
+        this.markPageNo = this.markPageNo + 1
+        this.getMsgList()
+      }
+    },
     getListData() {
       const loading = this.$loading({
         lock: true,
@@ -554,7 +608,7 @@ export default {
         const statisticalMap = res.data.statisticalMap
         //本月投诉统计
         const tempComplaints = statisticalMap.statisticalComplaintsWrap.data.list
-        
+
         this.leftData = this.echartsDataTran(tempComplaints, true)
         let value = []
         this.leftData.yAxis.map((item, index) => {
@@ -629,13 +683,13 @@ export default {
         this.tableData3 = this.riverPersonMap.riverPersonWrap.data.list
       }
     },
-    msgBtn(i){
+    msgBtn(i) {
       this.msgActiveIndex = i
       // 通知公告
-      if(i === 0){
+      if (i === 0) {
         this.linkUrl = "/setting/msg"
-        
-      }else if(i === 1){
+
+      } else if (i === 1) {
         // 新闻动态
         this.linkUrl = "/setting/sysNews"
         const p = {
@@ -644,12 +698,13 @@ export default {
         }
         getNewsList(p).then((res) => {
           this.newsList = res.data.list
-        }).catch((errorRes) => {})
-      }else if(i === 2){
+        }).catch((errorRes) => { })
+      } else if (i === 2) {
         // 任务提醒
         //Todo 路由路径没填
         this.linkUrl = "/"
-      }else if(i === 3){
+        this.getMsgList()
+      } else if (i === 3) {
         // 工作简报
         this.linkUrl = "/assessmentmanagement/workBriefing"
         const p = {
@@ -658,33 +713,72 @@ export default {
         }
         getWorkBriefingList(p).then((res) => {
           this.workList = res.data.list
-        }).catch((errorRes) => {})
+        }).catch((errorRes) => { })
       }
     },
+    // 任务提醒----已读
+    hasRead(){
+      getMsgList({ "readFlag": '0' }).then((res) => {
+        // let data = res.data.list
+        // if (this.markPageNo > 1) {
+        //   this.markList = this.markList.concat(data)
+        // } else {
+        //   this.markList = data
+        // }
+        this.markCount = res.data.count
+      }).catch((errorRes) => {
+
+      })
+    },
+    // 任务提醒接口
+    getMsgList() {
+      const p = {
+        pageNo: this.markPageNo,
+        pageSize: this.markPageSize
+      }
+      this.isShowLoading = true
+      getMsgList(p).then((res) => {
+        let data = res.data.list
+        if (this.markPageNo > 1) {
+          this.markList = this.markList.concat(data)
+        } else {
+          this.markList = data
+        }
+        this.isShowLoading = false
+      }).catch((errorRes) => {
+        this.isShowLoading = false
+      })
+    },
     // 点击通知列表,出现弹窗
-    newsDetailBtn(index, msgActiveIndex, bizId) {
+    newsDetailBtn(index, msgActiveIndex, bizId, type) {
       this.dialogVisible = true
       this.$nextTick(() => {
         this.images1 = []
-        if(msgActiveIndex === 0) {
+        if (msgActiveIndex === 0) {
           const p = {
             "bizId": bizId
           }
           getFiles(p).then((res) => {
             this.images1 = res.data
           }).catch((errorRes) => {
-            
+
           })
           this.msgDeatail = this.msgMap[index]
-        }else if(msgActiveIndex === 1){
+        } else if (msgActiveIndex === 1) {
           this.msgDeatail = this.newsList[index]
-        }else if(msgActiveIndex === 2){
-
-        }else if(msgActiveIndex === 3){
+        } else if (msgActiveIndex === 2) {
+          // 任务提醒
+          //标记已读
+          markRead({ "id": bizId, "type": type }).then((res) => {
+            this.markList[index].readFlag = '1'
+            this.msgDeatail = this.markList[index]
+            this.hasRead()
+          }).catch((errorRes) => { })
+        } else if (msgActiveIndex === 3) {
           this.msgDeatail = this.workList[index]
         }
-      })            
-    },    
+      })
+    },
     init() {
       const self = this
       setTimeout(() => {
@@ -864,8 +958,8 @@ export default {
       text-align: center;
       font-weight: 600;
       font-size: 18px;
-      margin-bottom:0.6em;
-      margin-top:0;
+      margin-bottom: 0.6em;
+      margin-top: 0;
       // font-family: "微软雅黑";
     }
     .DetailMore {
@@ -899,7 +993,7 @@ export default {
     /deep/ img {
       width: 100%;
     }
-  }  
+  }
 }
 .topWrap {
   padding-bottom: 19px;
@@ -936,6 +1030,7 @@ export default {
     .left {
       display: flex;
       align-items: center;
+      position: relative;
       img {
         width: 3vh;
         margin-right: 8px;
@@ -944,6 +1039,23 @@ export default {
         padding: 0 0.3em;
         color: #333;
         cursor: pointer;
+      }
+      span.markClass::after {
+        content: attr(data-length);
+        display: block;
+        height: 16px;
+        width: 16px;
+        background: #fa4646;
+        border-radius: 50%;
+        color: #fff;
+        position: absolute;
+        right: 0px;
+        top: -8px;
+        text-align: center;
+        font-size: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       span.msgActive {
         color: #ffffff;

@@ -74,7 +74,10 @@
               </el-table-column> 
               <el-table-column  label="操作">
                 <template slot-scope="scope">
-                  <el-button @click="editoffice(scope.row)" type="text"  size="mini" icon="el-icon-edit"/>
+                  <!-- <el-button @click="editoffice(scope.row)" type="text"  size="mini" icon="el-icon-edit"/> -->
+                  <el-button @click="editoffice(scope.row)" type="text" size="mini" title="编辑">
+                    <svg-icon icon-class="editColor"/>
+                  </el-button>                  
                 </template>
               </el-table-column> 
             </el-table>

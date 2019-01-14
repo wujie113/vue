@@ -43,3 +43,12 @@ export function getFiles(params) {
     params
   })
 }
+
+//标记消息已读
+export function markRead(params) {
+  return request({
+    url: "/api/msg/read",
+    method: "post",
+    data: params
+  })
+}

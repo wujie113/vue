@@ -42,11 +42,11 @@
       getDictList() {
         getdictList(this.type).then(response => {
           this.optionlists = response.data.list
-          console.log(" this.optionlists ", this.optionlists)
+          //console.log(" this.optionlists ", this.optionlists)
         })
       },
       handleInput(value, instanceId) { 
-        console.log('checkbox:',JSON.stringify(value))
+        //console.log('checkbox:',JSON.stringify(value))
         this.$emit("input", value)
       } 
     }

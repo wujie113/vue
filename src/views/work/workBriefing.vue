@@ -2,8 +2,9 @@
   <div class="app-container">
     <el-container>
       <el-container>
-        <el-header height="50px">
-          <div>
+        <el-header height="125px">
+          <div class="topTitle">工作简报列表</div>
+          <div class="filter-container">
             <el-input
               placeholder="输入标题"
               v-model="query.title"
@@ -37,8 +38,10 @@
         <el-main>
           <div class="filter-container" style="padding-top: 0;">
             <el-button type="primary" icon="el-icon-plus" @click="create">新增</el-button>
+            <el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>
           </div>
-          <el-table :data="list" row-key="id" stripe style="width: 100%">
+          <el-table :data="list" border stripe row-key="id"  style="width: 100%" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
             <el-table-column prop="title" label="简报标题"/>
             <!-- <el-table-column prop="content" label="工作简报"/> -->
             <el-table-column prop="auditor" label="审核人"/>
@@ -46,13 +49,9 @@
             <el-table-column prop="isAuditor" label="是否审核"/>
             <el-table-column prop="id" label="操作" width="100">
               <template slot-scope="scope">
-                <el-button
-                  @click="detailBtn(scope.row)"
-                  type="text"
-                  size="mini"
-                  icon="el-icon-ali-yulan"
-                />
-                <el-button @click="del(scope.row)" type="text" size="mini" icon="el-icon-delete"/>
+                <el-button @click="detailBtn(scope.row)"   type="text" size="mini" title="预览">
+                    <svg-icon icon-class="previewColor"/>
+                  </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -209,6 +208,7 @@ export default {
         loading: false
       },
       showBtn: true,
+      multipleSelection: [],
       examineOptions: [{ label: "全部已审核", key: "1" }, { label: "待审核", key: "0" },],
       query: {
         total: 0,
@@ -345,7 +345,39 @@ export default {
       this.form = {}
     },
     save() {
-
+      var regu = /^ +| +$/g; 
+      console.log("this.form.title",this.form.title);
+      
+      if(this.form.title == undefined ){
+          this.$message({
+          message: "请输入简报标题!",
+          type: "error"
+        })
+        return;
+      }
+      if (this.$refs.fileUpload.uploadFiles == undefined || this.$refs.fileUpload.uploadFiles.length < 1) {
+        this.$message({
+          message: "请上传附件!",
+          type: "error"
+        })
+        return;
+      }
+        const isLt10M = this.$refs.fileUpload.uploadFiles[0].raw.size / 1024 / 1024 < 10
+        const type = this.$refs.fileUpload.uploadFiles[0].raw.type === "application/pdf"
+        if (!type) {
+          this.$message({
+            message: "上传附件只能是PDF文件!",
+            type: "error"
+          })
+          return
+        }
+        if(!isLt10M) {
+          this.$message({
+            message: "上传附件大小不能超过 10MB!",
+            type: "error"
+          })
+          return          
+        }
 
       save(this.form).then(response => {
         if (this.$refs.fileUpload.uploadFiles !== undefined && this.$refs.fileUpload.uploadFiles.length > 0) {
@@ -362,10 +394,9 @@ export default {
           this.getList()
         }
       })
+      
     },
-    detailBtn(row) {
-      console.log("row", row);
-
+    detailBtn(row) { 
       if (this.query.isAuditor == 0) {
         this.showBtn = true
       } else if (this.query.isAuditor == 1) {
@@ -393,26 +424,44 @@ export default {
       })
     },
     handlePreview(file) {
-      console.log("ss", file.url)
-      location.href = file.url
+      // console.log("ss", file.url)
+      // location.href = file.url
+      window.open(file.url)
     },
-    del(row) {
-      //var self = this
-      //console.log(row) 
-      del(row.id).then(response => {
-        this.v.form = false
-        if (response.success) {
-          this.$message(response.msg)
-          //删除列表数据
-          const index = this.list.indexOf(row) //找到要删除数据在list中的位置 
-          this.list.splice(index, 1) //通过splice 删除数据
-        } else {
-          this.$message({
-            message: response.msg,
-            type: "warning"
+    del() { 
+      if (this.multipleSelection.length > 0 ) {
+        const idArray = []
+        this.multipleSelection.map(item => {
+          idArray.push(item.id)
+        })
+        const idStr = idArray.join()
+        console.log('idStr', idStr)
+        this.$confirm("确认删除?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          del(idStr).then(res => {
+            this.getList()
+            this.$message({
+              type: "success",
+              message: res.msg
+            })
+          }).catch(errorRes => {
+            this.$message({
+              type: "warning",
+              message: errorRes
+            })
           })
-        }
-      })
+        }).catch(() => {
+          // 用户点击取消按钮
+        })
+      } else {
+        this.$message({
+          type: "warning",
+          message: "请先勾选!"
+        })
+      } 
     },
     selectChang(data) {
       console.log("data", data);
@@ -424,14 +473,17 @@ export default {
     //审核
     reviewBtn() {
       examine(this.form).then(response => {
-        this.detailformvaisable = false;
+        this.detailformvaisable = false; 
         this.$message({
           message: response.msg,
           type: "success"
         })
         this.getList()
       })
-    }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
   }
 }
 </script>

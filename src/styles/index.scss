@@ -211,15 +211,15 @@ ul,li,p{
       top: 14px;
     }
     // 改写 ====   把element的dialog组件上下左右居中显示
-    position: absolute !important;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
-    margin-top: 0 !important;
+    // position: absolute !important;
+    // left: 50%;
+    // top: 50%;
+    // transform: translate(-50%, -50%);
+    // -moz-transform: translate(-50%, -50%);
+    // -webkit-transform: translate(-50%, -50%);
+    // -ms-transform: translate(-50%, -50%);
+    // -o-transform: translate(-50%, -50%);
+    // margin-top: 0 !important;
     .el-form .el-select {
       width: 100%;
     }
@@ -296,6 +296,10 @@ ul,li,p{
   .el-header {
     margin-bottom: 10px;
   }
+  .el-header.filter-container{
+    height: auto;
+    padding: 20px 10px 0px 10px;
+}
   .el-header, .el-main {
     .topTitle {
       text-align: left;

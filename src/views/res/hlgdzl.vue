@@ -36,7 +36,7 @@
             <el-table :data="list" stripe style="width: 100%" border>
               <el-table-column prop="title" label="标题"/>
               <el-table-column prop="typeName" label="类别"/>
-              <el-table-column label="文件">
+              <el-table-column label="文件" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <a @click="look(scope.row)">{{scope.row.fileName}}</a>
                 </template>
@@ -54,7 +54,7 @@
                   </div>
                   <div v-if="scope.row.issueStatus=='0'">
                     <el-button @click="issue(scope.row)" type="primary" title="发布">发布</el-button>
-                    <el-button @click="del(scope.row)" type="primary">删除</el-button>
+                    <el-button @click="del(scope.row)" type="info">删除</el-button>
                   </div>
                 </template>
               </el-table-column>
@@ -169,13 +169,18 @@ export default {
     },
     add() {
       this.visible = true;
+      this.$nextTick(() => {
+        this.fileList = []
+        this.form.title = ""
+        this.form.type = ""
+      })
     },
     notissue(row) {
       this.listLoading = true;
       notissue(row.id).then(response => {
         this.listLoading = false;
         this.$message({
-          message: "取消发布成功!!",
+          message: "取消发布成功!",
           type: "success"
         })
         this.getList();
@@ -186,7 +191,7 @@ export default {
       issue(row.id).then(response => {
         this.listLoading = false;
         this.$message({
-          message: "发布成功!!",
+          message: "发布成功!",
           type: "success"
         })
         this.getList();
@@ -199,30 +204,54 @@ export default {
       //console.log('保存:',JSON.stringify(this.form),this.selectUser);      
       if (this.$refs.upload.uploadFiles == undefined || this.$refs.upload.uploadFiles.length < 1) {
         this.$message({
-          message: "请上传附件!!",
+          message: "请上传附件!",
           type: "error"
         })
         return;
-      }
-      save(this.form).then(response => {
-        this.visible = false
-        if (response.success) {
-          this.uploadParams.bizId = response.data.id;
-          // 附件上传到服务器
-          const imgParams = "&bizType=" + this.uploadParams.bizType + "&bizId=" + this.uploadParams.bizId;
-          file(imgParams, this.$refs.upload.uploadFiles).then(res => {
-            this.getList();
+      } else {
+        if (this.$refs.upload.uploadFiles.length > 1) {
+          this.$message({
+            message: "只能上传一个附件!",
+            type: "error"
           })
-            .catch(errorRes => {
+          return
+        }
+        const isLt10M = this.$refs.upload.uploadFiles[0].raw.size / 1024 / 1024 < 10
+        const type = this.$refs.upload.uploadFiles[0].raw.type === "application/pdf"
+        if (!type) {
+          this.$message({
+            message: "附件只能是PDF文件!",
+            type: "error"
+          })
+          return
+        }
+        if (!isLt10M) {
+          this.$message({
+            message: "上传附件大小不能超过 10MB!",
+            type: "error"
+          })
+          return
+        }
+        save(this.form).then(response => {
+          this.visible = false
+          if (response.success) {
+            this.uploadParams.bizId = response.data.id;
+            // 附件上传到服务器
+            const imgParams = "&bizType=" + this.uploadParams.bizType + "&bizId=" + this.uploadParams.bizId;
+            file(imgParams, this.$refs.upload.uploadFiles).then(res => {
+              this.getList();
+            }).catch(errorRes => {
               this.getList();
             });
-        } else {
-          this.$message({
-            message: response.msg,
-            type: "warning"
-          })
-        }
-      })
+          } else {
+            this.$message({
+              message: response.msg,
+              type: "warning"
+            })
+          }
+        })
+      }
+
     },
     del(row) {
       //var self = this 

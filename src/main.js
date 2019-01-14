@@ -45,7 +45,8 @@ for (const i in plugin) {
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
-
+const Foo = window.add
+Vue.prototype.Foo = Foo
 Vue.config.productionTip = false
 
 new Vue({
