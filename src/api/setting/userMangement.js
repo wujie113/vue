@@ -8,7 +8,7 @@ export function tree(params) {
 }
 export function tableList(params) {
   return request({
-    url: "/api/sys/user/list",
+    url: "/api/employee/usermanagerlist",
     method: "get",
     params
   })
@@ -16,9 +16,9 @@ export function tableList(params) {
 
 export function Delete(params) {
   return request({
-    url: "/api/sys/user/del",
-    method: "get",
-    params
+    url: "/api/employee/del",
+    method: "post",
+    data: params
   })
 }
 export function save(params) {

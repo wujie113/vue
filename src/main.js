@@ -26,6 +26,15 @@ import 'babel-polyfill'
 // 图片预览
 import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
+// 视频流直播
+
+require('video.js/dist/video-js.css')
+require('vue-video-player/src/custom-theme.css')
+require('videojs-contrib-hls/dist/videojs-contrib-hls')
+import VideoPlayer from 'vue-video-player'
+// 视频直播 - 结束
+
+Vue.use(VideoPlayer)
 Vue.use(Viewer, {
   defaultOptions: {
     zIndex: 9999

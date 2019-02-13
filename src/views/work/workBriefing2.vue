@@ -3,7 +3,7 @@
     <el-container>
       <el-container>
         <el-header height="125px">
-          <div class="topTitle">工作简报列表</div>
+          <div class="topTitle">政策法规列表</div>
           <div class="filter-container">
             <el-input
               placeholder="输入标题"
@@ -11,22 +11,7 @@
               style="width: 200px;"
               class="filter-item"
               @keyup.enter.native="handleFilter"
-            />
-            <el-select
-              v-model="query.isAuditor"
-              placeholder="请选择列别"
-              @change="selectChang"
-              clearable
-              style="width: 120px"
-              class="filter-item"
-            >
-              <el-option
-                v-for="item in examineOptions"
-                :key="item.key"
-                :label="item.label"
-                :value="item.key"
-              />
-            </el-select>
+            /> 
             <el-button
               class="filter-item"
               type="primary"
@@ -42,11 +27,9 @@
           </div>
           <el-table :data="list" border stripe row-key="id"  style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center"></el-table-column>
-            <el-table-column prop="title" label="简报标题"/>
-            <!-- <el-table-column prop="content" label="工作简报"/> -->
-            <el-table-column prop="auditor" label="审核人"/>
-            <el-table-column prop="createDate" label="发布时间"/>
-            <el-table-column prop="isAuditor" label="是否审核"/>
+            <el-table-column prop="title" label="标题"/>
+            <!-- <el-table-column prop="content" label="工作简报"/> --> 
+            <el-table-column prop="createDate" label="发布时间"/> 
             <el-table-column prop="id" label="操作" width="100">
               <template slot-scope="scope">
                 <el-button @click="detailBtn(scope.row)"   type="text" size="mini" title="预览">
@@ -91,10 +74,10 @@
 
           <el-dialog :visible.sync="v.form" title="编辑">
             <el-form ref="form" :model="form" label-width="120px">
-              <el-form-item label="简报标题">
-                <el-input v-model="form.title" placeholder="请输入简报标题"/>
+              <el-form-item label="标题">
+                <el-input v-model="form.title" placeholder="标题"/>
               </el-form-item>
-              <el-form-item label="工作简报">
+              <el-form-item label="内容">
                 <quill-editor
                   v-model="form.content"
                   ref="myQuillEditor"
@@ -130,10 +113,10 @@
                     :auto-upload="false"
                     :data="uploaddata"
                     :on-remove="handleRemove"
-                    accept=".pdf"
+                    accept=".jpg, .png, .gif, .jpeg"
                     :on-preview="handlePreview"
                   >
-                    <i class="el-icon-ali-icon-test"></i>附件上传
+                    <i class="el-icon-ali-icon-test"></i>封面上传
                   </el-upload>
                 </div>
               </el-form-item>
@@ -202,16 +185,16 @@ export default {
       },
       showBtn: true,
       multipleSelection: [],
-      examineOptions: [{ label: "全部", key: "all" },{ label: "已审核", key: "1" }, { label: "待审核", key: "0" }],
+      examineOptions: [{ label: "全部已审核", key: "1" }, { label: "待审核", key: "0" },],
       query: {
         total: 0,
         pageNo: 1,
         pageSize: 10,
         title: undefined,
         type: undefined,
-        isAuditor: "1"
+        isAuditor: "1",
+         type: "1"
       },
-    
       wordUrl: null,
       quillform: {
         serverUrl: '',  // 这里写你要上传的图片服务器地址
@@ -258,6 +241,7 @@ export default {
         auditorDate: null,
         office: null,
         isAuditor: null,
+        type:"1"
       },
       uploadform: {
         serverUrl: process.env.BASE_FILE_API + "?token=" + getToken(),  // 这里写你要上传的图片服务器地址
@@ -273,9 +257,6 @@ export default {
     beforeUpload(file) {
       this.listLoading = true;
       this.v.formupdate = false;
-    },
-    seepdf(url){
-      window.open(url)
     },
     handleSuccess(respone) {
       console.log("respone:::", respone.url);
@@ -293,6 +274,9 @@ export default {
         });
       }
       this.getList();
+    }, 
+    seepdf(url){
+      window.open(url)
     },
     handlError() {
       this.$message({
@@ -343,7 +327,7 @@ export default {
     save() {
       var regu = /^ +| +$/g; 
       console.log("this.form.title",this.form.title);
-      
+      this.form.type="1";
       if(this.form.title == undefined ){
           this.$message({
           message: "请输入简报标题!",
@@ -358,15 +342,7 @@ export default {
         })
         return;
       }
-        const isLt10M = this.$refs.fileUpload.uploadFiles[0].raw.size / 1024 / 1024 < 10
-        const type = this.$refs.fileUpload.uploadFiles[0].raw.type === "application/pdf"
-        if (!type) {
-          this.$message({
-            message: "上传附件只能是PDF文件!",
-            type: "error"
-          })
-          return
-        }
+        const isLt10M = this.$refs.fileUpload.uploadFiles[0].raw.size / 1024 / 1024 < 10 
         if(!isLt10M) {
           this.$message({
             message: "上传附件大小不能超过 10MB!",
@@ -374,7 +350,7 @@ export default {
           })
           return          
         }
-
+      console.log("this.form::::",this.form);
       save(this.form).then(response => {
         if (this.$refs.fileUpload.uploadFiles !== undefined && this.$refs.fileUpload.uploadFiles.length > 0) {
           // 附件上传到服务器 
@@ -406,8 +382,8 @@ export default {
       this.detailformvaisable = true;
       this.uploaddata.bizId = row.id
       getfiles(this.uploaddata).then(response => {
-        this.fileList = response.worldArr
-        console.log("file", this.fileList);
+        this.fileList = response.data
+        console.log("fileList", this.fileList);
       })
     },
     handleRemove(file, fileList) {

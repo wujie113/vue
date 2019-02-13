@@ -102,20 +102,21 @@
 					名称<br />县名<br />经度（如：113.8569）<br />纬度（如：27.6253）<br />
 				</el-form-item>
 			</el-form>
-			<el-upload :action="uploadaction" :show-file-list="false"   accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
+			<el-upload :http-request="uploadFile" :action="uploadaction" :show-file-list="false"   accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
 				<el-button type="primary">去上传</el-button>
 			</el-upload>
 		</el-dialog>
 	</div>
 </template> 
 <script>
-import Pagination from "@/components/Pagination";
-import { getList, getfiles, get, delBtn } from "@/api/res/sluice.js";
-import RmDict from "@/components/rm/dict";
-import RmOrgSelect from "@/components/rm/orgselect";
-import RmUserSelect from "@/components/rm/userselect";
-import RmAreaSelect from "@/components/rm/areaselect";
-import { getToken } from "@/utils/auth";
+import Pagination from "@/components/Pagination"
+import { getList, getfiles, get, delBtn } from "@/api/res/sluice.js"
+import RmDict from "@/components/rm/dict"
+import RmOrgSelect from "@/components/rm/orgselect"
+import RmUserSelect from "@/components/rm/userselect"
+import RmAreaSelect from "@/components/rm/areaselect"
+import { getToken } from "@/utils/auth"
+import { upload } from "@/api/imgUplodFile"
 export default {
 	components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
 	filters: {
@@ -124,8 +125,8 @@ export default {
 				published: "success",
 				draft: "gray",
 				deleted: "danger"
-			};
-			return statusMap[status];
+			}
+			return statusMap[status]
 		}
 	},
 	data() {
@@ -226,106 +227,111 @@ export default {
 				bizType: "sz"
 			},
 			importanceOptions: [1, 2, 3]
-		};
+		}
 	},
 	created() {
-		this.getList();
+		this.getList()
 	},
 	methods: {
 		getList() {
-			this.listLoading = true;
-			 console.log("this.listQuery22222222", this.listQuery);
+			this.listLoading = true
+			 console.log("this.listQuery22222222", this.listQuery)
 			getList(this.listQuery).then(response => {
-				this.listLoading = false;
-				this.list = response.data.list;
-				this.total = response.data.count;
-			});
+				this.listLoading = false
+				this.list = response.data.list
+				this.total = response.data.count
+			})
 		},
-		handleCurrentChange(row){
+		handleCurrentChange(row) {
 			console.log(row)
 			  this.$emit('clickRow', { id: row.id, gtype: 'shuizha', name: row.name, lng: row.lng, lat: row.lat })
 		},
 		downloadExcel() {
-			this.v.formhistory = true;
-			this.listLoadingHistory = true;
+			this.v.formhistory = true
+			this.listLoadingHistory = true
 			getfiles(this.uploaddata).then(response => {
-				this.listDate =response.uploadexcelarr;
-				this.listLoadingHistory = false;
-			});
+				this.listDate = response.uploadexcelarr
+				this.listLoadingHistory = false
+			})
 		},
 		get(row) {
-			this.listLoading = true;
-			this.v.formhistory = false;
+			this.listLoading = true
+			this.v.formhistory = false
 			this.listQuery.search = ""
 			get(row.id).then(response => {
 				this.$message({
 					message: '恢复数据成功',
 					type: 'success'
-				});
-				this.listLoading = false;
-				this.getList();
-			});
+				})
+				this.listLoading = false
+				this.getList()
+			})
 		},
 		del(row) {
-			this.listLoadingHistory = true;
+			this.listLoadingHistory = true
 			delBtn(row.id).then(response => {
-				this.listLoadingHistory = false;
+				this.listLoadingHistory = false
 				this.$message({
 					message: '删除数据成功',
 					type: 'success'
-				});
-				this.downloadExcel();
-			});
+				})
+				this.downloadExcel()
+			})
 		},
 		updateData() {
-			this.v.formupdate = true;
+			this.v.formupdate = true
 		},
 		exportExcel(index, row) {
-			this.v.formhistory = false;
+			this.v.formhistory = false
 		},
 		beforeUpload(file) {
-			this.listLoading = true;
-			this.v.formupdate = false;
+			this.listLoading = true
+			this.v.formupdate = false
 		},
 		handleFilter() {
-			this.listQuery.pageNo = 1;
-			this.getList();
+			this.listQuery.pageNo = 1
+			this.getList()
 		},
-		handleSuccess(respone) {
-			if (respone.success == true) {
+		handleSuccess(respone) { 
+			if (respone.data.success == true) {
 				this.$message({
 					message: "导入数据成功",
 					type: "success"
-				});
+				})
 			} else {
 				this.$message({
-					message: respone.msg,
+					message: "导入数据失败",
 					type: "error"
-				});
+				})
 			}
-			this.listQuery.search = "";
-			this.getList();
+			this.listQuery.search = ""
+			this.getList()
 		},
 		handlError() {
 			this.$message({
 				message: "导入数据失败",
 				type: "error"
-			});
-			this.listQuery.search = "";
-			this.getList();
+			})
+			this.listQuery.search = ""
+			this.getList()
 		},
 		edit(row) {
 			//console.log(JSON.stringify(row));
-			this.visible = true;
-			this.form = row;
+			this.visible = true
+			this.form = row
 		},
 		save() {
 			//console.log('保存:',JSON.stringify(this.form),this.selectUser);
-			this.visible = false;
+			this.visible = false
 			//
+		},
+		uploadFile(options) {
+			// :http-request="uploadFile"
+			// import { upload } from "@/api/imgUplodFile"   
+			return upload(this.uploadaction,options)
 		}
 	}
-};
+}
 </script>
 
 <style>

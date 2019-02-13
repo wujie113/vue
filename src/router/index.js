@@ -186,6 +186,12 @@ export const constantRouterMap = [
         name: 'workBriefing',
         component: () => import('@/views/work/workBriefing'),
         meta: { title: '工作简报' }
+      },
+      {
+        path: 'workBriefing2', 
+        name: 'workBriefing2',
+        component: () => import('@/views/work/workBriefing2'),
+        meta: { title: '政策法规' }
       }
       ]
   },
@@ -252,6 +258,12 @@ export const constantRouterMap = [
         name: 'addressBook',
         component: () => import('@/views/setting/addressBook'),
         meta: { title: '通 讯 录', noCache: true }
+      }
+      , {
+        path: 'addressBook2',
+        name: 'addressBook2',
+        component: () => import('@/views/setting/addressBook2'),
+        meta: { title: '联系我们', noCache: true }
       }, {
         path: 'msg',
         name: 'msg',

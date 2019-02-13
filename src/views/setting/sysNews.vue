@@ -90,6 +90,8 @@
           <el-upload
             style="display:none"
             class="avatar-uploader"
+            :http-request="uploadFile"
+            :data="uploadform.uploaddata"
             :action="uploadform.serverUrl"
             name="img"
             :headers="uploadform.header"
@@ -122,6 +124,7 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
 import { getToken } from "@/utils/auth";
+import { upload } from "@/api/imgUplodFile"
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
   ['blockquote', 'code-block'],
@@ -195,7 +198,7 @@ export default {
       },
       fileList: [],
       detailformvaisable: false,
-      uploadaction: process.env.BASE_API + "/c/common/fileRecord/uploadFile?token=" + getToken(),
+      // uploadaction: process.env.BASE_API + "/c/common/fileRecord/uploadFile?token=" + getToken(),
       form: {
         title: null,
         content: '',
@@ -203,8 +206,12 @@ export default {
         createDate: null,
       },
       uploadform: {
-        serverUrl: process.env.BASE_FILE_API + "?token=" + getToken() + "&bizId=1" + "&bizType=news",  // 这里写你要上传的图片服务器地址
-        // header: {token: getToken()}  // 有的图片服务器要求请求头需要有token  
+        serverUrl: process.env.BASE_FILE_API + "?token=" + getToken(),  // 这里写你要上传的图片服务器地址
+        // header: {token: getToken()},  // 有的图片服务器要求请求头需要有token  
+        uploaddata: {
+          bizId: 1,
+          bizType: "news"
+        }
       },
       multipleSelection: [],
     }
@@ -213,23 +220,29 @@ export default {
     this.getList()
   },
   methods: {
+
     /**图片上传 */
     beforeUpload(file) {
       this.listLoading = true;
       this.v.formupdate = false;
     },
+    // 自定义图片的上传方式
+    uploadFile(options){
+      return upload(this.uploadform.serverUrl, options)
+    },
     handleSuccess(respone) {
-      console.log("respone:::", respone.url);
-      if (respone.success == true) {
+      console.log("respone:::", respone);
+      let resData = respone.data
+      if (resData.success == true) {
         let quill = this.$refs.myQuillEditor.quill
         let length = quill.getSelection().index;
         // 插入图片  res.info为服务器返回的图片地址
-        quill.insertEmbed(length, 'image', respone.data[0].url)
+        quill.insertEmbed(length, 'image', resData.data[0].url)
         // 调整光标到最后
         quill.setSelection(length + 1)
       } else {
         this.$message({
-          message: respone.msg,
+          message: resData.msg,
           type: "error"
         });
       }
@@ -243,11 +256,6 @@ export default {
       this.listQuery.search = "";
       this.getList();
     },
-    beforeUpload(file) {
-      this.listLoading = true;
-      this.v.formupdate = false;
-    },
-
     /**图片上传部分结束 */
     getList() {
       this.listLoading = true;
@@ -295,7 +303,7 @@ export default {
           this.v.form = false
           if (response.success) {
             this.$message({
-              message: "保存新闻动态成功!!",
+              message: "保存新闻动态成功!",
               type: "success"
             });
             this.getList();

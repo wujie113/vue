@@ -2,38 +2,18 @@
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:43:44 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2019-01-24 16:43:37
+ * @Last Modified time: 2019-01-24 16:40:43
  */
 // 通讯录
 <template>
   <div class="app-container">
-    <el-container v-loading="listLoading">
-      <el-aside>
-        <!-- <div class="panel">
-          <div class="panelHeading">
-            <div>单位</div>
-            <div>
-              <el-checkbox v-model="checked" @change="onlyShowSelectBtn()">仅显示所选单位</el-checkbox>
-            </div>
-          </div>
-          <div class="source panel-body">
-            <el-tree
-              :data="dataArray"
-              :props="defaultProps"
-              @node-click="handleNodeClick"
-              empty-text="暂无数据"
-              highlight-current
-            ></el-tree>
-          </div>
-        </div> -->
-        <left-tree titleName="单位" :dataArray="dataArray" @areaData="handleNodeClick" :isShowTabbar="isShowTabbar" />
-      </el-aside>
+    <el-container v-loading="listLoading"> 
       <el-container>
         <el-header height="125px">
-          <div style class="topTitle">通讯录列表</div>
+          <div style class="topTitle">联系我们</div>
           <div class="filter-container" style>
             <el-input
-              placeholder="输入姓名、单位或电话搜索..."
+              placeholder="输入名称检索"
               style="width: 210px;"
               class="filter-item"
               @keyup.enter.native="searchBtn"
@@ -56,13 +36,7 @@
               type="primary"
               icon="el-icon-plus"
               @click="create"
-            >新增</el-button>
-            <el-button
-              class="filter-item"
-              type="primary"
-              icon="el-icon-refresh"
-              @click="synchronous"
-            >同步</el-button>
+            >新增</el-button> 
             <el-button class="filter-item" type="info" icon="el-icon-delete" @click="del">删除</el-button>
           </div>
           <div>
@@ -76,8 +50,7 @@
             >
               <el-table-column type="selection" width="55" align="center"></el-table-column>
               <el-table-column prop="name" label="名称"/>
-              <el-table-column prop="phone" label="电话"/>
-              <el-table-column prop="unitName" label="单位"/>
+              <el-table-column prop="phone" label="电话"/> 
               <el-table-column prop="id" label="操作" width="100">
                 <template slot-scope="scope">
                   <el-button @click="edit(scope.row)" type="text" size="mini" title="编辑">
@@ -105,20 +78,7 @@
         </el-form-item>
         <el-form-item label="电话" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入电话"/>
-        </el-form-item>
-        <el-form-item label="单位" prop="unit">
-          <el-select v-model="form.unit" placeholder="请选择单位" clearable class="filter-item">
-            <el-option
-              v-for="item in lowerofficeList"
-              :key="item.id"
-              :label="item.label"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入排序"/>
-        </el-form-item>
+        </el-form-item>  
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="v.form = false">取 消</el-button>
@@ -172,21 +132,23 @@ export default {
         pageNo: 1,
         pageSize: 10,
         search: undefined,
-        type: undefined
+        type: undefined,
+        toUs:"1"
       },
       form: {
         name: "",
         phone: "",
         unit: "",
         sort: "",
+        toUs:"1"
       },
       multipleSelection: [],
     }
   },
 
   created() {
-    this.listLoading = true
-    this.loadLeftTree()
+    this.listLoading = true 
+    this.getList();
   },
   methods: {
     synchronous(){
@@ -197,31 +159,14 @@ export default {
           console.error("errror:::::::", errorRes)
        })
        
-    },
-    loadLeftTree() {
-      getorgtrees().then((res) => {
-        const data = res.data.list
-        this.dataArray = data
-        // 第一次默认
-        // this.listQuery['office.id'] = data[0].id
-        this.unit = data[0].label
-        this.companyID = data[0].id
-        this.getList()
-      }).catch((errorRes) => {
-        console.error("errror:::::::", errorRes)
-      })
-    },
-    getList() {
+    }, 
+    getList() { 
       getList(this.query).then(response => {
         this.listLoading = false
         this.mainLoading = false
         this.list = response.data.list
         this.query.total = response.data.count
-      })
-      getLoweroffice().then(response => {
-        // console.log('接单单位数据：',response.data);
-        this.lowerofficeList = response.data.list
-      });
+      }) 
     },
     onlyShowSelectBtn() {
       //console.log("只显示所属单位",this.query,this.checked)
@@ -259,13 +204,9 @@ export default {
 
       // this.form = {}
     },
-    edit(row) {
-      //console.log(JSON.stringify(row));
+    edit(row) { 
+      this.v.form = true 
       Object.assign(this.form, row)
-
-      this.v.form = true
-      // this.form = row
-      // console.log('this.form', this.form)
     },
     save() {
       //console.log('保存:',JSON.stringify(this.form),this.selectUser);         

@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:43:20 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2018-12-27 15:42:10
+ * @Last Modified time: 2019-01-24 18:05:08
  */
 //  用户管理
 <template>
@@ -31,7 +31,7 @@
             <el-input placeholder="输入姓名、帐号或电话搜索..." style="width: 210px;" class="filter-item" @keyup.enter.native="searchBtn" v-model="listQuery.name" />
             状态：
             <el-select placeholder="请选择状态" clearable style="width: 140px" class="filter-item" v-model="listQuery.state">
-              <el-option v-for="item in states" :key="item" :label="item" :value="item" />
+              <el-option v-for="item in states" :key="item" :label="item.value" :value="item.state" />
             </el-select>
             <!-- 角色：
             <el-select placeholder="请选择角色" clearable style="width: 140px" class="filter-item" v-model="listQuery.role">
@@ -57,7 +57,7 @@
               </el-table-column>
               <el-table-column prop="mobile" label="联系号码" width="120" align="center">
               </el-table-column>
-              <el-table-column prop="dept.name" label="部门" width="120" show-overflow-tooltip align="center">
+              <el-table-column prop="officeName" label="部门" width="120" show-overflow-tooltip align="center">
               </el-table-column>
               <el-table-column prop="postStateLabel" label="状态" align="center">
               </el-table-column>
@@ -112,6 +112,7 @@
         <el-form-item prop="mobile" label="手机号码" required>
           <el-input type="text" v-model="form.mobile" />
         </el-form-item>
+        
         <el-form-item prop="gender" label="性别">
           <el-select v-model="form.gender" placeholder="请选择性别" clearable class="filter-item">
             <!-- <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" /> -->
@@ -302,7 +303,7 @@ export default {
         loginName: [{ required: true, message: "请填写登录账号", trigger: "blur" }],
         name: [
           { required: true, message: "请填写您的姓名", trigger: "blur" },
-          { min: 2, max: 4, message: "长度在 3 到 10 个字符", trigger: "blur" }
+          { min: 3, max: 15, message: "长度在 3 到 15 个字符", trigger: "blur" }
         ],
         password: [
           { validator: validatePass, trigger: "blur" }
@@ -313,8 +314,9 @@ export default {
           // { min: 6, message: "密码长度必须大于6字符", trigger: "blur" }
         ],
         sort: [{ required: true, message: "序号是必填的", trigger: "change" }],
-        mobile: [{ required: true, message: "请填写手机号码", trigger: "change" }],
-        state: [{ required: true, message: '请选择状态', trigger: "change" }]
+        mobile: [{ required: true, message:  "请填写手机号码", trigger: "change" }],
+        state: [{ required: true, message: '请选择状态', trigger: "change" }],
+        email: [{ required: true, message: '请输入邮箱地址', trigger: "change" }]
       },
       form2: {
         oldPassword: "",
@@ -330,7 +332,13 @@ export default {
         ]
       },
       total: 0,
-      states: ["正常", "停用"],
+      states: [{
+        "value": "正常",
+        "state": 0,
+      },{
+        "value": "停用",
+        "state": 1,
+      }],
       roles: ["巡河长", "张三", "李四", "王五", "赵六"],
       // departments: ["总河长", "管理员", "科长"],
       tableData3: [],
@@ -384,7 +392,8 @@ export default {
       // TODO 这里有bug,未解决(点击编辑弹窗,然后点击新增弹窗,新增弹窗会出现内容)      
       if (this.$refs.form != undefined) {
         console.log('表单编辑---重置表单');        
-        this.$refs.form.resetFields()
+        // this.$refs.form.resetFields()
+        // Object.assign(this.form, row)
       }
       this.$nextTick(() => {
         this.form = row
@@ -407,18 +416,24 @@ export default {
     },
     // 修改密码保存
     savePass() {
-      modifyPwd(this.form2).then(res => {
+      let p = {
+        oldPassword: this.form2.oldPassword,
+        newPassword: this.form2.newPassword
+      }
+      modifyPwd(p).then(response => {
         this.dialogVisible2 = false
         this.$message({
           type: "success",
           message: "成功修改密码!"
         })
-      }).catch(errorRes => {
+      }).catch(errorRes => {  
         this.dialogVisible2 = false
       })
     },
     // 停用启用
     handleStart(index, row) {
+      console.log("row",row);
+      
       const params = {
         id: row.id
       }
@@ -442,6 +457,8 @@ export default {
       tableList(this.listQuery).then((res) => {
         console.log('表单列表', res)
         this.tableData3 = res.data.list
+        console.log("this.tableData3",this.tableData3);
+        
         this.total = res.data.count
         this.tableLoading = false
       }).catch(errorRes => {
@@ -452,6 +469,7 @@ export default {
       this.listQuery.pageNo = 1
       this.getList()
     },
+    // 新增
     addBtn() {
       this.dialogVisible = true
       getPostState({ id: this.listQuery['office.id'] }).then(res => {
@@ -462,8 +480,9 @@ export default {
       
       this.$nextTick(() => {
         if (this.$refs.form != undefined) {     
-          this.$refs.form.resetFields()
           // Object.assign(this.form, this.$options.data().form)
+          this.$refs.form.resetFields()
+
         }
       })
       this.form.dept = this.deptObj
@@ -481,12 +500,14 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
-          Delete(idStr).then(res => {
-            this.AreaTree()
+          Delete({ids : idStr}).then(res => {
+            console.log("a")
             this.$message({
               type: "success",
               message: "删除成功!"
             })
+            this.getList()
+            this.AreaTree()
           }).catch(errorRes => {
 
           })
@@ -502,8 +523,6 @@ export default {
     },
     // 新增用户  保存
     save(e) {
-      this.dialogVisible = false
-      console.log(this.form)
       const params = {
         "company.id": 'system',
         "office.id": this.form.dept.id
@@ -517,9 +536,7 @@ export default {
       if (this.form.name) {
         params.name = this.form.name
       }
-      if (this.form.email) {
-        params.email = this.form.email
-      }
+      
       // 性别
       if (this.form.gender) {
         params.gender = this.form.gender
@@ -527,10 +544,7 @@ export default {
       if (this.form.id) {
         params.id = this.form.id
       }
-      // 手机号
-      if (this.form.mobile) {
-        params.mobile = this.form.mobile
-      }
+     
       // 岗位
       if (this.form.post) {
         params.post = this.form.post
@@ -539,15 +553,29 @@ export default {
       if (this.form.state) {
         params.state = this.form.state
       }
-      console.log('编辑新增的params', params)
-      save(params).then(res => {
-        this.getList()
-        this.dialogVisible1 = false
-      }).catch(errorRes => {
-        this.dialogVisible1 = false
-      })
+      
+       //邮箱  手机号  验证 
+      if(!/^1[3456789]\d{9}$/.test(this.form.mobile)){ 
+           this.$message({
+            type: "error",
+           message: "请输入有效的手机号码!"
+          }) 
+       }else if(!/^[\w._]+@(qq|gmail|163)\.com(\r\n|\r|\n)?$/.test(this.form.email)){
+          this.$message({
+          type: "error",
+          message: "请输入有效的邮箱!"
+        }) 
+      }  else{
+         console.log("1")
+         params.email = this.form.email
+         params.mobile = this.form.mobile
+         console.log('编辑新增的params', params)
+          save(params).then(response => { 
+                this.getList()
+                this.dialogVisible = false 
+       })
+     }
     },
-
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {

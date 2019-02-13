@@ -122,6 +122,11 @@ const webpackConfig = merge(baseWebpackConfig, {
           priority: 21, // 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
           test: /[\\/]node_modules[\\/]ol[\\/]/
         },
+        elementVideo: {
+          name: 'chunk-vue-video-player', // 单独将 ol 拆包
+          priority: 21, // 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
+          test: /[\\/]node_modules[\\/]vue-video-player[\\/]/
+        },
         commons: {
           name: 'chunk-commons',
           test: resolve('src/components'), // 可自定义拓展你的规则

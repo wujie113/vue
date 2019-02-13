@@ -61,7 +61,7 @@
           <div>
             <el-table :data="tableData" stripe style="width: 100%" border>
               <el-table-column prop="title" label="操作"></el-table-column>
-              <el-table-column prop="tenantId" label="操作人"></el-table-column>
+              <el-table-column prop="username" label="操作人"></el-table-column>
               <el-table-column prop="createDate" label="操作时间"></el-table-column>
             </el-table>
             <pagination

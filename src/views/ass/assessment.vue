@@ -463,7 +463,7 @@ export default {
     },
     //考核评分
     assscore() {
-      this.idvalue=[]
+      this.idvalue=[] 
       this.value3 = null
       this.scoreVisible = true
       this.scoreloading = true

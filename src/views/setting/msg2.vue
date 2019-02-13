@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:44:29 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2019-01-26 17:25:37
+ * @Last Modified time: 2019-01-26 15:42:30
  */
 // 通知公告
 <template>
@@ -101,36 +101,31 @@
     </el-container>
     <!--添加编辑弹窗-->
     <el-dialog :visible.sync="v.form" title="编辑">
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="标题">
+      <el-form ref="form" :model="form" label-width="40px">
+        <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题"/>
         </el-form-item>
-        <el-form-item label="内容">
-          <quill-editor
-            v-model="form.content"
-            ref="myQuillEditor"
-            :options="quillform.editorOption"
-            @blur="onEditorBlur($event)"
-            @focus="onEditorFocus($event)"
-            @ready="onEditorReady($event)"
-          ></quill-editor>
-          <el-upload
-            style="display:none"
-            class="avatar-uploader"
-            :http-request="uploadFile"
-            :data="uploadform.uploaddata"
-            :action="uploadform.serverUrl"
-            name="img"
-            :headers="uploadform.header"
-            :show-file-list="false"
-            :on-success="handleSuccess"
-            :on-error="handlError"
-            :before-upload="beforeUpload"
-            :file-list="fileList"
-            accept=".png, .jpg, .gif"
-          ></el-upload>
+        <el-form-item label="内容" prop="content">
+          <el-input v-model="form.content" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
       </el-form>
+      <el-upload
+        :action="doUpload"
+        list-type="picture-card"
+        :auto-upload="false"
+        :on-preview="handlePictureCardPreview"
+        accept=".jpg, .jpeg, .png, .gif"
+        ref="upload"
+        :file-list="fileList"
+        :before-remove="removefile"
+        :data="uploaddata"
+        :on-success="handleSuccess"
+        :on-remove="handleRemove"
+        class="elUpload"
+      >
+        <i class="el-icon-plus"></i>
+      </el-upload>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="v.form = false">取 消</el-button>
         <el-button @click="save()" type="primary">确 定</el-button>
@@ -138,13 +133,24 @@
     </el-dialog>
     <!-- 通知公告弹窗 -->
     <el-dialog title="通知公告详情" :visible.sync="dialogVisible" width="60%">
-      <div style="text-align:center">
-        <h2 style="margin-bottom:0.6em;margin-top:0;">{{form.title}}</h2>
-        <span>
-          <p style="color: #636363;font-size: 12px;">{{form.createDate}} {{form.createByName}}</p>
-        </span>
+      <div class="NotificationDetailContent clearfix">
+        <div class="subContent clearfix">
+          <h2 class="ContentHeader">{{ msgDeatail.title }}</h2>
+          <p style="color: #636363;font-size: 12px;text-align: center;">{{msgDeatail.createDate}} {{msgDeatail.createByName}}</p>
+          <!-- <p class="DetailMore">{{ msgDeatail.content }}</p> -->
+          <div class="content ql-editor" v-html="msgDeatail.content"></div>
+          <div></div>
+          <div class="clearfix">
+            <viewer :images="images1" class="clearfix pre-image">
+              <img v-for="src in images1" :src="src.url" :key="src.name">
+            </viewer>
+          </div>
+          <!-- <div class="subUser">
+            <span class="DetailTime">{{ msgDeatail.createDate }}</span>
+            <span class="DetailUser">{{ msgDeatail.updateByName }}</span>
+          </div> -->
+        </div>
       </div>
-      <div class="content ql-editor" v-html="form.content"></div>
     </el-dialog>
   </div>
 </template> 
@@ -153,33 +159,13 @@ import Pagination from "@/components/Pagination"
 import { getList, get, save, del } from "@/api/setting/msg.js"
 import RmDict from "@/components/rm/dict"
 import RmOrgSelect from "@/components/rm/orgselect"
+import { getToken } from "@/utils/auth"
 import { getfiles, delfiles } from "@/api/res/river.js"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
-import { file, upload } from "@/api/imgUplodFile"
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
-import { quillEditor } from 'vue-quill-editor'
-import { getToken } from "@/utils/auth";
-const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-  ['blockquote', 'code-block'],
-  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-  [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
-  [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-  [{ 'direction': 'rtl' }],                         // text direction
-  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-  [{ 'font': [] }],
-  [{ 'align': [] }],
-  ['link', 'image'],
-  ['clean']                                         // remove formatting button
-]
+import { file } from "@/api/imgUplodFile"
 export default {
-  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect, quillEditor },
+  components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -200,18 +186,6 @@ export default {
       list: null,
       fileList: [],
       doUpload: process.env.BASE_FILE_API + "?token=" + getToken(),
-      uploaddata: {
-        bizId: null,
-        bizType: "msg"
-      },
-      uploadform: {
-        serverUrl: process.env.BASE_FILE_API + "?token=" + getToken(),  // 这里写你要上传的图片服务器地址
-        // header: {token: getToken()},  // 有的图片服务器要求请求头需要有token  
-        uploaddata: {
-          bizId: "",
-          bizType: "msg"
-        }
-      },
       value1: "",
       value2: "",
       popoverVisible: false,
@@ -228,23 +202,23 @@ export default {
         startTime: "",
         endTime: ""
       },
-      // form: {
-      //   type: '2',
-      //   title: null,
-      //   content: null,
-      //   from: null,
-      //   userType: null,
-      //   userDesc: null,
-      //   userData: null,
-      //   ticket: null,
-      //   status: null,
-      //   sendTime: null,
-      //   sendState: "2",
-      //   remark: null
-      // },
+      uploaddata: {
+        bizId: null,
+        bizType: "msg"
+      },
       form: {
+        type: '2',
         title: null,
-        content: '',
+        content: null,
+        from: null,
+        userType: null,
+        userDesc: null,
+        userData: null,
+        ticket: null,
+        status: null,
+        sendTime: null,
+        sendState: "2",
+        remark: null
       },
       multipleSelection: [],
       msgDeatail: {
@@ -253,30 +227,7 @@ export default {
         createDate: "",
         updateByName: ""
       },
-      images1: [],
-      quillform: {
-        serverUrl: '',  // 这里写你要上传的图片服务器地址
-        header: { token: getToken() },  // 有的图片服务器要求请求头需要有token之类的参数，写在这里 
-        editorOption: {
-          placeholder: '',
-          theme: 'snow',  // or 'bubble'
-          modules: {
-            toolbar: {
-              container: toolbarOptions,  // 工具栏
-              handlers: {
-                'image': function (value) {
-                  if (value) {
-                    // 触发input框选择图片文件
-                    document.querySelector('.avatar-uploader input').click()
-                  } else {
-                    this.quill.format('image', false);
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
+      images1: []
     };
   },
   created() {
@@ -284,49 +235,27 @@ export default {
     this.getList()
   },
   methods: {
-    beforeUpload() {
-      let out
-      do
-        out = Math.floor(Math.random() * 100000);
-      while (out < 10000)
-      this.uploadform.uploaddata.bizId = ((new Date()).getTime() + out).toString()
-      console.log('this.uploadform.uploaddata.bizId', this.uploadform.uploaddata.bizId);
-
-    },
-    // 自定义图片的上传方式
-    uploadFile(options) {
-      return upload(this.uploadform.serverUrl, options)
-    },
-    handlError() {
-      this.$message({
-        message: "导入数据失败",
-        type: "error"
-      });
-      this.listQuery.search = "";
-      this.getList();
-    },
-    handleSuccess(respone) {
-      let resData = respone.data
-      if (resData.success == true) {
-        let quill = this.$refs.myQuillEditor.quill
-        let length = quill.getSelection().index;
-        // 插入图片  res.info为服务器返回的图片地址
-        quill.insertEmbed(length, 'image', resData.data[0].url)
-        // 调整光标到最后
-        quill.setSelection(length + 1)
-      } else {
-        this.$message({
-          message: resData.msg,
-          type: "error"
-        });
-      }
-      this.getList();
-    },
     detailBtn(row) {
       // Todo 图片还没接入
+      this.msgDeatail.title = ""
+      this.msgDeatail.content = ""
+      this.msgDeatail.createDate = ""
+      this.msgDeatail.updateByName = ""
       this.dialogVisible = true
       this.$nextTick(() => {
-        this.form = row
+        this.images1 = []
+        const p = {
+          "bizId": row.id
+        }
+        getfiles(p).then((res) => {
+          this.images1 = res.data
+        }).catch((errorRes) => {
+          
+        })
+        this.msgDeatail.title = row.title
+        this.msgDeatail.content = row.content
+        this.msgDeatail.createDate = row.createDate
+        this.msgDeatail.updateByName = row.updateByName
       })
     },
     getList() {
@@ -336,7 +265,7 @@ export default {
         this.query.total = response.data.count
       }).catch((errorRes) => {
         this.v.loading = false
-      })
+      })      
     },
     start(start) {
       this.originTime.beginDate = start
@@ -363,6 +292,7 @@ export default {
       }
     },
     create() {
+      this.fileList = []
       if (this.$refs.form != undefined) {
         this.$refs.form.resetFields()
       }
@@ -374,9 +304,14 @@ export default {
       this.v.form = true;
       this.form = row;
 
-      // getfiles({ bizId: this.form.id }).then(response => {
-      //   this.fileList = response.data;
-      // });
+      getfiles({ bizId: this.form.id }).then(response => {
+        this.fileList = response.data;
+      });
+
+    },
+    handleSuccess() {
+      this.fileList = [];
+      this.getList();
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
@@ -393,25 +328,33 @@ export default {
     save() {
       //console.log('保存:',JSON.stringify(this.form),this.selectUser);
       this.form.sendState = "2"
-      if (this.form.title && this.form.content) {
-        save(this.form).then(response => {
-          this.v.form = false
-          if (response.success) {
-            this.$message({
-              message: response.msg,
-              type: "success"
-            })
-            //添加到列表中
-            //this.list.unshift(this.form)
-            this.getList()
-          } else {
-            this.$message({
-              message: response.msg,
-              type: "warning"
-            })
-          }
-        })
-      }
+      save(this.form).then(response => {
+        this.uploaddata.bizId = response.data.id
+        if (this.$refs.upload.uploadFiles !== undefined && this.$refs.upload.uploadFiles.length > 0) {
+          // 上传到服务器
+          const imgParams = "&bizType=" + this.uploaddata.bizType + "&bizId=" + this.uploaddata.bizId;
+          file(imgParams, this.$refs.upload.uploadFiles).then(res => {
+            console.log("file----res", res)
+          }).catch(errorRes => { })
+        } else {
+          this.getList()
+        }
+        this.v.form = false
+        if (response.success) {
+          this.$message({
+            message: response.msg,
+            type: "success"
+          })
+          //添加到列表中
+          //this.list.unshift(this.form)
+          this.getList()
+        } else {
+          this.$message({
+            message: response.msg,
+            type: "warn"
+          })
+        }
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -448,21 +391,25 @@ export default {
           message: "请先勾选!"
         })
       }
+      // -----------------
+      // del(row.id).then(response => {
+      //   this.v.form = false;
+      //   if (response.success) {
+      //     this.$message(response.msg);
+      //     //删除列表数据
+      //     const index = this.list.indexOf(row); //找到要删除数据在list中的位置
+      //     this.list.splice(index, 1); //通过splice 删除数据
+      //   } else {
+      //     this.$message({
+      //       message: response.msg,
+      //       type: "warning"
+      //     });
+      //   }
+      // });
+    },
+    deleteBtn() {
 
-    },
-    onEditorBlur(quill) {
-      console.log('editor blur!', quill)
-    },
-    onEditorFocus(quill) {
-      console.log('editor focus!', quill)
-    },
-    onEditorReady(quill) {
-      console.log('editor ready!', quill)
-    },
-    onEditorChange({ quill, html, text }) {
-      console.log('editor change!', quill, html, text)
-      this.content = html
-    },
+    }
   }
 };
 </script>
@@ -474,15 +421,10 @@ export default {
       font-size: 12px;
     }
   }
-  .ql-editor {
-    /deep/ img {
-      width: 100%;
-    }
-  }
   > .el-container {
     min-height: calc(100vh - 126px);
   }
-  .el-dialog__body .pre-image img {
+  .el-dialog__body .pre-image img{
     width: 19%;
     height: 100px;
     max-height: 15em;
@@ -499,8 +441,8 @@ export default {
       text-align: center;
       font-weight: 600;
       font-size: 18px;
-      margin-bottom: 0.6em;
-      margin-top: 0;
+      margin-bottom:0.6em;
+      margin-top:0;
       // font-family: "微软雅黑";
     }
     .DetailMore {

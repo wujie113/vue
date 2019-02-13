@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-11-19 16:15:52 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2019-01-14 14:12:07
+ * @Last Modified time: 2019-01-24 09:11:16
  */
 <template>
   <div class="app-container homeIndex">
@@ -214,7 +214,7 @@
         <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6">
           <div class="grid-content">
             <div class="topTitle">
-              <div class="left">
+              <div class="left msgWrap">
                 <img src="../../../static/img/news.svg" alt="通知公告">
                 <span :class="{msgActive: msgActiveIndex === 0}" @click="msgBtn(0)">通知公告</span>
                 <span :class="{msgActive: msgActiveIndex === 1}" @click="msgBtn(1)">新闻动态</span>
@@ -732,7 +732,7 @@ export default {
     },
     // 任务提醒接口
     getMsgList() {
-      const p = {
+      const p = { 
         pageNo: this.markPageNo,
         pageSize: this.markPageSize
       }
@@ -769,7 +769,7 @@ export default {
         } else if (msgActiveIndex === 2) {
           // 任务提醒
           //标记已读
-          markRead({ "id": bizId, "type": type }).then((res) => {
+          markRead({ "id": bizId }).then((res) => {
             this.markList[index].readFlag = '1'
             this.msgDeatail = this.markList[index]
             this.hasRead()
@@ -1027,6 +1027,11 @@ export default {
     height: 4vh;
     min-height: 37px;
     padding: 0 10px;
+    .msgWrap {
+      span {
+        cursor: pointer;
+      }
+    }
     .left {
       display: flex;
       align-items: center;
@@ -1038,7 +1043,6 @@ export default {
       span {
         padding: 0 0.3em;
         color: #333;
-        cursor: pointer;
       }
       span.markClass::after {
         content: attr(data-length);

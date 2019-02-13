@@ -1,19 +1,37 @@
 <template>
-  <div class="app-container documentation-container">
-    <a class="document-btn" target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/">{{ $t('documentation.documentation') }}</a>
-    <a class="document-btn" target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">{{ $t('documentation.github') }}</a>
-    <a class="document-btn" target="_blank" href="https://panjiachen.gitee.io/vue-element-admin-site/zh/">国内文档</a>
-    <dropdown-menu :items="articleList" style="float:left;margin-left:50px;" title="系列文章"/>
-  </div>
+<div>
+    <div class="app-container documentation-container clearfix">
+      <a class="document-btn" target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/">{{ $t('documentation.documentation') }}</a>
+      <a class="document-btn" target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">{{ $t('documentation.github') }}</a>
+      <a class="document-btn" target="_blank" href="https://panjiachen.gitee.io/vue-element-admin-site/zh/">国内文档</a>
+      <dropdown-menu :items="articleList" style="float:left;margin-left:50px;" title="系列文章"/>
+    </div>
+    <video-player class="vjs-custom-skin video-player" :options="playerOptions"></video-player>
+
+</div>
+
 </template>
 <script>
 import DropdownMenu from '@/components/Share/dropdownMenu'
+import 'video.js/dist/video-js.css'
+import { videoPlayer } from 'vue-video-player'
+import 'videojs-flash'
 
 export default {
   name: 'Documentation',
-  components: { DropdownMenu },
+  components: { DropdownMenu, videoPlayer },
   data() {
     return {
+      playerOptions: {
+        height: 550,
+        sources: [{
+          type: "rtmp/mp4",
+          src: "rtmp://192.168.3.64:1935/hls/mystream"
+        }],
+        techOrder: ['flash'],
+        autoplay: false,
+        controls: true
+      },
       articleList: [
         { title: '基础篇', href: 'https://juejin.im/post/59097cd7a22b9d0065fb61d2' },
         { title: '登录权限篇', href: 'https://juejin.im/post/591aa14f570c35006961acac' },
