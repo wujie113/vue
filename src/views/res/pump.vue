@@ -80,7 +80,7 @@
           名称<br />县名<br />经度（如：113.8569）<br />纬度（如：27.6253）<br />
         </el-form-item>
       </el-form>
-      <el-upload :action="uploadaction" :show-file-list="false" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
+      <el-upload :http-request="uploadFile" :action="uploadaction" :show-file-list="false" accept=".xlsx,.xls" class="upload-demo" :before-upload="beforeUpload" :data="uploaddata" :on-success="handleSuccess" :on-error="handlError">
         <el-button type="primary" size="mini">去上传</el-button>
       </el-upload>
     </el-dialog>
@@ -94,6 +94,8 @@ import RmOrgSelect from "@/components/rm/orgselect";
 import RmUserSelect from "@/components/rm/userselect";
 import RmAreaSelect from "@/components/rm/areaselect";
 import { getToken } from "@/utils/auth";
+
+import { upload } from "@/api/imgUplodFile"
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -203,7 +205,7 @@ export default {
       this.v.formhistory = true;
       this.listLoadingHistory = true;
       getfiles(this.uploaddata).then(response => {
-        this.listDate = response.uploadexcelarr;
+        this.listDate = response.worldArr;
         this.listLoadingHistory = false;
       });
     },
@@ -217,7 +219,7 @@ export default {
       this.v.formupdate = false;
     },
     handleSuccess(respone) {
-      if (respone.success == true) {
+      if (respone.data.success == true) {
         this.$message({
           message: "导入数据成功",
           type: "success"
@@ -277,7 +279,12 @@ export default {
         this.listLoading = false;
         this.getList();
       });
-    }
+    },
+    uploadFile(options) {
+			// :http-request="uploadFile"
+			// import { upload } from "@/api/imgUplodFile"   
+			return upload(this.uploadaction,options)
+		}
   }
 };
 </script>

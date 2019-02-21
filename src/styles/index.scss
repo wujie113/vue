@@ -396,4 +396,9 @@ ul,li,p{
   white-space: nowrap;
   overflow: hidden;
 }
+.ql-editor {
+  /deep/ img {
+    width: 100%;
+  }
+}
 // 这里是我们自定义的通用样式-----end

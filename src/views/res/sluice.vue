@@ -250,7 +250,7 @@ export default {
 			this.v.formhistory = true
 			this.listLoadingHistory = true
 			getfiles(this.uploaddata).then(response => {
-				this.listDate = response.uploadexcelarr
+				this.listDate = response.worldArr
 				this.listLoadingHistory = false
 			})
 		},

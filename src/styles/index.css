@@ -938,15 +938,17 @@ ul, li, p {
   margin-bottom: 10px;
 }
 
+.el-container .el-header.filter-container {
+  height: auto;
+  padding: 20px 10px 0px 10px;
+}
+
 .el-container .el-header .topTitle, .el-container .el-main .topTitle {
   text-align: left;
   border-bottom: 1px solid #ccc;
   padding: 10px 0;
 }
-.el-header.filter-container{
-    height: auto;
-    padding: 20px 10px 0px 10px;
-}
+
 .el-container .el-header .filter-container, .el-container .el-main .filter-container {
   padding: 25px 0;
 }
@@ -1037,4 +1039,8 @@ ul, li, p {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.ql-editor /deep/ img {
+  width: 100%;
 }

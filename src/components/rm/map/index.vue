@@ -408,10 +408,14 @@
               if (f.get('gtype') === 'tousu' || f.get('gtype') === 'shangbao') {
                 //向上抛出事件，由上级页面处理展示内容
                 self.$emit("clickHandle", { type: f.get('gtype'), id: f.get('id'), name: f.get('name'), x: evt.originalEvent.x, y: evt.originalEvent.y })
-              }else {
-                self.showProperties(f.get('id'), f.get('gtype'))
+              }else if(f.get('gtype') === 'camera'){
+                   //true 暂时在此处添加播放事件
+               self.$emit("cameraClick", { type: f.get('gtype'), id: f.get('id'), name: f.get('name'), x: evt.originalEvent.x, y: evt.originalEvent.y })
+              } else {
+               console.log("aaas")
+               self.showProperties(f.get('id'), f.get('gtype'))
                 //设置显示位置 
-                self.proOverlay.setPosition(evt.coordinate)
+               self.proOverlay.setPosition(evt.coordinate)
               }
             } else {
               //从geoserver获取feature信息URL,'INFO_FORMAT': 'text/html',application/json
@@ -429,6 +433,7 @@
                     if (f.properties.gtype === 'camera') {
                       self.$emit("cameraClick", { type: f.get('gtype'), id: f.get('id'), name: f.get('name'), x: evt.originalEvent.x, y: evt.originalEvent.y })
                     } else {
+                      console.log("bbb")
                       self.showProperties(id, f.properties.gtype)
                       //设置显示位置 
                       self.proOverlay.setPosition(evt.coordinate)

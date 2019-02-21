@@ -2,7 +2,7 @@
  * @Author: 刘小康 
  * @Date: 2018-12-27 09:43:44 
  * @Last Modified by: 刘小康
- * @Last Modified time: 2019-01-24 16:40:43
+ * @Last Modified time: 2019-02-21 14:32:13
  */
 // 通讯录
 <template>
@@ -295,6 +295,9 @@ export default {
 // }
 
 .app-container {
+  > .el-container {
+    min-height: calc(100vh - 126px);
+  }
   .panel {
     margin-bottom: 0;
     min-height: 86vh;

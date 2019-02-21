@@ -108,6 +108,7 @@
                   style="display:none"
                   class="avatar-uploader"
                   :action="uploadform.serverUrl"
+                  :http-request="uploadFile"
                   name="img"
                   :data="uploaddata2"
                   :headers="uploadform.header"
@@ -152,6 +153,7 @@
 import Pagination from '@/components/Pagination'
 import { getList, get, save, del, examine } from '@/api/work/workBriefing.js'
 import { getfiles, delfiles, uploadFile } from "@/api/res/river.js"
+import { upload } from "@/api/imgUplodFile"
 import RmDict from '@/components/rm/dict'
 import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
@@ -248,7 +250,6 @@ export default {
       fileList: [],
       fileList2: [],
       detailformvaisable: false,
-
       uploadaction: process.env.BASE_API + "/c/common/fileRecord/uploadFile?token=" + getToken(),
       form: {
         id: null,
@@ -278,12 +279,11 @@ export default {
       window.open(url)
     },
     handleSuccess(respone) {
-      console.log("respone:::", respone.url);
-      if (respone.success == true) {
+      if (respone.data.success == true) {
         let quill = this.$refs.myQuillEditor.quill
         let length = quill.getSelection().index;
         // 插入图片  res.info为服务器返回的图片地址
-        quill.insertEmbed(length, 'image', respone.data[0].url)
+        quill.insertEmbed(length, 'image', respone.data.data[0].url)
         // 调整光标到最后
         quill.setSelection(length + 1)
       } else {
@@ -299,14 +299,18 @@ export default {
         message: "导入数据失败",
         type: "error"
       });
-      this.listQuery.search = "";
+      this.query.title = "";
       this.getList();
     },
     beforeUpload(file) {
       this.listLoading = true;
       this.v.formupdate = false;
     },
-
+	  uploadFile(options) {
+			// :http-request="uploadFile"
+			// import { upload } from "@/api/imgUplodFile"   
+			return upload(this.uploadaction,options)
+		},
     /**图片上传部分结束 */
     getList() {
       this.listLoading = true;

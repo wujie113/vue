@@ -153,7 +153,7 @@ export default {
         // techOrder: ['flash'], //默认 default : html5
         poster: "../../../static/img/bj.jpg", //你的封面地址
         width: document.documentElement.clientWidth,
-        // height: '400',
+        //height: '400',
         notSupportedMessage: '此视频暂无法播放，请稍后再试', //允许覆盖Video.js无法播放媒体源时显示的默认信息。
         //  controlBar: {
         //   timeDivider: true,
@@ -182,7 +182,6 @@ export default {
   },
   mounted() {
     this.dialogVisible = true
-    
   },
   computed: {
     player() {
@@ -221,10 +220,12 @@ export default {
 
     onClickcamera(rdx) {
       console.log("rdx", rdx)
-      this.showdialog = true
       this.$nextTick(() => {
-        // this.playerOptions.sources[0].src = "http://192.168.3.181:8090/video/m3u8/video.m3u8"
-         this.playerOptions.sources[0].src = rdx.url
+        this.showdialog=true
+        this.playerOptions.sources[0].src = "http://192.168.3.113:8090/video/m3u8/video.m3u8"
+        console.log("this.playerOptions",this.playerOptions.sources[0].src);
+        //获取视频路径参数
+        //this.playerOptions.sources[0].src = rdx.url
       })
     },
   }

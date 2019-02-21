@@ -462,7 +462,9 @@ export default {
       }
     },
     //考核评分
-    assscore() {
+    assscore() { 
+      this.getarealist1()
+      console.log("考核评分",this.value2)
       this.idvalue=[] 
       this.value3 = null
       this.scoreVisible = true

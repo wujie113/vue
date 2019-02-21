@@ -159,7 +159,12 @@ export const constantRouterMap = [
         component: () => import('@/views/regula/usermanger'),
         meta: { title: '专员管理', noCache: true }
       },
-      
+      {
+        path: 'information',
+        name: 'information',
+        component: () => import('@/views/regula/information'),
+        meta: { title: '河流基本信息', noCache: true }
+      },
     ]
   },
   {

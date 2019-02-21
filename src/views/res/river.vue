@@ -192,6 +192,7 @@
         </el-form-item>
       </el-form>
       <el-upload
+      :http-request="uploadFile"
         :action="doUpload"
         list-type="picture-card"
         :before-upload="beforeUpload"
@@ -248,6 +249,7 @@ import RmOrgSelect from "@/components/rm/orgselect";
 import RmUserSelect from "@/components/rm/userselect";
 import RmAreaSelect from "@/components/rm/areaselect";
 import { getToken } from "@/utils/auth";
+import { upload } from "@/api/imgUplodFile"
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -509,7 +511,12 @@ export default {
     },
     testclick(data) {
       console.log("子界面data:::", data);
-    }
+    },
+    uploadFile(options) {
+			// :http-request="uploadFile"
+			// import { upload } from "@/api/imgUplodFile"   
+			return upload(this.uploadaction,options)
+		}
   }
 };
 </script>

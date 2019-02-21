@@ -295,6 +295,8 @@
         </el-form-item>
       </el-form>
       <el-upload
+      
+:http-request="uploadFile"
         :action="uploadaction"
         :show-file-list="false"
         accept=".xlsx, .xls"
@@ -309,6 +311,7 @@
     </el-dialog>
     <!--附件详情-->
     <el-dialog
+    
       :visible.sync="v.formenclosure"
       v-loading="v.enclosureLoading"
       title="附件详情"
@@ -326,6 +329,7 @@
       </el-form>
       <!--上传图片-->
       <el-upload
+      :http-request="uploadFile2"
         class="upload-demo"
         style="text-align: left;"
         :multiple="true"
@@ -377,6 +381,8 @@ import RmOrgSelect from "@/components/rm/orgselect"
 import RmUserSelect from "@/components/rm/userselect"
 import RmAreaSelect from "@/components/rm/areaselect"
 import { getToken } from "@/utils/auth";
+
+import { upload } from "@/api/imgUplodFile"
 export default {
   components: { Pagination, RmDict, RmOrgSelect, RmUserSelect, RmAreaSelect },
   filters: {
@@ -498,7 +504,7 @@ export default {
       this.enclosureLoading = true
       getphotolist(this.uploaddata2).then(response => {
         this.enclosureLoading = false
-        this.fileList = response.data
+        this.fileList = response.mapArr
         console.log("file", this.fileList)
       })
 
@@ -509,7 +515,7 @@ export default {
       this.v.formhistory = true;
       this.listLoadingHistory = true;
       getfiles(this.uploaddata).then(response => {
-        this.listDate = response.uploadexcelarr;
+        this.listDate = response.worldArr;
         this.listLoadingHistory = false;
       });
     },
@@ -522,7 +528,7 @@ export default {
       this.v.formupdate = false;
     },
     handleSuccess(respone) {
-      if (respone.success == true) {
+      if (respone.data.success == true) {
         this.$message({
           message: "导入数据成功",
           type: "success"
@@ -597,7 +603,17 @@ export default {
     closeBtn() {
       this.fileList = []
       this.v.formenclosure = false
-    }
+    },
+    uploadFile(options) {
+			// :http-request="uploadFile"
+			// import { upload } from "@/api/imgUplodFile"   
+			return upload(this.uploadaction,options)
+    },
+    uploadFile2(options) {
+			// :http-request="uploadFile"
+			// import { upload } from "@/api/imgUplodFile"   
+			return upload(this.uploadaction2,options)
+		}
 
   }
 }

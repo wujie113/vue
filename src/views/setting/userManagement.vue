@@ -136,7 +136,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button @click="save" type="primary">确 定</el-button>
+        <el-button @click="save" :disabled="isDisable" type="primary">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 编辑弹窗 -->
@@ -188,7 +188,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible1 = false">取 消</el-button>
-        <el-button @click="save" type="primary">确 定</el-button>
+        <el-button @click="save" :disabled="isDisable" type="primary">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -260,6 +260,7 @@ export default {
       }
     }
     return {
+      isDisable: false,
       isShowTabbar: false,
       postArray: [],
       loading: true,
@@ -523,6 +524,7 @@ export default {
     },
     // 新增用户  保存
     save(e) {
+      this.isDisable=true
       const params = {
         "company.id": 'system',
         "office.id": this.form.dept.id
@@ -566,13 +568,15 @@ export default {
           message: "请输入有效的邮箱!"
         }) 
       }  else{
-         console.log("1")
          params.email = this.form.email
          params.mobile = this.form.mobile
-         console.log('编辑新增的params', params)
-          save(params).then(response => { 
-                this.getList()
-                this.dialogVisible = false 
+         console.log('编辑新增的params', params) 
+          save(params).then(response => {  
+              this.getList()
+              this.dialogVisible = false 
+              setTimeout(() => {
+              this.isDisable = false
+              }, 1000)
        })
      }
     },

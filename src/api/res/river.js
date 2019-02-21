@@ -15,6 +15,15 @@ export function get(id) {
     params: { id: id }
   });
 }
+
+export function getdata(id) {
+  return request({
+    url: "/api/pub/river/get",
+    method: "get",
+    params: { id: id }
+  });
+}
+
 export function save(data) {
   return request({
     url: "/api/res/river/save",
@@ -38,10 +47,12 @@ export function getxslist() {
     params: { type: "SX" }
   });
 }
-export function tree() {
+export function tree(data) {
+  console.log("data",data)
   return request({
     url: "/api/res/river/tree",
-    method: "get"
+    method: "post",
+    data
   });
 }
 
